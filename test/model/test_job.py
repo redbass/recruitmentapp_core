@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from model.job import create_job, delete_jobs
+from model.job import create_job, delete_jobs, get_jobs
 
 
 class TestCreateJob(TestCase):
@@ -53,7 +53,25 @@ class TestDeleteJobs(TestCase):
         self.assertEqual(call_args[0], {'_id': {'$in': job_to_delete_ids}})
         self.assertEqual(call_args[1], {'$set': {'deleted': True}})
 
-    def test_delete_jobs_parameters_error(self):
+    def test_delete_jobs_parameter_error(self):
+        self.assertRaises(AttributeError, delete_jobs, None)
+        self.assertRaises(AttributeError, delete_jobs, [])
+        self.assertRaises(AttributeError, delete_jobs, '123')
+
+
+class TestGetJobs(TestCase):
+
+    @patch('model.job.jobs')
+    def test_get_jobs(self, jobs):
+        _ids = ["123"]
+        expected_job = {}
+        jobs.find.return_value = [expected_job]
+
+        result = get_jobs(_ids)
+
+        self.assertEqual(result[0], expected_job)
+
+    def test_get_jobs_parameter_error(self):
         self.assertRaises(AttributeError, delete_jobs, None)
         self.assertRaises(AttributeError, delete_jobs, [])
         self.assertRaises(AttributeError, delete_jobs, '123')

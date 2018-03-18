@@ -1,5 +1,6 @@
 from functools import wraps
-from json import dumps
+
+from flask.json import jsonify
 
 
 def json_response(f):
@@ -9,7 +10,7 @@ def json_response(f):
 
         try:
             result = f(*args, **kwargs)
-            return dumps(result), 200
+            return jsonify(result), 200
 
         except Exception as e:
             return _error_handler(e)
@@ -18,7 +19,7 @@ def json_response(f):
 
 
 def _error_handler(e):
-    return dumps({
+    return jsonify({
         'error': 'Unexpected error',
         'exception': str(e)
     }), 500

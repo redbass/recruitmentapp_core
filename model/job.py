@@ -1,5 +1,6 @@
-from db.collections import jobs
+from pymongo.cursor import Cursor
 
+from db.collections import jobs
 from model import create_id
 from model.period import create_period
 
@@ -28,7 +29,14 @@ def create_job(title: str,
 def delete_jobs(_ids: [str]):
 
     if not _ids or not isinstance(_ids, list):
-        raise AttributeError('_ids have to be an list of ids')
+        raise AttributeError('_ids have to be a list of ids')
 
     jobs.update_many({'_id': {'$in': _ids}},
                      {'$set': {'deleted': True}})
+
+
+def get_jobs(_ids: [str]) -> [Cursor]:
+    if not _ids or not isinstance(_ids, list):
+        raise AttributeError('_ids have to be a list of ids')
+
+    return [job for job in jobs.find({'_id': {'$in': _ids}})]
