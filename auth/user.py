@@ -1,17 +1,15 @@
-# silly user model
-from flask.ext.login import UserMixin
+class User(object):
+
+    def __init__(self, _id):
+        self.id = _id
+        self.password = self._create_password(_id)
+
+    def check_password(self, password):
+        return password == self.id + "_secret"
+
+    @staticmethod
+    def _create_password(_id):
+        return _id + "_secret"
 
 
-class User(UserMixin):
-
-    def __init__(self, id):
-        self.id = id
-        self.name = "user" + str(id)
-        self.password = self.name + "_secret"
-
-    def __repr__(self):
-        return "%d/%s/%s" % (self.id, self.name, self.password)
-
-
-# create some users with ids 1 to 20
-users = [User(id) for id in range(1, 21)]
+users = {key: User(key) for key in ['luca', 'claudia']}
