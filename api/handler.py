@@ -2,6 +2,8 @@ from functools import wraps
 
 from flask.json import jsonify
 
+from exceptions import api
+
 
 def json_response(f):
 
@@ -19,7 +21,16 @@ def json_response(f):
 
 
 def _error_handler(e):
+
+    e_msg = str(e)
+    code = 500
+
+    #  400 Bad Request
+    if type(e) in [api.ParametersException]:
+        code = 400
+
     return jsonify({
-        'error': 'Unexpected error',
-        'exception': str(e)
-    }), 500
+        'exception': type(e).__name__,
+        'msg': e_msg,
+        'refId': getattr(e, 'ref_id', "")
+    }), code

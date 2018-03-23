@@ -1,7 +1,10 @@
-from api.job import get_job
+from api.job import get_job, create_job
 
-GET_JOB_URL = '/api/job/<_id>'
+JOB_URL = '/api/job'
+GET_JOB_URL = JOB_URL + '/<_id>'
 
 
 def add_routes(app):
-    return app.add_url_rule(GET_JOB_URL, 'get_job', get_job, methods=['GET'])
+
+    app.add_url_rule(JOB_URL, 'create_job', create_job, methods=['POST'])
+    app.add_url_rule(GET_JOB_URL, 'get_job', get_job, methods=['GET'])
