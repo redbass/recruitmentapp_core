@@ -2,8 +2,22 @@ from flask import Flask
 
 from api.route import add_routes
 
-app = Flask(__name__)
-add_routes(app)
+__recruitment_app__ = None
+
+
+def get_app() -> Flask:
+    global __recruitment_app__
+
+    if not __recruitment_app__:
+        __recruitment_app__ = Flask(__name__)
+    return __recruitment_app__
+
+
+def run_app():
+    app = get_app()
+    add_routes(app)
+    app.run(debug=True)
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    run_app()

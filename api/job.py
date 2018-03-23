@@ -1,10 +1,12 @@
 from flask import request
+from flask.ext.login import login_required
 
 from api.handler import json_response
 from exceptions.api import ParametersException
 from model import job
 
 
+@login_required
 @json_response
 def get_job(_id: str):
     results = job.get_jobs([_id])

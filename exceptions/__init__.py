@@ -1,4 +1,4 @@
-class RecruitmentAppException(Exception):
+class BaseRecruitmentAppException(Exception):
 
     def __init__(self,
                  msg: str,

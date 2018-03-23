@@ -1,5 +1,5 @@
-from exceptions import RecruitmentAppException
+from exceptions import BaseRecruitmentAppException
 
 
-class ParametersException(RecruitmentAppException):
+class ParametersException(BaseRecruitmentAppException):
     pass
