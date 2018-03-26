@@ -3,9 +3,6 @@ from api.job import get_job, create_job
 JOB_URL = '/api/job'
 GET_JOB_URL = JOB_URL + '/<_id>'
 
-LOGIN_URL = "/login"
-LOGOUT_URL = "/logout"
-
 
 def add_routes(app):
 

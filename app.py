@@ -2,30 +2,26 @@ from flask import Flask
 
 from api.route import add_routes
 from auth.jwt import setup_jwt
+from config import settings
 
-__recruitment_app__ = None
-
-
-def get_app() -> Flask:
-    global __recruitment_app__
-
-    if not __recruitment_app__:
-        __recruitment_app__ = Flask(__name__)
-    return __recruitment_app__
+_app = None
 
 
-def run_app():
-    app = get_app()
-    app.config.update(
-        SECRET_KEY='secret_xxx'  # TODO: SET REAL ONE
-    )
+def get_app(*args, **kwarg) -> Flask:
 
-    setup_jwt(app)
+    global _app
 
-    add_routes(app)
+    if not _app:
+        _app = Flask(__name__, *args, **kwarg)
+        _app.config.update(
+            SECRET_KEY='secret_xxx'  # TODO: SET REAL ONE
+        )
 
-    app.run(debug=True)
+        setup_jwt(_app)
+        add_routes(_app)
+
+    return _app
 
 
 if __name__ == '__main__':
-    run_app()
+    get_app().run(debug=settings.DEBUG, port=settings.DEFAULT_PORT)

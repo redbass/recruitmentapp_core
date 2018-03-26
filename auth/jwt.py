@@ -55,7 +55,10 @@ def _setup_endpoints(app):
 
         # Set the JWTs and the CSRF double submit protection cookies
         # in this response
-        resp = jsonify({'login': True})
+        resp = jsonify({
+            'token': access_token,
+            'username': username
+        })
         set_access_cookies(resp, access_token)
         set_refresh_cookies(resp, refresh_token)
         return resp, 200
