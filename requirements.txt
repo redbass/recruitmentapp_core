@@ -1,4 +1,6 @@
-pymongo==3.6.1
 Flask==0.12.2
 Flask-JWT-Extended==3.7.2
 gunicorn==19.7.1
+pycrypto==2.6.1
+pymongo==3.6.1
+

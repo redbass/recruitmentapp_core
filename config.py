@@ -1,23 +1,16 @@
 import os
 
-
-class BaseConfig(object):
-    DEBUG = False
-    DEFAULT_PORT = None
-
-    DATABASE_HOST = ''
-    DATABASE_PORT = None
-    DATABASE_USER = None
-    DATABASE_PASSWORD = None
-    DATABASE_DB_SUFFIX = ''
+from lib.config import BaseConfig
 
 
 class StagingConfig(BaseConfig):
+    ENC_SEED = 'G2kPfCexw9IRKEro'
+
     DATABASE_HOST = 'ds229909.mlab.com'
     DATABASE_PORT = 299009
-    DATABASE_USER = 'test'
-    DATABASE_PASSWORD = 'test'
+    DATABASE_USER = 'dev_recruitment_app'
     DATABASE_DB_SUFFIX = ''
+    DATABASE_PASSWORD = '076970ce739732354c51bae004fd9f9b'
 
 
 class DevConfig(StagingConfig):
@@ -45,7 +38,8 @@ def _get_settings():
     }
 
     if app_env not in app_configs.keys():
-        raise Exception('APP_ENV "{app_env}" not supported'.format(app_env=app_env))
+        raise Exception(
+            'APP_ENV "{app_env}" not supported'.format(app_env=app_env))
 
     return app_configs.get(app_env)()
 
