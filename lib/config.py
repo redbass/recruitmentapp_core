@@ -10,6 +10,8 @@ class BaseConfig(object):
     DEBUG = False
     DEFAULT_PORT = None
 
+    LOGIN_REQUIRED = True
+
     DATABASE_HOST = ''
     DATABASE_PORT = None
     DATABASE_USER = None

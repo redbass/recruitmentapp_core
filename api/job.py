@@ -1,7 +1,7 @@
 from flask import request
-from flask_jwt_extended import jwt_required
 
 from api.handler import json_response
+from auth.jwt import jwt_required
 from exceptions.api import ParametersException
 from model import job
 

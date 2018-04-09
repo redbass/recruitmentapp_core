@@ -1,13 +1,13 @@
 import json
 from unittest import TestCase
 
-from app import app
+from app import get_app
 
 
 class TestApi(TestCase):
 
     def setUp(self):
-        self.test_app = app.test_client()
+        self.test_app = get_app().test_client()
 
     @staticmethod
     def url_for(endpoint_url, **url_args):

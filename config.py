@@ -25,6 +25,7 @@ class DevConfig(StagingConfig):
 
 
 class TestConfig(DevConfig):
+    LOGIN_REQUIRED = False
     DATABASE_DB_SUFFIX = 'test'
 
 

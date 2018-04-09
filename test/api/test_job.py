@@ -41,14 +41,13 @@ class TestApiCreateJob(TestApi):
 
         expected_job = {'result': 'result'}
         job.create_job.return_value = expected_job
-
         url = self.url_for(JOB_URL)
         response = self.post_json(url, data)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(200, response.status_code)
         self.assertEqual(loads(response.data), expected_job)
 
     def test_create_job_no_input(self):
         url = self.url_for(JOB_URL)
         response = self.post_json(url, {})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(400, response.status_code)

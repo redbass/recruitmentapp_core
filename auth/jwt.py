@@ -1,3 +1,6 @@
+from functools import wraps
+from flask_jwt_extended import jwt_required as flask_jwt_required
+
 from flask import request, jsonify
 from flask_jwt_extended import (
     JWTManager, create_access_token,
@@ -7,6 +10,7 @@ from flask_jwt_extended import (
 )
 
 from auth.user import users
+from config import settings
 
 __jwt = None
 
@@ -36,6 +40,19 @@ def setup_jwt(app) -> JWTManager:
         _setup_endpoints(app)
 
     return __jwt
+
+
+def jwt_required(fn):
+
+    @wraps(fn)
+    def wrapped(*args, **qwargs):
+
+        if not settings.LOGIN_REQUIRED:
+            return fn(*args, ** qwargs)
+
+        return flask_jwt_required(fn)
+
+    return wrapped
 
 
 def _setup_endpoints(app):
