@@ -20,7 +20,7 @@ def setup_jwt(app) -> JWTManager:
 
     if not __jwt:
         # Configure application to store JWTs in cookies
-        app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+        app.config['JWT_TOKEN_LOCATION'] = ['headers']
         # Only allow JWT cookies to be sent over https. In production, this
         # should likely be True
         app.config['JWT_COOKIE_SECURE'] = False
@@ -31,9 +31,10 @@ def setup_jwt(app) -> JWTManager:
         # they aren't needed.
         app.config['JWT_ACCESS_COOKIE_PATH'] = '/api/'
         app.config['JWT_REFRESH_COOKIE_PATH'] = '/token/refresh'
+
         # Enable csrf double submit protection. See this for a thorough
         # explanation: http://www.redotheweb.com/2015/11/09/api-security.html
-        app.config['JWT_COOKIE_CSRF_PROTECT'] = True
+        app.config['JWT_COOKIE_CSRF_PROTECT'] = False
 
         __jwt = JWTManager(app)
 
@@ -50,7 +51,7 @@ def jwt_required(fn):
         if not settings.LOGIN_REQUIRED:
             return fn(*args, ** qwargs)
 
-        return flask_jwt_required(fn)
+        return flask_jwt_required(fn)(*args, ** qwargs)
 
     return wrapped
 
@@ -76,8 +77,8 @@ def _setup_endpoints(app):
             'token': access_token,
             'username': username
         })
-        set_access_cookies(resp, access_token)
-        set_refresh_cookies(resp, refresh_token)
+        # set_access_cookies(resp, access_token)
+        # set_refresh_cookies(resp, refresh_token)
         return resp, 200
 
     @app.route('/token/refresh', methods=['POST'])

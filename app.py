@@ -24,4 +24,4 @@ def get_app(*args, **kwarg) -> Flask:
 
 
 if __name__ == '__main__':
-    get_app().run(debug=settings.DEBUG, port=settings.DEFAULT_PORT)
+    get_app().run(debug=settings.DEBUG_MODE, port=settings.DEFAULT_PORT)
