@@ -1,10 +1,10 @@
-from unittest import TestCase
 from unittest.mock import patch
 
 from model.job import create_job, delete_jobs, get_jobs
+from test import UnitTestCase
 
 
-class TestCreateJob(TestCase):
+class TestCreateJob(UnitTestCase):
 
     @patch('model.job.create_id')
     @patch('model.job.jobs')
@@ -42,7 +42,7 @@ class TestCreateJob(TestCase):
         self.assertRaises(AttributeError, create_job, None, 'asd')
 
 
-class TestDeleteJobs(TestCase):
+class TestDeleteJobs(UnitTestCase):
 
     @patch('model.job.jobs')
     def test_delete_jobs(self, jobs):
@@ -59,7 +59,7 @@ class TestDeleteJobs(TestCase):
         self.assertRaises(AttributeError, delete_jobs, '123')
 
 
-class TestGetJobs(TestCase):
+class TestGetJobs(UnitTestCase):
 
     @patch('model.job.jobs')
     def test_get_jobs(self, jobs):

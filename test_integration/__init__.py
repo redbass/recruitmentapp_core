@@ -1,10 +1,10 @@
 from unittest import TestCase
 
-from config import get_config
+from config import settings
 
 
 class IntegrationTestCase(TestCase):
 
     def setUp(self):
-        if get_config().TEST_MODE:
+        if not settings.TEST_MODE:
             raise Exception('Test have to run in test mode')

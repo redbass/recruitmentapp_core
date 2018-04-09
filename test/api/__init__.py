@@ -1,12 +1,13 @@
 import json
-from unittest import TestCase
 
 from app import get_app
+from test import UnitTestCase
 
 
-class TestApi(TestCase):
+class TestApi(UnitTestCase):
 
     def setUp(self):
+        super().setUp()
         self.test_app = get_app().test_client()
 
     @staticmethod

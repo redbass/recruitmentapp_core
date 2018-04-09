@@ -7,7 +7,8 @@ class BaseConfig(object):
     ENC_SEED = 'aaaaaaaaaaaaaaaa'
     ENC_PSWD = None
 
-    DEBUG = False
+    DEBUG_MODE = False
+    TEST = False
     DEFAULT_PORT = None
 
     LOGIN_REQUIRED = True

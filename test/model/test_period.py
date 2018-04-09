@@ -1,9 +1,8 @@
-from unittest import TestCase
-
 from model.period import create_period
+from test import UnitTestCase
 
 
-class TestPeriod(TestCase):
+class TestPeriod(UnitTestCase):
 
     def test_create_period(self):
         expected_period = {
