@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
-from model.job import create_job, delete_jobs, get_jobs, get_all_jobs, DEFAULT_JOBS_PAGINATION_LIMIT, \
-    DEFAULT_JOBS_PAGINATION_START
+from model.job import create_job, delete_jobs, get_jobs, get_all_jobs, \
+    DEFAULT_JOBS_PAGINATION_LIMIT, DEFAULT_JOBS_PAGINATION_START
 from test import UnitTestCase
 
 
@@ -117,4 +117,3 @@ class TestGetAllJobs(UnitTestCase):
         get_pagination.assert_called_once_with(expected_cursor,
                                                DEFAULT_JOBS_PAGINATION_START,
                                                DEFAULT_JOBS_PAGINATION_LIMIT)
-

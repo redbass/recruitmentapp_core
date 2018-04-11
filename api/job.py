@@ -27,7 +27,8 @@ def get_all_jobs():
 def create_job():
     data = request.json
     if 'title' not in data or 'description' not in data:
-        raise ParametersException("`title` and `description` arguments are mandatory")
+        raise ParametersException(
+            '`title` and `description` arguments are mandatory')
 
     result = job.create_job(title=data['title'],
                             description=data['description'])

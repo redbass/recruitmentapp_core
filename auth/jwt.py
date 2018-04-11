@@ -3,10 +3,8 @@ from flask_jwt_extended import jwt_required as flask_jwt_required
 
 from flask import request, jsonify
 from flask_jwt_extended import (
-    JWTManager, create_access_token,
-    jwt_refresh_token_required, create_refresh_token,
-    get_jwt_identity, set_access_cookies,
-    set_refresh_cookies, unset_jwt_cookies
+    JWTManager, create_access_token, jwt_refresh_token_required,
+    get_jwt_identity, set_access_cookies, unset_jwt_cookies
 )
 
 from auth.user import users
@@ -69,7 +67,7 @@ def _setup_endpoints(app):
 
         # Create the tokens we will be sending back to the user
         access_token = create_access_token(identity=username)
-        refresh_token = create_refresh_token(identity=username)
+        # refresh_token = create_refresh_token(identity=username)
 
         # Set the JWTs and the CSRF double submit protection cookies
         # in this response
