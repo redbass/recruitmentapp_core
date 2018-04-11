@@ -4,6 +4,9 @@ from flask.json import jsonify
 
 from exceptions import api
 
+EXCEPTIONS_400 = [api.ParametersException,
+                  api.ArgumentException]
+
 
 def json_response(f):
 
@@ -26,7 +29,7 @@ def _error_handler(e):
     code = 500
 
     #  400 Bad Request
-    if type(e) in [api.ParametersException]:
+    if type(e) in EXCEPTIONS_400:
         code = 400
 
     return jsonify({

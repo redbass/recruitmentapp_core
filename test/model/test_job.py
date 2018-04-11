@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
-from model.job import create_job, delete_jobs, get_jobs
+from model.job import create_job, delete_jobs, get_jobs, get_all_jobs, DEFAULT_JOBS_PAGINATION_LIMIT, \
+    DEFAULT_JOBS_PAGINATION_START
 from test import UnitTestCase
 
 
@@ -75,3 +76,45 @@ class TestGetJobs(UnitTestCase):
         self.assertRaises(AttributeError, delete_jobs, None)
         self.assertRaises(AttributeError, delete_jobs, [])
         self.assertRaises(AttributeError, delete_jobs, '123')
+
+
+class TestGetAllJobs(UnitTestCase):
+
+    @patch('model.job.jobs')
+    @patch('model.job.get_pagination_from_cursor')
+    def test_get_all_jobs(self, get_pagination, jobs):
+        expected_jobs = "expected_jobs"
+        expected_cursor = "cursor"
+
+        expected_pagination_start = 2
+        expected_pagination_limit = 20
+
+        jobs.find.return_value = expected_cursor
+        get_pagination.return_value = expected_jobs
+
+        results = get_all_jobs(start=expected_pagination_start,
+                               limit=expected_pagination_limit)
+
+        self.assertEqual(results, expected_jobs)
+        jobs.find.assert_called_once_with({})
+        get_pagination.assert_called_once_with(expected_cursor,
+                                               expected_pagination_start,
+                                               expected_pagination_limit)
+
+    @patch('model.job.jobs')
+    @patch('model.job.get_pagination_from_cursor')
+    def test_get_all_jobs_null_params(self, get_pagination, jobs):
+        expected_jobs = "expected_jobs"
+        expected_cursor = "cursor"
+
+        jobs.find.return_value = expected_cursor
+        get_pagination.return_value = expected_jobs
+
+        results = get_all_jobs(limit=None, start=None)
+
+        self.assertEqual(results, expected_jobs)
+        jobs.find.assert_called_once_with({})
+        get_pagination.assert_called_once_with(expected_cursor,
+                                               DEFAULT_JOBS_PAGINATION_START,
+                                               DEFAULT_JOBS_PAGINATION_LIMIT)
+
