@@ -1,6 +1,6 @@
 import os
 
-from lib.config import BaseConfig
+from lib.base_config import BaseConfig
 
 
 class StagingConfig(BaseConfig):
