@@ -30,11 +30,16 @@ class TestConfig(DevConfig):
     DATABASE_DB_SUFFIX = 'test'
 
 
+class TestCIConfig(TestConfig):
+    DATABASE_DB_SUFFIX = 'test'
+
+
 def _get_settings():
     app_env = os.environ.get('APP_ENV')
 
     app_configs = {
         'test': TestConfig,
+        'test_ci': TestCIConfig,
         'dev': DevConfig,
         'staging': StagingConfig
     }
