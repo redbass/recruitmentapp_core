@@ -15,7 +15,6 @@ class StagingConfig(BaseConfig):
 
 class DevConfig(StagingConfig):
     DEBUG_MODE = True
-    DEFAULT_PORT = 5001
 
     DATABASE_HOST = 'localhost'
     DATABASE_PORT = 27017
