@@ -12,9 +12,13 @@ def get_client() -> MongoClient:
         'port': settings.DATABASE_PORT,
         'username': settings.DATABASE_USER,
         'password': settings.DATABASE_PASSWORD,
+        'connectTimeoutMS': 10000,
+        'socketTimeoutMS': 10000,
+        'serverSelectionTimeoutMS': 10000
     }
 
-    return MongoClient(**params)
+    client = MongoClient(**params)
+    return client
 
 
 def get_db() -> Database:

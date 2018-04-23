@@ -3,6 +3,7 @@ from flask import Flask
 from api.route import add_routes
 from auth.jwt import setup_jwt
 from config import settings
+from lib.healthchecks import set_health_check
 
 _app = None
 
@@ -19,6 +20,7 @@ def get_app(*args, **kwarg) -> Flask:
 
         setup_jwt(_app)
         add_routes(_app)
+        set_health_check(_app)
 
     return _app
 
