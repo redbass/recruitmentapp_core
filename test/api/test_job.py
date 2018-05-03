@@ -1,53 +1,53 @@
 from json import loads
 from unittest.mock import patch
 
-from api.route import GET_JOB_URL, JOB_URL
+from api.route import GET_ADVERT_URL, ADVERT_URL
 from test.api import TestApi
 
 
-class TestApiGetJob(TestApi):
+class TestApiGetAdverts(TestApi):
 
-    @patch('api.job.job')
-    def test_get_jobs(self, job):
-        job_id = '123'
-        expected_job = {'_id': job_id, 'name': 'job'}
-        job.get_jobs.return_value = [expected_job]
+    @patch('api.advert.advert')
+    def test_get_adverts(self, advert):
+        advert_id = '123'
+        expected_advert = {'_id': advert_id, 'name': 'advert'}
+        advert.get_adverts.return_value = [expected_advert]
 
-        url = self.url_for(GET_JOB_URL, _id=job_id)
+        url = self.url_for(GET_ADVERT_URL, _id=advert_id)
         response = self.test_app.get(url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(loads(response.data), expected_job)
+        self.assertEqual(loads(response.data), expected_advert)
 
-    @patch('api.job.job')
-    def test_get_job_no_results(self, job):
-        job_id = '123'
-        job.get_jobs.return_value = []
+    @patch('api.advert.advert')
+    def test_get_advert_no_results(self, advert):
+        advert_id = '123'
+        advert.get_adverts.return_value = []
 
-        url = self.url_for(GET_JOB_URL, _id=job_id)
+        url = self.url_for(GET_ADVERT_URL, _id=advert_id)
         response = self.test_app.get(url)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(loads(response.data), [])
 
 
-class TestApiCreateJob(TestApi):
+class TestApiCreateAdvert(TestApi):
 
-    @patch('api.job.job')
-    def test_create_job(self, job):
+    @patch('api.advert.advert')
+    def test_create_advert(self, advert):
 
         data = {"title": "title",
                 'description': 'description'}
 
-        expected_job = {'result': 'result'}
-        job.create_job.return_value = expected_job
-        url = self.url_for(JOB_URL)
+        expected_advert = {'result': 'result'}
+        advert.create_advert.return_value = expected_advert
+        url = self.url_for(ADVERT_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
-        self.assertEqual(loads(response.data), expected_job)
+        self.assertEqual(loads(response.data), expected_advert)
 
-    def test_create_job_no_input(self):
-        url = self.url_for(JOB_URL)
+    def test_create_advert_no_input(self):
+        url = self.url_for(ADVERT_URL)
         response = self.post_json(url, {})
         self.assertEqual(400, response.status_code)
