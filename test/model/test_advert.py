@@ -3,6 +3,7 @@ from unittest.mock import patch
 from model.advert import create_advert, delete_adverts, get_adverts, \
     get_all_adverts, DEFAULT_ADVERTS_PAGINATION_LIMIT, \
     DEFAULT_ADVERTS_PAGINATION_START
+from model.location import Location
 from test import UnitTestCase
 
 
@@ -23,6 +24,7 @@ class TestCreateAdvert(UnitTestCase):
                 'start': None,
                 'stop': None
             },
+            'location': None,
             'draft': False,
             'deleted': False
         }
@@ -42,6 +44,18 @@ class TestCreateAdvert(UnitTestCase):
         self.assertRaises(AttributeError, create_advert, '', '')
         self.assertRaises(AttributeError, create_advert, '123', None)
         self.assertRaises(AttributeError, create_advert, None, 'asd')
+
+    @patch('model.advert.create_id')
+    @patch('model.advert.adverts')
+    def test_create_advert_with_location(self, _, create_id):
+        expected_id = '123'
+        location = Location(10, 20)
+        created_advert = create_advert(location=location,
+                                       title='test',
+                                       description='test description')
+        create_id.return_value = expected_id
+        self.assertEqual(created_advert['location'],
+                         location.get_geo_json_point())
 
 
 class TestDeleteAdverts(UnitTestCase):

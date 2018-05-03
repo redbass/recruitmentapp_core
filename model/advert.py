@@ -3,6 +3,7 @@ from pymongo.cursor import Cursor
 from db.collections import adverts
 from lib.pagination import get_pagination_from_cursor
 from model import create_id
+from model.location import Location
 from model.period import create_period
 
 
@@ -11,7 +12,8 @@ DEFAULT_ADVERTS_PAGINATION_LIMIT = 10
 
 
 def create_advert(title: str,
-                  description: str) -> dict:
+                  description: str,
+                  location: Location=None) -> dict:
 
     if not title or not description:
         raise AttributeError('Title and Description are required',
@@ -24,6 +26,7 @@ def create_advert(title: str,
         'title': title,
         'description': description,
         'period': create_period(),
+        'location': location.get_geo_json_point() if location else None,
         'draft': False,
         'deleted': False
     }

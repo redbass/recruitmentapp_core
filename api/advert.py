@@ -4,6 +4,7 @@ from api.handler import json_response
 from auth.jwt import jwt_required
 from exceptions.api import ParametersException, ArgumentException
 from model import advert
+from model.location import Location
 
 
 @jwt_required
@@ -26,13 +27,25 @@ def get_all_adverts():
 @json_response
 def create_adverts():
     data = request.json
-    if 'title' not in data or 'description' not in data:
+    title = data.get('title')
+    description = data.get('description')
+    location = data.get('location')
+
+    if not title or not description:
         raise ParametersException(
             '`title` and `description` arguments are mandatory')
 
-    result = advert.create_advert(title=data['title'],
-                                  description=data['description'])
-    return result
+    if location:
+        latitude = location.get('latitude')
+        longitude = location.get('longitude')
+
+        if not latitude or not longitude:
+            raise ParametersException(
+                'Location require a latitude and longitude')
+
+        location = Location(longitude, latitude)
+
+    return advert.create_advert(title, description, location)
 
 
 def _request_arg_to_str(arg_name: str):
