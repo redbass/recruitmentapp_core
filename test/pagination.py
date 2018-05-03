@@ -4,7 +4,7 @@ from lib.pagination import get_pagination_from_cursor
 from test import UnitTestCase
 
 
-class TestCreateJob(UnitTestCase):
+class TestCreateAdverts(UnitTestCase):
 
     def test_get_pagination_from_cursor(self):
         cursor = MagicMock()

@@ -1,20 +1,21 @@
 from unittest.mock import patch
 
-from model.job import create_job, delete_jobs, get_jobs, get_all_jobs, \
-    DEFAULT_JOBS_PAGINATION_LIMIT, DEFAULT_JOBS_PAGINATION_START
+from model.advert import create_advert, delete_adverts, get_adverts, \
+    get_all_adverts, DEFAULT_ADVERTS_PAGINATION_LIMIT, \
+    DEFAULT_ADVERTS_PAGINATION_START
 from test import UnitTestCase
 
 
-class TestCreateJob(UnitTestCase):
+class TestCreateAdvert(UnitTestCase):
 
-    @patch('model.job.create_id')
-    @patch('model.job.jobs')
-    def test_create_job(self, jobs, create_id):
+    @patch('model.advert.create_id')
+    @patch('model.advert.adverts')
+    def test_create_advert(self, adverts, create_id):
 
         expected_id = '123'
         expected_title = 'title'
         expected_description = 'description'
-        expected_job = {
+        expected_advert = {
             '_id': expected_id,
             'title': expected_title,
             'description': expected_description,
@@ -28,92 +29,93 @@ class TestCreateJob(UnitTestCase):
 
         create_id.return_value = expected_id
 
-        created_job = create_job(
-            title=expected_job['title'],
-            description=expected_job['description']
+        created_advert = create_advert(
+            title=expected_advert['title'],
+            description=expected_advert['description']
         )
 
-        self.assertEqual(created_job, expected_job)
-        self.assertTrue(jobs.insert_one.called)
+        self.assertEqual(created_advert, expected_advert)
+        self.assertTrue(adverts.insert_one.called)
 
-    def test_create_job_parameters_error(self):
-        self.assertRaises(AttributeError, create_job, None, None)
-        self.assertRaises(AttributeError, create_job, '', '')
-        self.assertRaises(AttributeError, create_job, '123', None)
-        self.assertRaises(AttributeError, create_job, None, 'asd')
+    def test_create_advert_parameters_error(self):
+        self.assertRaises(AttributeError, create_advert, None, None)
+        self.assertRaises(AttributeError, create_advert, '', '')
+        self.assertRaises(AttributeError, create_advert, '123', None)
+        self.assertRaises(AttributeError, create_advert, None, 'asd')
 
 
-class TestDeleteJobs(UnitTestCase):
+class TestDeleteAdverts(UnitTestCase):
 
-    @patch('model.job.jobs')
-    def test_delete_jobs(self, jobs):
-        job_to_delete_ids = ["123"]
-        delete_jobs(job_to_delete_ids)
+    @patch('model.advert.adverts')
+    def test_delete_adverts(self, adverts):
+        advert_to_delete_ids = ["123"]
+        delete_adverts(advert_to_delete_ids)
 
-        call_args = jobs.update_many.call_args[0]
-        self.assertEqual(call_args[0], {'_id': {'$in': job_to_delete_ids}})
+        call_args = adverts.update_many.call_args[0]
+        self.assertEqual(call_args[0], {'_id': {'$in': advert_to_delete_ids}})
         self.assertEqual(call_args[1], {'$set': {'deleted': True}})
 
-    def test_delete_jobs_parameter_error(self):
-        self.assertRaises(AttributeError, delete_jobs, None)
-        self.assertRaises(AttributeError, delete_jobs, [])
-        self.assertRaises(AttributeError, delete_jobs, '123')
+    def test_delete_adverts_parameter_error(self):
+        self.assertRaises(AttributeError, delete_adverts, None)
+        self.assertRaises(AttributeError, delete_adverts, [])
+        self.assertRaises(AttributeError, delete_adverts, '123')
 
 
-class TestGetJobs(UnitTestCase):
+class TestGetAdverts(UnitTestCase):
 
-    @patch('model.job.jobs')
-    def test_get_jobs(self, jobs):
+    @patch('model.advert.adverts')
+    def test_get_adverts(self, adverts):
         _ids = ["123"]
-        expected_job = {}
-        jobs.find.return_value = [expected_job]
+        expected_advert = {}
+        adverts.find.return_value = [expected_advert]
 
-        result = get_jobs(_ids)
+        result = get_adverts(_ids)
 
-        self.assertEqual(result[0], expected_job)
+        self.assertEqual(result[0], expected_advert)
 
-    def test_get_jobs_parameter_error(self):
-        self.assertRaises(AttributeError, delete_jobs, None)
-        self.assertRaises(AttributeError, delete_jobs, [])
-        self.assertRaises(AttributeError, delete_jobs, '123')
+    def test_get_adverts_parameter_error(self):
+        self.assertRaises(AttributeError, delete_adverts, None)
+        self.assertRaises(AttributeError, delete_adverts, [])
+        self.assertRaises(AttributeError, delete_adverts, '123')
 
 
-class TestGetAllJobs(UnitTestCase):
+class TestGetAllAdverts(UnitTestCase):
 
-    @patch('model.job.jobs')
-    @patch('model.job.get_pagination_from_cursor')
-    def test_get_all_jobs(self, get_pagination, jobs):
-        expected_jobs = "expected_jobs"
+    @patch('model.advert.adverts')
+    @patch('model.advert.get_pagination_from_cursor')
+    def test_get_all_adverts(self, get_pagination, adverts):
+        expected_adverts = "expected_adverts"
         expected_cursor = "cursor"
 
         expected_pagination_start = 2
         expected_pagination_limit = 20
 
-        jobs.find.return_value = expected_cursor
-        get_pagination.return_value = expected_jobs
+        adverts.find.return_value = expected_cursor
+        get_pagination.return_value = expected_adverts
 
-        results = get_all_jobs(start=expected_pagination_start,
-                               limit=expected_pagination_limit)
+        results = get_all_adverts(start=expected_pagination_start,
+                                  limit=expected_pagination_limit)
 
-        self.assertEqual(results, expected_jobs)
-        jobs.find.assert_called_once_with({})
+        self.assertEqual(results, expected_adverts)
+        adverts.find.assert_called_once_with({})
         get_pagination.assert_called_once_with(expected_cursor,
                                                expected_pagination_start,
                                                expected_pagination_limit)
 
-    @patch('model.job.jobs')
-    @patch('model.job.get_pagination_from_cursor')
-    def test_get_all_jobs_null_params(self, get_pagination, jobs):
-        expected_jobs = "expected_jobs"
+    @patch('model.advert.adverts')
+    @patch('model.advert.get_pagination_from_cursor')
+    def test_get_all_adverts_null_params(self, get_pagination, adverts):
+        expected_adverts = "expected_adverts"
         expected_cursor = "cursor"
 
-        jobs.find.return_value = expected_cursor
-        get_pagination.return_value = expected_jobs
+        adverts.find.return_value = expected_cursor
+        get_pagination.return_value = expected_adverts
 
-        results = get_all_jobs(limit=None, start=None)
+        results = get_all_adverts(limit=None, start=None)
 
-        self.assertEqual(results, expected_jobs)
-        jobs.find.assert_called_once_with({})
-        get_pagination.assert_called_once_with(expected_cursor,
-                                               DEFAULT_JOBS_PAGINATION_START,
-                                               DEFAULT_JOBS_PAGINATION_LIMIT)
+        self.assertEqual(results, expected_adverts)
+        adverts.find.assert_called_once_with({})
+        get_pagination.assert_called_once_with(
+            expected_cursor,
+            DEFAULT_ADVERTS_PAGINATION_START,
+            DEFAULT_ADVERTS_PAGINATION_LIMIT)

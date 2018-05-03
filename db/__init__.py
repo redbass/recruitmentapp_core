@@ -24,6 +24,9 @@ def get_client() -> MongoClient:
 def get_db() -> Database:
     client = get_client()
 
-    db_name = DATABASE_NAME + '_' + settings.DATABASE_DB_SUFFIX
+    db_name = DATABASE_NAME
+
+    if settings.DATABASE_DB_SUFFIX:
+        db_name = db_name + '_' + settings.DATABASE_DB_SUFFIX
 
     return client[db_name]

@@ -1,30 +1,30 @@
-from db.collections import jobs
-from model.job import create_job, delete_jobs, get_jobs
+from db.collections import adverts
+from model.advert import create_advert, delete_adverts, get_adverts
 from test_integration import IntegrationTestCase
 
 
-class TestCreateJob(IntegrationTestCase):
+class TestCreateAdvert(IntegrationTestCase):
 
     def tearDown(self):
-        jobs.drop()
+        adverts.drop()
 
-    def test_create_job(self):
+    def test_create_advert(self):
         title = 'The title'
-        description = 'Job Description!'
+        description = 'Advert Description!'
 
-        expected_job1 = create_job(title + '1', description + '1')
-        expected_job2 = create_job(title + '2', description + '2')
+        expected_advert1 = create_advert(title + '1', description + '1')
+        expected_advert2 = create_advert(title + '2', description + '2')
 
-        created_job1 = get_jobs([expected_job1['_id']])
-        created_job2 = get_jobs([expected_job2['_id']])
+        created_advert1 = get_adverts([expected_advert1['_id']])
+        created_advert2 = get_adverts([expected_advert2['_id']])
 
-        self.assertEqual(created_job1[0], expected_job1)
-        self.assertEqual(created_job2[0], expected_job2)
+        self.assertEqual(created_advert1[0], expected_advert1)
+        self.assertEqual(created_advert2[0], expected_advert2)
 
-    def test_delete_job(self):
-        job = create_job('title', 'description')
+    def test_delete_advert(self):
+        advert = create_advert('title', 'description')
 
-        delete_jobs([job['_id']])
+        delete_adverts([advert['_id']])
 
-        deleted_jobs = get_jobs([job['_id']])
-        self.assertTrue(deleted_jobs[0].get('deleted'))
+        deleted_adverts = get_adverts([advert['_id']])
+        self.assertTrue(deleted_adverts[0].get('deleted'))

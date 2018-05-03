@@ -3,35 +3,35 @@ from flask import request
 from api.handler import json_response
 from auth.jwt import jwt_required
 from exceptions.api import ParametersException, ArgumentException
-from model import job
+from model import advert
 
 
 @jwt_required
 @json_response
-def get_job(_id: str = None):
-    results = job.get_jobs([_id])
+def get_advert(_id: str = None):
+    results = advert.get_adverts([_id])
     return results[0] if results else []
 
 
 @jwt_required
 @json_response
-def get_all_jobs():
+def get_all_adverts():
     limit = _request_arg_to_str('limit') or 10
     start = _request_arg_to_str('start') or 0
 
-    return job.get_all_jobs(limit, start)
+    return advert.get_all_adverts(limit, start)
 
 
 @jwt_required
 @json_response
-def create_job():
+def create_adverts():
     data = request.json
     if 'title' not in data or 'description' not in data:
         raise ParametersException(
             '`title` and `description` arguments are mandatory')
 
-    result = job.create_job(title=data['title'],
-                            description=data['description'])
+    result = advert.create_advert(title=data['title'],
+                                  description=data['description'])
     return result
 
 
