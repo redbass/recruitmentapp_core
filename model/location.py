@@ -1,4 +1,3 @@
-import geojson
 from geojson import Point
 
 
@@ -25,4 +24,4 @@ class Location:
         return self._point['coordinates'][1]
 
     def get_geo_json_point(self):
-        return geojson.dumps(self._point)
+        return self._point

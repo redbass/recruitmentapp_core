@@ -1,4 +1,3 @@
-import json
 from unittest import TestCase
 
 from model.location import Location
@@ -52,4 +51,4 @@ class TestLocation(TestCase):
 
         result = point.get_geo_json_point()
 
-        self.assertEqual(json.dumps(expected_geo_json_point), result)
+        self.assertEqual(expected_geo_json_point, result)
