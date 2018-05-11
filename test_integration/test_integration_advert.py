@@ -30,7 +30,8 @@ class TestCreateAdvert(IntegrationTestCase):
         expected_data = {
             'title': title,
             'description': description,
-            'location': Location(longitude, latitude).get_geo_json_point(),
+            'location': Location(
+                longitude=longitude, latitude=latitude).get_geo_json_point(),
             'deleted': False,
             'draft': False,
             'period': {'start': None, 'stop': None},

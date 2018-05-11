@@ -43,7 +43,7 @@ def create_adverts():
             raise ParametersException(
                 'Location require a latitude and longitude')
 
-        location = Location(longitude, latitude)
+        location = Location(latitude, longitude)
 
     return advert.create_advert(title, description, location)
 
