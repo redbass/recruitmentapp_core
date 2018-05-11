@@ -3,17 +3,17 @@ from geojson import Point
 
 class Location:
 
-    def __init__(self, lng: float, lat: float):
+    def __init__(self, latitude: float, longitude: float):
 
-        if lng < -180 or 180 < lng:
+        if longitude < -180 or 180 < longitude:
             raise ValueError(
                 'Longitude value have to be -180 <= longitude <= 180')
 
-        if lat < -90 or 90 < lat:
+        if latitude < -90 or 90 < latitude:
             raise ValueError(
                 'Latitude value have to be -90 <= latitude <= 90')
 
-        self._point = Point((lng, lat))
+        self._point = Point((longitude, latitude))
 
     @property
     def longitude(self):
