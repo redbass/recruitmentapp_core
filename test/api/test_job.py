@@ -9,7 +9,6 @@ class TestApiCreateJob(TestApi):
 
     @patch('api.job.job')
     def test_create_job(self, job):
-
         title = 'title'
         description = 'description'
         data = {
@@ -17,7 +16,8 @@ class TestApiCreateJob(TestApi):
             'description': description
         }
 
-        expected_job = {'result': 'result'}
+        expected_job = {
+            'result': 'result'}
         job.create_job.return_value = expected_job
 
         url = self.url_for(JOB_URL)
@@ -29,7 +29,6 @@ class TestApiCreateJob(TestApi):
 
     @patch('api.job.job')
     def test_create_job_with_location(self, job):
-
         title = 'title'
         description = 'description'
         location = {
@@ -42,7 +41,8 @@ class TestApiCreateJob(TestApi):
             'location': location
         }
 
-        expected_job = {'result': 'result'}
+        expected_job = {
+            'result': 'result'}
         job.create_job.return_value = expected_job
 
         url = self.url_for(JOB_URL)

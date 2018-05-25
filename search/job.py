@@ -1,11 +1,11 @@
 from pymongo.cursor import Cursor
 
-from db.collections import adverts
+from db.collections import jobs
 from model.location import Location
 
 
-def search_advert_by_radius(location: Location,
-                            radius: float) -> Cursor:
+def search_adverts_by_radius(location: Location,
+                             radius: float) -> Cursor:
     """
     Search all the Adverts in a circular area with the given `radius` and the
     center in `location`
@@ -25,4 +25,4 @@ def search_advert_by_radius(location: Location,
         }
     }
 
-    return adverts.find(query)
+    return jobs.find(query)

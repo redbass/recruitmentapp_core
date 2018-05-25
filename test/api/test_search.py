@@ -1,13 +1,13 @@
 import json
 from unittest.mock import patch
 
-from api.route import SEARCH_ADVERT_BY_RADIUS_URL
+from api.route import SEARCH_ADVERTS_BY_RADIUS_URL
 from test.api import TestApi
 
 
 class TestAPISearchByArea(TestApi):
 
-    @patch('api.search.advert.search_advert_by_radius')
+    @patch('api.search.job.search_adverts_by_radius')
     def test_search_advert_by_radius(self, search_by_radius):
         expected_data = [1, 2, 3]
         location = [12.345, 54.321]
@@ -17,7 +17,7 @@ class TestAPISearchByArea(TestApi):
         url_params = '?location={location}&radius={radius}'.format(
             location=location, radius=radius)
 
-        url = SEARCH_ADVERT_BY_RADIUS_URL + url_params
+        url = SEARCH_ADVERTS_BY_RADIUS_URL + url_params
         response = self.test_app.get(url)
 
         self.assertEqual(response.status_code, 200)
@@ -64,7 +64,7 @@ class TestAPISearchByArea(TestApi):
     def _assert_search_parameters(self, location, radius, expected_msg_error):
         url_params = '?location={location}&radius={radius}'.format(
             location=location, radius=radius)
-        url = SEARCH_ADVERT_BY_RADIUS_URL + url_params
+        url = SEARCH_ADVERTS_BY_RADIUS_URL + url_params
         response = self.test_app.get(url)
         self.assertEqual(response.status_code, 400)
         error = json.loads(response.data)

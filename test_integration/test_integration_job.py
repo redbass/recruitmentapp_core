@@ -1,20 +1,23 @@
 import json
 
-from api.route import ADVERT_URL
-from db.collections import adverts
-from model.advert import create_advert, delete_adverts, get_adverts
+from freezegun import freeze_time
+
+from api.route import JOB_URL
+from db.collections import jobs
 from model.location import Location
 from test_integration import IntegrationTestCase
 
 
-class TestCreateAdvert(IntegrationTestCase):
+@freeze_time("2015-10-26")
+class TestCreateJob(IntegrationTestCase):
 
     def tearDown(self):
-        adverts.drop()
+        super().tearDown()
+        jobs.drop()
 
-    def test_create_advert(self):
+    def test_create_job(self):
         title = 'The title'
-        description = 'Advert Description!'
+        description = 'Job Description!'
 
         latitude = 12.345
         longitude = 54.321
@@ -33,22 +36,15 @@ class TestCreateAdvert(IntegrationTestCase):
             'location': Location(
                 longitude=longitude, latitude=latitude).get_geo_json_point(),
             'deleted': False,
-            'draft': False,
-            'period': {'start': None, 'stop': None},
-         }
+            'period': {
+                'start': '2015-10-26T00:00:00',
+                'end': None},
+        }
 
-        response = self.post_json(ADVERT_URL, data)
+        response = self.post_json(JOB_URL, data)
 
         self.assertEqual(response.status_code, 200)
 
         response_data = json.loads(response.data)
         self.assertIsNotNone(response_data.pop('_id'))
         self.assertEqual(response_data, expected_data)
-
-    def test_delete_advert(self):
-        advert = create_advert('title', 'description')
-
-        delete_adverts([advert['_id']])
-
-        deleted_adverts = get_adverts([advert['_id']])
-        self.assertTrue(deleted_adverts[0].get('deleted'))

@@ -13,7 +13,7 @@ class Location:
             raise ValueError(
                 'Latitude value have to be -90 <= latitude <= 90')
 
-        self._point = Point((longitude, latitude))
+        self._point = dict(Point((longitude, latitude)))
 
     @property
     def longitude(self):

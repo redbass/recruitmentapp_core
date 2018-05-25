@@ -4,6 +4,10 @@ from model.location import Location
 from model.period import create_period
 
 
+def get_job(job_id: str):
+    return jobs.find_one({'_id': job_id})
+
+
 def create_job(title: str,
                description: str,
                location: Location = None):
@@ -35,6 +39,13 @@ def delete_jobs(_ids: [str]):
                      {'$set': {'deleted': True}})
 
 
-# def add_avert_to_job(job_id: str,
-#                      advert: dict):
-#     pass
+def add_avert_to_job(job_id: str,
+                     advert: dict):
+
+    if not advert or type(advert) != dict:
+        raise ValueError("The given advert is invalid or null")
+
+    job = jobs.update_one({'_id': job_id},
+                          {'$push': {'adverts': advert}})
+
+    return job.raw_result

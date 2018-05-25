@@ -1,58 +1,40 @@
-from pymongo.cursor import Cursor
+from datetime import datetime
+from enum import Enum
 
-from db.collections import adverts
-from lib.pagination import get_pagination_from_cursor
 from model import create_id
-from model.location import Location
-from model.period import create_period
-
+from model.job import add_avert_to_job
 
 DEFAULT_ADVERTS_PAGINATION_START = 0
 DEFAULT_ADVERTS_PAGINATION_LIMIT = 10
 
 
-def create_advert(title: str,
-                  description: str,
-                  location: Location=None) -> dict:
+class AdvertStatus(Enum):
+    DRAFT = 'DRAFT'
+    APPROVED = 'APPROVED'
 
-    if not title or not description:
-        raise AttributeError('Title and Description are required',
-                             title,
-                             description)
+    def __eq__(self, o: object) -> bool:
+
+        if type(o) == str:
+            return self.value == o
+
+        return super().__eq__(o)
+
+
+def create_advert(job_id: str) -> dict:
 
     _id = create_id()
     advert = {
         '_id': _id,
-        'title': title,
-        'description': description,
-        'period': create_period(),
-        'location': location.get_geo_json_point() if location else None,
-        'draft': False,
+        'status': AdvertStatus.DRAFT.value,
+        'date': {
+            'created': datetime.utcnow(),
+            'expire': None
+        },
         'deleted': False
     }
-    adverts.insert_one(advert)
+    job = add_avert_to_job(job_id, advert)
+
+    if not job.get('updatedExisting'):
+        raise AttributeError("The given 'job_id' doesnt match any stored job.")
+
     return advert
-
-
-def delete_adverts(_ids: [str]):
-
-    if not _ids or not isinstance(_ids, list):
-        raise AttributeError('_ids have to be a list of ids')
-
-    adverts.update_many({'_id': {'$in': _ids}},
-                        {'$set': {'deleted': True}})
-
-
-def get_adverts(_ids: [str]) -> [Cursor]:
-    if not _ids or not isinstance(_ids, list):
-        raise AttributeError('_ids have to be a list of ids')
-
-    return [advert for advert in adverts.find({'_id': {'$in': _ids}})]
-
-
-def get_all_adverts(limit: int, start: int):
-    limit = limit or DEFAULT_ADVERTS_PAGINATION_LIMIT
-    start = start or DEFAULT_ADVERTS_PAGINATION_START
-
-    cursor = adverts.find({})
-    return get_pagination_from_cursor(cursor, start, limit)
