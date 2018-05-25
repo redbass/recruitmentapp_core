@@ -6,17 +6,17 @@ from api.handler import json_response
 from auth.jwt import jwt_required
 from exceptions.api import ParametersException
 from model.location import Location
-from search import advert
+from search import job
 
 
 @jwt_required
 @json_response
-def search_advert_by_radius():
+def search_adverts_by_radius():
 
     radius = _get_radius()
     location = _get_location()
 
-    results = advert.search_advert_by_radius(location, radius)
+    results = job.search_adverts_by_radius(location, radius)
 
     return results
 
