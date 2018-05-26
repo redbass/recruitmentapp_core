@@ -1,7 +1,7 @@
 from json import loads
 from unittest.mock import patch
 
-from api.route import JOB_URL
+from api.route import JOBS_URL
 from test.api import TestApi
 
 
@@ -20,7 +20,7 @@ class TestApiCreateJob(TestApi):
             'result': 'result'}
         job.create_job.return_value = expected_job
 
-        url = self.url_for(JOB_URL)
+        url = self.url_for(JOBS_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
@@ -45,7 +45,7 @@ class TestApiCreateJob(TestApi):
             'result': 'result'}
         job.create_job.return_value = expected_job
 
-        url = self.url_for(JOB_URL)
+        url = self.url_for(JOBS_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
@@ -57,6 +57,6 @@ class TestApiCreateJob(TestApi):
         self.assertEqual(loads(response.data), expected_job)
 
     def test_create_job_no_input(self):
-        url = self.url_for(JOB_URL)
+        url = self.url_for(JOBS_URL)
         response = self.post_json(url, {})
         self.assertEqual(400, response.status_code)

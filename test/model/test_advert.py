@@ -1,9 +1,9 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from freezegun import freeze_time
 
 from db.collections import jobs
 from model.advert import create_advert, AdvertStatus
-from model.job import get_job, create_job
+from model.period import create_period
 from test import UnitTestCase
 
 
@@ -29,21 +29,23 @@ class TestCreateAdvert(BaseTestAdvert):
 
     @freeze_time(freeze_date)
     def test_create_advert(self):
-        job = create_job(title="Title", description="Description")
-        job_id = job['_id']
+        period = create_period(start=datetime.now() + timedelta(days=3),
+                               end=datetime.now() + timedelta(days=33))
 
-        expected_advert = create_advert(job_id=job_id)
+        expected_advert = {
+            'status': AdvertStatus.DRAFT,
+            'deleted': False,
+            'period': period,
+            'date': {
+                'created': datetime.utcnow(),
+                'expire': None
+            }
+        }
 
-        job = get_job(job_id=job_id)
-
-        self.assertTrue(job.get('adverts'))
-        advert = job['adverts'][0]
+        advert = create_advert(period=period)
+        self.assertIsNotNone(advert.pop('_id'))
         self.assertEqual(expected_advert, advert)
-        self.assertEqual(AdvertStatus.DRAFT, advert['status'])
-        self.assertFalse(advert['deleted'])
-        self.assertEqual(advert['date']['created'], self.freeze_date)
-        self.assertIsNone(advert['date']['expire'])
 
-    def test_create_advert_wrong_job_id(self):
-        with self.assertRaises(AttributeError):
-            create_advert(job_id="")
+    def test_create_advert_with_wrong_period(self):
+        with self.assertRaises(ValueError):
+            create_advert(period=None)
