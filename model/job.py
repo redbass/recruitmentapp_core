@@ -25,9 +25,12 @@ def create_job(title: str,
         '_id': _id,
         'title': title,
         'description': description,
-        'period': create_period(),
         'location': location.get_geo_json_point() if location else None,
-        'deleted': False
+        'deleted': False,
+        'date': {
+            'created': datetime.utcnow(),
+            'updated': datetime.utcnow()
+        }
     }
     jobs.insert_one(job)
     return job
@@ -39,7 +42,9 @@ def delete_jobs(_ids: [str]):
         raise AttributeError('_ids have to be a list of ids')
 
     jobs.update_many({'_id': {'$in': _ids}},
-                     {'$set': {'deleted': True}})
+                     {'$set': {
+                         'deleted': True,
+                         'date.updated': datetime.utcnow()}})
 
 
 def create_advert_for_a_job(job_id: str,
@@ -52,8 +57,12 @@ def create_advert_for_a_job(job_id: str,
     period = create_period(start=start_period, end=end_period)
     advert = create_advert(period)
 
-    job = jobs.update_one({'_id': job_id},
-                          {'$push': {'adverts': advert}})
+    job = jobs.update_one(
+        {'_id': job_id},
+        {
+            '$push': {'adverts': advert},
+            '$set': {'date.updated': datetime.utcnow()}
+        })
 
     if job.matched_count == 0:
         raise ValueError('The job with id `{job_id}` has not been found'

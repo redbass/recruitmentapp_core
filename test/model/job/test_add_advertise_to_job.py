@@ -9,9 +9,9 @@ from model.period import create_period
 from test.model.job import BaseTestJob
 
 
-@freeze_time("2015-10-26")
 class TestAddAdvertToJob(BaseTestJob):
 
+    @freeze_time("2015-10-26")
     def test_create_advert_for_a_job(self):
         title = "Some title"
         description = "Some description"
@@ -59,3 +59,23 @@ class TestAddAdvertToJob(BaseTestJob):
 
         result = jobs.find({}).count()
         self.assertEqual(0, result)
+
+    def test_job_date_updated(self):
+        with freeze_time("2015-10-26"):
+            expected_creation_date = datetime.now()
+            create_job(title="title", description="description")
+            job = jobs.find_one({})
+            date = job.get('date')
+            self.assertEqual(date.get('created'), expected_creation_date)
+            self.assertEqual(date.get('updated'), expected_creation_date)
+
+        with freeze_time("2015-10-27"):
+            expected_modification_date = datetime.now()
+            create_advert_for_a_job(
+                job_id=job.get('_id'),
+                start_period=datetime.now(),
+                end_period=datetime.now() + timedelta(days=30))
+            job = jobs.find_one({})
+            date = job.get('date')
+            self.assertEqual(date.get('created'), expected_creation_date)
+            self.assertEqual(date.get('updated'), expected_modification_date)

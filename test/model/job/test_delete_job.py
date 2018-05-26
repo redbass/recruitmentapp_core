@@ -1,3 +1,7 @@
+from datetime import datetime
+
+from freezegun import freeze_time
+
 from model.job import create_job, delete_jobs, get_job
 from test.model.job import BaseTestJob
 
@@ -12,6 +16,23 @@ class TestDeleteJobs(BaseTestJob):
         stored_job = get_job(job_id)
 
         self.assertTrue(stored_job['deleted'])
+
+    def test_delete_jobs_modified_date(self):
+
+        with freeze_time("2015-10-26"):
+            created_date = datetime.now()
+            job = create_job(title="title", description="description")
+
+        with freeze_time("2015-10-27"):
+            modified_date = datetime.now()
+            job_id = job['_id']
+            delete_jobs([job_id])
+
+        stored_job = get_job(job_id)
+
+        self.assertTrue(stored_job['deleted'])
+        self.assertEqual(created_date, stored_job['date']['created'])
+        self.assertEqual(modified_date, stored_job['date']['updated'])
 
     def test_delete_jobs_parameter_error(self):
         self.assertRaises(AttributeError, delete_jobs, None)

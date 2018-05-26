@@ -14,12 +14,12 @@ class TestCreateJob(BaseTestJob):
         expected_job = {
             'title': 'title',
             'description': 'description',
-            'period': {
-                'start': datetime.now(),
-                'end': None
-            },
             'location': None,
-            'deleted': False
+            'deleted': False,
+            'date': {
+                'created': datetime.utcnow(),
+                'updated': datetime.utcnow()
+            }
         }
 
         created_job = create_job(
