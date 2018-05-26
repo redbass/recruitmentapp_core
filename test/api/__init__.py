@@ -13,7 +13,8 @@ class TestApi(UnitTestCase):
     @staticmethod
     def url_for(endpoint_url, **url_args):
         for key, val in url_args.items():
-            endpoint_url = endpoint_url.replace('<{key}>'.format(key=key), val)
+            endpoint_url = endpoint_url.replace('<{key}>'.format(key=key),
+                                                str(val))
         return endpoint_url
 
     def get_json(self, url):

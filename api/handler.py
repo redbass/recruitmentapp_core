@@ -5,7 +5,7 @@ from flask.json import jsonify
 from exceptions import api
 
 EXCEPTIONS_400 = [api.ParametersException,
-                  api.ArgumentException]
+                  ValueError]
 
 
 def json_response(f):

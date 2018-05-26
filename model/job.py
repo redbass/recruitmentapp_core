@@ -1,5 +1,8 @@
+from datetime import datetime
+
 from db.collections import jobs
 from model import create_id
+from model.advert import create_advert
 from model.location import Location
 from model.period import create_period
 
@@ -39,13 +42,21 @@ def delete_jobs(_ids: [str]):
                      {'$set': {'deleted': True}})
 
 
-def add_avert_to_job(job_id: str,
-                     advert: dict):
+def create_advert_for_a_job(job_id: str,
+                            start_period: datetime,
+                            end_period: datetime):
 
-    if not advert or type(advert) != dict:
-        raise ValueError("The given advert is invalid or null")
+    if not job_id:
+        raise ValueError('job_id cannot be none')
+
+    period = create_period(start=start_period, end=end_period)
+    advert = create_advert(period)
 
     job = jobs.update_one({'_id': job_id},
                           {'$push': {'adverts': advert}})
+
+    if job.matched_count == 0:
+        raise ValueError('The job with id `{job_id}` has not been found'
+                         .format(job_id=job_id))
 
     return job.raw_result

@@ -2,7 +2,7 @@ import json
 
 from freezegun import freeze_time
 
-from api.route import JOB_URL
+from api.route import JOBS_URL
 from db.collections import jobs
 from model.location import Location
 from test_integration import IntegrationTestCase
@@ -16,9 +16,17 @@ class TestCreateJob(IntegrationTestCase):
         jobs.drop()
 
     def test_create_job(self):
+        expected_data, response = self.create_job()
+
+        self.assertEqual(response.status_code, 200)
+
+        response_data = json.loads(response.data)
+        self.assertIsNotNone(response_data.pop('_id'))
+        self.assertEqual(response_data, expected_data)
+
+    def create_job(self):
         title = 'The title'
         description = 'Job Description!'
-
         latitude = 12.345
         longitude = 54.321
         data = {
@@ -29,7 +37,6 @@ class TestCreateJob(IntegrationTestCase):
                 'longitude': longitude
             }
         }
-
         expected_data = {
             'title': title,
             'description': description,
@@ -40,11 +47,5 @@ class TestCreateJob(IntegrationTestCase):
                 'start': '2015-10-26T00:00:00',
                 'end': None},
         }
-
-        response = self.post_json(JOB_URL, data)
-
-        self.assertEqual(response.status_code, 200)
-
-        response_data = json.loads(response.data)
-        self.assertIsNotNone(response_data.pop('_id'))
-        self.assertEqual(response_data, expected_data)
+        response = self.post_json(JOBS_URL, data)
+        return expected_data, response

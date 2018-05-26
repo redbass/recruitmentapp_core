@@ -1,59 +1,31 @@
+from dateutil.parser import parse
 from flask import request
 
 from api.handler import json_response
 from auth.jwt import jwt_required
-from exceptions.api import ParametersException, ArgumentException
-from model import advert
-from model.location import Location
+from exceptions.api import ParametersException
+from model.job import create_advert_for_a_job
 
 
 @jwt_required
 @json_response
-def get_advert(_id: str = None):
-    results = advert.get_adverts([_id])
-    return results[0] if results else []
-
-
-@jwt_required
-@json_response
-def get_all_adverts():
-    limit = _request_arg_to_str('limit') or 10
-    start = _request_arg_to_str('start') or 0
-
-    return advert.get_all_adverts(limit, start)
-
-
-@jwt_required
-@json_response
-def create_adverts():
+def create_advert(job_id: str):
     data = request.json
-    title = data.get('title')
-    description = data.get('description')
-    location = data.get('location')
 
-    if not title or not description:
-        raise ParametersException(
-            '`title` and `description` arguments are mandatory')
+    period = data.get('period', {})
 
-    if location:
-        latitude = location.get('latitude')
-        longitude = location.get('longitude')
+    start = period.get('start')
+    if start is None:
+        raise ParametersException('Start period is required')
 
-        if not latitude or not longitude:
-            raise ParametersException(
-                'Location require a latitude and longitude')
+    end = period.get('end')
 
-        location = Location(latitude, longitude)
-
-    return advert.create_advert(title, description, location)
-
-
-def _request_arg_to_str(arg_name: str):
-    value = request.args.get(arg_name)
     try:
-        if value:
-            return int(value)
-        return None
+        start = parse(start)
+        end = parse(end) if end else None
+    except Exception:
+        raise ValueError("Period dates have to be in ISO format")
 
-    except ValueError:
-        raise ArgumentException("The input string '{s}' is not a valid number")
+    return create_advert_for_a_job(job_id=job_id,
+                                   start_period=start,
+                                   end_period=end)
