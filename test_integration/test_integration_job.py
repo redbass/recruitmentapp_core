@@ -43,9 +43,10 @@ class TestCreateJob(IntegrationTestCase):
             'location': Location(
                 longitude=longitude, latitude=latitude).get_geo_json_point(),
             'deleted': False,
-            'period': {
-                'start': '2015-10-26T00:00:00',
-                'end': None},
+            'date': {
+                'created': '2015-10-26T00:00:00',
+                'updated': '2015-10-26T00:00:00',
+            }
         }
         response = self.post_json(JOBS_URL, data)
         return expected_data, response

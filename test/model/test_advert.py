@@ -3,7 +3,6 @@ from freezegun import freeze_time
 
 from db.collections import jobs
 from model.advert import create_advert, AdvertStatus
-from model.period import create_period
 from test import UnitTestCase
 
 
@@ -29,23 +28,21 @@ class TestCreateAdvert(BaseTestAdvert):
 
     @freeze_time(freeze_date)
     def test_create_advert(self):
-        period = create_period(start=datetime.now() + timedelta(days=3),
-                               end=datetime.now() + timedelta(days=33))
-
+        publication_date = datetime.now() + timedelta(days=30)
         expected_advert = {
             'status': AdvertStatus.DRAFT,
             'deleted': False,
-            'period': period,
             'date': {
                 'created': datetime.utcnow(),
+                'updated': datetime.utcnow(),
+                'published': publication_date,
                 'expire': None
             }
         }
-
-        advert = create_advert(period=period)
+        advert = create_advert(publication_date=publication_date)
         self.assertIsNotNone(advert.pop('_id'))
         self.assertEqual(expected_advert, advert)
 
     def test_create_advert_with_wrong_period(self):
         with self.assertRaises(ValueError):
-            create_advert(period=None)
+            create_advert(publication_date=None)
