@@ -1,20 +1,27 @@
 from datetime import datetime
 
 from db.collections import jobs
+
+from exceptions.model import GenericError
 from model import create_id
-from model.advert import create_advert
+from model.advert import create_advert, AdvertStatus
 from model.location import Location
 from model.period import create_period
 
 
 def get_job(job_id: str):
-    return jobs.find_one({'_id': job_id})
+    job = jobs.find_one({
+                            '_id': job_id})
+
+    if not job:
+        raise ValueError("Impossible to find the job '{job_id}"
+                         .format(job_id=job_id))
+    return job
 
 
 def create_job(title: str,
                description: str,
                location: Location = None):
-
     if not title or not description:
         raise AttributeError('Title and Description are required',
                              title,
@@ -37,7 +44,6 @@ def create_job(title: str,
 
 
 def delete_jobs(_ids: [str]):
-
     if not _ids or not isinstance(_ids, list):
         raise AttributeError('_ids have to be a list of ids')
 
@@ -49,8 +55,7 @@ def delete_jobs(_ids: [str]):
 
 def create_advert_for_a_job(job_id: str,
                             start_period: datetime,
-                            end_period: datetime):
-
+                            end_period: datetime = None):
     if not job_id:
         raise ValueError('job_id cannot be none')
 
@@ -68,4 +73,25 @@ def create_advert_for_a_job(job_id: str,
         raise ValueError('The job with id `{job_id}` has not been found'
                          .format(job_id=job_id))
 
-    return job.raw_result
+    return advert
+
+
+def approve_advert(job_id: str, advert_id: str):
+    job = jobs.find_one(
+        {'_id': job_id, 'adverts._id': advert_id, 'adverts.status': 'DRAFT'}
+    )
+
+    if not job:
+        raise ValueError('The advert is not in `DRAFT` or does not exists:'
+                         '(job: `{job_id}`, advert: `{advert_id}'
+                         .format(job_id=job_id, advert_id=advert_id))
+
+    result = jobs.update_one(
+        {'_id': job_id, 'adverts._id': advert_id},
+        {'$set': {'adverts.$.status': AdvertStatus.APPROVED}}
+    )
+
+    if result.modified_count == 0:
+        raise GenericError(
+            'The advert with id `{advert_id}` has not been updated'
+            .format(advert_id=advert_id))

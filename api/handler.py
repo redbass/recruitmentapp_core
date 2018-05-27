@@ -2,10 +2,12 @@ from functools import wraps
 
 from flask.json import jsonify
 
-from exceptions import api
+from exceptions import api, model
 
 EXCEPTIONS_400 = [api.ParametersException,
                   ValueError]
+
+EXCEPTIONS_500 = [model.GenericError]
 
 
 def json_response(f):

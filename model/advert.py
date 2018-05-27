@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 
 from model import create_id
 
@@ -7,16 +6,9 @@ DEFAULT_ADVERTS_PAGINATION_START = 0
 DEFAULT_ADVERTS_PAGINATION_LIMIT = 10
 
 
-class AdvertStatus(Enum):
+class AdvertStatus:
     DRAFT = 'DRAFT'
     APPROVED = 'APPROVED'
-
-    def __eq__(self, o: object) -> bool:
-
-        if type(o) == str:
-            return self.value == o
-
-        return super().__eq__(o)
 
 
 def create_advert(publication_date: datetime) -> dict:
@@ -27,7 +19,7 @@ def create_advert(publication_date: datetime) -> dict:
     _id = create_id()
     advert = {
         '_id': _id,
-        'status': AdvertStatus.DRAFT.value,
+        'status': AdvertStatus.DRAFT,
         'date': {
             'created': datetime.utcnow(),
             'updated': datetime.utcnow(),

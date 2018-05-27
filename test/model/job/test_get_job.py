@@ -18,8 +18,11 @@ class TestGetJob(BaseTestJob):
     def test_get_job_invalid_id(self):
         create_job(title="title", description="description")
 
-        job = get_job(None)
-        self.assertEqual(None, job)
+        with self.assertRaises(ValueError):
+            get_job(None)
 
-        job = get_job("")
-        self.assertEqual(None, job)
+        with self.assertRaises(ValueError):
+            get_job("")
+
+        with self.assertRaises(ValueError):
+            get_job("valid id")

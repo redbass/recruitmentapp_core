@@ -20,7 +20,7 @@ class TestApi(UnitTestCase):
     def get_json(self, url):
         return self.test_app.get(url)
 
-    def post_json(self, url, data):
+    def post_json(self, url, data={}):
         return self.test_app.post(url,
                                   data=json.dumps(data),
                                   content_type='application/json')
