@@ -3,9 +3,9 @@ from lib.validation import validate_email
 
 
 class UserType:
-    ADMIN = 'A'
-    HIRING_MANAGER = 'HM'
-    CANDIDATE = 'C'
+    ADMIN = 'ADMIN'
+    HIRING_MANAGER = 'HIRING_MANAGER'
+    CANDIDATE = 'CANDIDATE'
 
 
 def create_user(email: str, password: str,
