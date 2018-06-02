@@ -5,6 +5,7 @@ from lib.base_config import BaseConfig
 
 class StagingConfig(BaseConfig):
     ENC_SEED = 'G2kPfCexw9IRKEro'
+    SALT = b'$2b$12$Y2p2jM9RmD6kZ7zi51UEw.'
 
     DATABASE_HOST = 'ds229909.mlab.com'
     DATABASE_PORT = 29909
