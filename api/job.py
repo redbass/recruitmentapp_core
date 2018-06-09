@@ -9,6 +9,12 @@ from model.location import Location
 
 @jwt_required
 @json_response
+def get_jobs():
+    return job.get_jobs()
+
+
+@jwt_required
+@json_response
 def create_job():
     data = request.json
     title = data.get('title')

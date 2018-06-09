@@ -1,4 +1,4 @@
-from api.job import create_job
+from api.job import create_job, get_jobs
 from api.advert import create_advert, approve_advert
 from api.search import search_adverts_by_radius
 
@@ -15,6 +15,11 @@ def add_routes(app):
 
 
 def _add_job_routes(app):
+
+    app.add_url_rule(JOBS_URL,
+                     'get_jobs',
+                     get_jobs,
+                     methods=['GET'])
 
     app.add_url_rule(JOBS_URL,
                      'create_job',
