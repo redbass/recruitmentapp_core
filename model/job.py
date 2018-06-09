@@ -9,9 +9,12 @@ from model.location import Location
 from model.period import create_period
 
 
+def get_jobs():
+    return jobs.find({})
+
+
 def get_job(job_id: str):
-    job = jobs.find_one({
-                            '_id': job_id})
+    job = jobs.find_one({'_id': job_id})
 
     if not job:
         raise ValueError("Impossible to find the job '{job_id}"
