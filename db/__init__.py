@@ -7,9 +7,14 @@ DATABASE_NAME = 'recruitment_app'
 
 
 def get_client() -> MongoClient:
+
+    url = 'mongodb://{host}:{port}/{db_name}'.format(
+        host=settings.DATABASE_HOST,
+        port=settings.DATABASE_PORT,
+        db_name=get_db_name()
+    )
+
     params = {
-        'host': settings.DATABASE_HOST,
-        'port': settings.DATABASE_PORT,
         'username': settings.DATABASE_USER,
         'password': settings.DATABASE_PASSWORD,
         'connectTimeoutMS': 10000,
@@ -17,16 +22,20 @@ def get_client() -> MongoClient:
         'serverSelectionTimeoutMS': 10000
     }
 
-    client = MongoClient(**params)
+    client = MongoClient(url, **params)
     return client
 
 
 def get_db() -> Database:
     client = get_client()
 
-    db_name = DATABASE_NAME
+    db_name = get_db_name()
 
     if settings.DATABASE_DB_SUFFIX:
         db_name = db_name + '_' + settings.DATABASE_DB_SUFFIX
 
     return client[db_name]
+
+
+def get_db_name():
+    return settings.DATABASE_NAME or DATABASE_NAME

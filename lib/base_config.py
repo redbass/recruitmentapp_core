@@ -17,6 +17,7 @@ class BaseConfig(object):
     DATABASE_PORT = None
     DATABASE_USER = None
     DATABASE_PASSWORD = None
+    DATABASE_NAME = None
     DATABASE_DB_SUFFIX = ''
 
     def __init__(self):
