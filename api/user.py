@@ -17,3 +17,14 @@ def create_user():
     user.create_user(email=email, password=password, user_type=user_type)
 
     return {}
+
+
+@json_response
+def get_users(user_type: str = None):
+
+    if not hasattr(UserType, user_type.upper()):
+        raise ValueError('Invalid user_type `{user_type}`'
+                         .format(user_type=user_type))
+
+    users = user.get_users(user_type=user_type)
+    return users

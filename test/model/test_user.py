@@ -1,6 +1,6 @@
 from db.collections import users
 from lib.password import check_password
-from model.user import create_user, UserType
+from model.user import create_user, UserType, get_users
 from test import UnitTestCase
 
 
@@ -60,3 +60,32 @@ class UserTestCase(UnitTestCase):
 
         with self.assertRaises(ValueError):
             create_user(email='some_invalid_email', password="password")
+
+    def test_create_users_with_same_emails(self):
+        create_user(email=self.email, password=self.password)
+
+        with self.assertRaises(ValueError):
+            create_user(email=self.email, password=self.password)
+
+
+class GetUserTestCase(UnitTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.email = "email@one.it"
+        self.password = "some_password"
+
+    def tearDown(self):
+        super().tearDown()
+        users.drop()
+
+    def test_get_users(self):
+        expected_email = "a_" + self.email
+        create_user(email=expected_email, password=self.password)
+        create_user(email="b_" + self.email, password=self.password,
+                    user_type=UserType.ADMIN)
+
+        user_list = get_users(UserType.CANDIDATE)
+
+        self.assertEqual(user_list.count(), 1)
+        self.assertEqual(user_list[0]['_id'], expected_email)

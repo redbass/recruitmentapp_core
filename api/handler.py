@@ -36,6 +36,6 @@ def _error_handler(e):
 
     return jsonify({
         'exception': type(e).__name__,
-        'msg': e_msg,
+        'message': e_msg,
         'refId': getattr(e, 'ref_id', "")
     }), code
