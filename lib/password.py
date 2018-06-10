@@ -1,12 +1,12 @@
 import bcrypt
 
-from config import settings
+
+def encrypt_password(password: str) -> str:
+    password = bcrypt.hashpw(password.encode('utf-8'),
+                             bcrypt.gensalt())
+    return password.decode('utf-8')
 
 
-def encrypt_password(password):
-    utf8_password = password.encode('UTF-8')
-    return bcrypt.hashpw(utf8_password, settings.SALT)
-
-
-def check_password(password, hashed):
-    return bcrypt.checkpw(password.encode('UTF-8'), hashed)
+def check_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode('utf-8'),
+                          hashed.encode('utf-8'))

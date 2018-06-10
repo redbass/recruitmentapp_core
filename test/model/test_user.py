@@ -19,7 +19,7 @@ class UserTestCase(UnitTestCase):
         create_user(email=self.email, password=self.password)
 
         user = users.find_one({'_id': self.email})
-        self.assertTrue(check_password(user['password'], self.password))
+        self.assertTrue(check_password(self.password, user['password']))
         self.assertEqual(user['type'], UserType.CANDIDATE)
 
     def test_create_admin_user(self):
@@ -28,7 +28,7 @@ class UserTestCase(UnitTestCase):
                     user_type=user_type)
 
         user = users.find_one({'_id': self.email})
-        self.assertEqual(user['password'], self.password)
+        self.assertTrue(check_password(self.password, user['password']))
         self.assertEqual(user['type'], user_type)
 
     def test_create_hiring_manager_user(self):
@@ -37,7 +37,7 @@ class UserTestCase(UnitTestCase):
                     user_type=user_type)
 
         user = users.find_one({'_id': self.email})
-        self.assertEqual(user['password'], self.password)
+        self.assertTrue(check_password(self.password, user['password']))
         self.assertEqual(user['type'], user_type)
 
     def test_create_user_no_email_raises_value_error(self):

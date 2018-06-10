@@ -1,4 +1,5 @@
 from db.collections import users
+from lib.password import encrypt_password
 from lib.validation import validate_email
 
 
@@ -18,5 +19,5 @@ def create_user(email: str, password: str,
         raise ValueError('Invalid email')
 
     return users.insert_one({'_id': email,
-                             'password': password,
+                             'password': encrypt_password(password),
                              'type': user_type})
