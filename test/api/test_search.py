@@ -68,4 +68,4 @@ class TestAPISearchByArea(TestApi):
         response = self.test_app.get(url)
         self.assertEqual(response.status_code, 400)
         error = json.loads(response.data)
-        self.assertEqual(error['msg'], expected_msg_error)
+        self.assertEqual(error['message'], expected_msg_error)

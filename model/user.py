@@ -1,3 +1,5 @@
+from pymongo.errors import DuplicateKeyError
+
 from db.collections import users
 from lib.password import encrypt_password
 from lib.validation import validate_email
@@ -18,6 +20,14 @@ def create_user(email: str, password: str,
     if not validate_email(email=email):
         raise ValueError('Invalid email')
 
-    return users.insert_one({'_id': email,
-                             'password': encrypt_password(password),
-                             'type': user_type})
+    try:
+        return users.insert_one({'_id': email,
+                                 'password': encrypt_password(password),
+                                 'type': user_type})
+    except DuplicateKeyError:
+        raise ValueError('An account with the email `{email}` already '
+                         'exists'.format(email=email))
+
+
+def get_users(user_type: str):
+    return users.find({'type': user_type})
