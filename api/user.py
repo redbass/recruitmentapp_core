@@ -11,8 +11,13 @@ def create_user():
 
     email = data.get('email', '')
     password = data.get('password', '')
-    user_type = getattr(UserType, data.get('user_type', ''),
-                        UserType.CANDIDATE)
+    user_type = data.get('user_type', UserType.CANDIDATE)
+
+    try:
+        user_type = getattr(UserType, user_type.upper())
+    except AttributeError:
+        raise ValueError('Invalid user type `{user_type}`'.
+                         format(user_type=user_type))
 
     user.create_user(email=email, password=password, user_type=user_type)
 
@@ -22,7 +27,8 @@ def create_user():
 @json_response
 def get_users(user_type: str = None):
 
-    if not hasattr(UserType, user_type.upper()):
+    user_type = user_type.upper()
+    if not hasattr(UserType, user_type):
         raise ValueError('Invalid user_type `{user_type}`'
                          .format(user_type=user_type))
 

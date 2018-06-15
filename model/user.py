@@ -30,4 +30,9 @@ def create_user(email: str, password: str,
 
 
 def get_users(user_type: str):
-    return users.find({'type': user_type})
+    return users.find({'type': user_type},
+                      {'_id': 1, 'type': 1})
+
+
+def get_user(email: str):
+    return users.find_one({'_id': email})

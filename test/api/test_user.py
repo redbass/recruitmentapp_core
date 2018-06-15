@@ -18,7 +18,7 @@ class TestAPICreateUser(TestApi):
         data = {
             'email': email,
             'password': password,
-            'user_type': user_type
+            'user_type': user_type.lower()
         }
         response = self.post_json(USERS_URL, data)
         self.assertEqual(200, response.status_code)
@@ -51,9 +51,9 @@ class TestAPIGetUsers(TestApi):
 
         expected_users = []
         mock_user.get_user.returns = [{"an": "array"}]
-        user_type = UserType.ADMIN.lower()
+        user_type = UserType.ADMIN
 
-        url = self.url_for(GET_USERS_BY_TYPE_URL, user_type=user_type)
+        url = self.url_for(GET_USERS_BY_TYPE_URL, user_type=user_type.lower())
         response = self.get_json(url)
 
         self.assertEqual(200, response.status_code)

@@ -1,6 +1,6 @@
 from db.collections import users
 from lib.password import check_password
-from model.user import create_user, UserType, get_users
+from model.user import create_user, UserType, get_users, get_user
 from test import UnitTestCase
 
 
@@ -89,3 +89,19 @@ class GetUserTestCase(UnitTestCase):
 
         self.assertEqual(user_list.count(), 1)
         self.assertEqual(user_list[0]['_id'], expected_email)
+        self.assertFalse('password' in user_list[0])
+
+    def test_get_user(self):
+        create_user(email=self.email, password=self.password)
+
+        user = get_user(self.email)
+
+        self.assertEqual(user['_id'], self.email)
+        self.assertTrue(check_password(self.password, user['password']))
+
+    def test_get_user_that_does_not_exists(self):
+        create_user(email=self.email, password=self.password)
+
+        user = get_user(self.email + "something")
+
+        self.assertIsNone(user)
