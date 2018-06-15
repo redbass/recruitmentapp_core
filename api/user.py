@@ -1,10 +1,12 @@
 from flask import request
 
 from api.handler import json_response
+from auth.jwt import jwt_required
 from model import user
 from model.user import UserType
 
 
+@jwt_required
 @json_response
 def create_user():
     data = request.json
@@ -24,6 +26,7 @@ def create_user():
     return {}
 
 
+@jwt_required
 @json_response
 def get_users(user_type: str = None):
 

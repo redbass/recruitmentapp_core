@@ -1,5 +1,3 @@
-from pymongo.errors import DuplicateKeyError
-
 from db.collections import users
 from lib.password import encrypt_password
 from lib.validation import validate_email
@@ -11,28 +9,44 @@ class UserType:
     CANDIDATE = 'CANDIDATE'
 
 
-def create_user(email: str, password: str,
+def create_user(username: str,
+                email: str,
+                password: str,
                 user_type: UserType = UserType.CANDIDATE):
 
-    if not email or not password:
-        raise ValueError('Email and password are both required')
+    if not all([username, email, password]):
+        raise ValueError('username, email, password are all required')
 
     if not validate_email(email=email):
         raise ValueError('Invalid email')
 
-    try:
-        return users.insert_one({'_id': email,
-                                 'password': encrypt_password(password),
-                                 'type': user_type})
-    except DuplicateKeyError:
-        raise ValueError('An account with the email `{email}` already '
-                         'exists'.format(email=email))
+    duplicate = users.find_one({'$or': [
+        {'_id': username},
+        {'email': email}
+    ]})
+
+    if duplicate and duplicate['_id']:
+        raise ValueError('Username `{username}` has already been used'
+                         .format(username=username))
+
+    if duplicate and duplicate['email']:
+        raise ValueError('Email `{email}` has already been used'
+                         .format(email=email))
+
+    new_user = {
+        '_id': username,
+        'email': email,
+        'password': encrypt_password(password),
+        'type': user_type}
+    users.insert_one(new_user)
+
+    return new_user
 
 
 def get_users(user_type: str):
     return users.find({'type': user_type},
-                      {'_id': 1, 'type': 1})
+                      {'_id': 1, 'email': 1, 'type': 1})
 
 
 def get_user(email: str):
-    return users.find_one({'_id': email})
+    return users.find_one({'email': email})
