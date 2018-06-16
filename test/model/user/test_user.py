@@ -36,7 +36,7 @@ class GetUserTestCase(BaseUserTestCase):
         create_user(username=self.username, email=self.email,
                     password=self.password)
 
-        user = get_user(self.email)
+        user = get_user(self.username)
 
         self.assertEqual(user['email'], self.email)
         self.assertTrue(check_password(self.password, user['password']))
@@ -45,6 +45,6 @@ class GetUserTestCase(BaseUserTestCase):
         create_user(username=self.username, email=self.email,
                     password=self.password)
 
-        user = get_user(self.email + "something")
+        user = get_user(self.username + "something")
 
         self.assertIsNone(user)

@@ -1,5 +1,7 @@
 import json
 
+from flask import Response
+
 from app import get_app
 from test import UnitTestCase
 
@@ -24,3 +26,11 @@ class TestApi(UnitTestCase):
         return self.test_app.post(url,
                                   data=json.dumps(data),
                                   content_type='application/json')
+
+    def assert_error(self,
+                     response: Response,
+                     error_status: int,
+                     error_message: str):
+        self.assertEqual(error_status, response.status_code)
+        data = json.loads(response.data)
+        self.assertEqual(data['message'], error_message)

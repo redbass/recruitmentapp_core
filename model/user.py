@@ -15,7 +15,7 @@ def create_user(username: str,
                 user_type: UserType = UserType.CANDIDATE):
 
     if not all([username, email, password]):
-        raise ValueError('username, email, password are all required')
+        raise ValueError('Username, email, password are all required')
 
     if not validate_email(email=email):
         raise ValueError('Invalid email')
@@ -48,5 +48,5 @@ def get_users(user_type: str):
                       {'_id': 1, 'email': 1, 'type': 1})
 
 
-def get_user(email: str):
-    return users.find_one({'email': email})
+def get_user(username: str):
+    return users.find_one({'_id': username})

@@ -1,0 +1,25 @@
+{
+  "_id": "1",
+  "name": "ACME Inc.",
+  "description": "some description",
+  "admin_user_ids": ["2"],
+  "hire_managers_ids": ["2", "3", "4", "5"],
+  "contacts": {
+    "address": {
+      "line1": "65 Peachfield Road",
+      "line2": null,
+      "line3": null,
+      "postcode": "EH1 1HE"
+    },
+    "phone_number": {
+      "landline": "+44123456789",
+      "office": "+44787878787",
+      "mobile": null
+    }
+  },
+  "logo": null,
+  "metadata": {
+    "role_types": [],
+    "skill_types": []
+  }
+}
