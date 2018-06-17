@@ -31,11 +31,14 @@ def get_db() -> Database:
 
     db_name = get_db_name()
 
-    if settings.DATABASE_DB_SUFFIX:
-        db_name = db_name + '_' + settings.DATABASE_DB_SUFFIX
-
     return client[db_name]
 
 
 def get_db_name():
-    return settings.DATABASE_NAME or DATABASE_NAME
+
+    db_name = settings.DATABASE_NAME or DATABASE_NAME
+
+    if settings.DATABASE_DB_SUFFIX:
+        db_name = db_name + '_' + settings.DATABASE_DB_SUFFIX
+
+    return db_name

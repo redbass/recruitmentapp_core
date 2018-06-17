@@ -7,8 +7,9 @@ from flask_jwt_extended import (
     get_jwt_identity, set_access_cookies, unset_jwt_cookies
 )
 
-from auth.user import users
 from config import settings
+from lib.password import check_password
+from model.user import get_user
 
 __jwt = None
 
@@ -61,8 +62,8 @@ def _setup_endpoints(app):
         username = request.json.get('username', None)
         password = request.json.get('password', None)
 
-        user = users.get(username, None)
-        if not user or not user.check_password(password):
+        user = get_user(username)
+        if not user or not check_password(password, user.get('password')):
             return jsonify({'login': False}), 401
 
         # Create the tokens we will be sending back to the user
