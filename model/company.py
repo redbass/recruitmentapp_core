@@ -9,8 +9,7 @@ def create_company(name: str,
     if not name:
         raise ValueError("Company `name` is a required field")
 
-    admin_user = users.find_one({
-                                    '_id': admin_user_id})
+    admin_user = users.find_one({'_id': admin_user_id})
 
     if not admin_user:
         raise ValueError("The given user admin id `{_id}` is not valid"
@@ -38,8 +37,7 @@ def create_company(name: str,
 
 
 def get_company(company_id: str):
-    return companies.find_one({
-                                  '_id': company_id})
+    return companies.find_one({'_id': company_id})
 
 
 def get_companies():
@@ -47,5 +45,4 @@ def get_companies():
 
 
 def get_company_by_admin_user(admin_user_id: str):
-    return companies.find_one({
-                                  'admin_user_ids': admin_user_id})
+    return companies.find_one({'admin_user_ids': admin_user_id})

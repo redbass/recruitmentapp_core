@@ -13,6 +13,7 @@ APPROVE_ADVERT_URL = '/api/job/<job_id>/advert/<advert_id>/approve'
 SEARCH_ADVERTS_BY_RADIUS_URL = '/api/job/search/advert/radius'
 
 ADMIN_COMPANIES_URL = '/admin/api/company'
+ADMIN_JOBS_URL = '/admin/api/job'
 
 
 def add_routes(app):
@@ -50,10 +51,11 @@ def add_job_routes(app):
                      'get_jobs',
                      job.get_jobs,
                      methods=['GET'])
-    app.add_url_rule(JOBS_URL,
-                     'create_job',
-                     job.create_job,
+    app.add_url_rule(ADMIN_JOBS_URL,
+                     'admin_create_job',
+                     job.admin_create_job,
                      methods=['POST'])
+
     app.add_url_rule(ADVERTS_URL,
                      'create_advert',
                      advert.create_advert,

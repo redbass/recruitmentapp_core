@@ -15,8 +15,9 @@ def get_jobs():
 
 @jwt_required
 @json_response
-def create_job():
+def admin_create_job():
     data = request.json
+    company_id = data.get('company_id')
     title = data.get('title')
     description = data.get('description')
     location = data.get('location')
@@ -24,15 +25,15 @@ def create_job():
     if not title or not description:
         raise ParametersException(
             '`title` and `description` arguments are mandatory')
-
     if location:
-        latitude = location.get('latitude')
-        longitude = location.get('longitude')
+        latitude = float(location.get('lat'))
+        longitude = float(location.get('lng'))
 
         if not latitude or not longitude:
             raise ParametersException(
                 'Location require a latitude and longitude')
 
         location = Location(latitude, longitude)
-
-    return job.create_job(title, description, location)
+    new_job = job.create_job(company_id=company_id, title=title,
+                             description=description, location=location)
+    return new_job

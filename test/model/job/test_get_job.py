@@ -8,7 +8,8 @@ class TestGetJob(BaseTestJob):
 
     @freeze_time("2015-10-26")
     def test_get_job(self):
-        expected_job = create_job(title="title", description="description")
+        expected_job = create_job(company_id=self.company['_id'],
+                                  title="title", description="description")
         job_id = expected_job['_id']
 
         job = get_job(job_id)
@@ -16,7 +17,8 @@ class TestGetJob(BaseTestJob):
         self.assertEqual(expected_job, job)
 
     def test_get_job_invalid_id(self):
-        create_job(title="title", description="description")
+        create_job(company_id=self.company['_id'],
+                   title="title", description="description")
 
         with self.assertRaises(ValueError):
             get_job(None)
