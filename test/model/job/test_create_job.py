@@ -12,6 +12,7 @@ class TestCreateJob(BaseTestJob):
     @freeze_time("2015-10-26")
     def test_create_job(self):
         expected_job = {
+            'company_id': self.company['_id'],
             'title': 'title',
             'description': 'description',
             'location': None,
@@ -23,6 +24,7 @@ class TestCreateJob(BaseTestJob):
         }
 
         created_job = create_job(
+            company_id=expected_job['company_id'],
             title=expected_job['title'],
             description=expected_job['description']
         )
@@ -35,14 +37,21 @@ class TestCreateJob(BaseTestJob):
         self.assertEqual(stored_job, expected_job)
 
     def test_create_job_parameters_error(self):
-        self.assertRaises(AttributeError, create_job, None, None)
-        self.assertRaises(AttributeError, create_job, '', '')
-        self.assertRaises(AttributeError, create_job, '123', None)
-        self.assertRaises(AttributeError, create_job, None, 'asd')
+        self.assertRaises(AttributeError, create_job, None, '123', 'asd')
+        self.assertRaises(AttributeError, create_job, '', '123', 'asd')
+        self.assertRaises(AttributeError, create_job, 'abc', None, 'asd')
+        self.assertRaises(AttributeError, create_job, 'abc', '', 'asd')
+        self.assertRaises(AttributeError, create_job, 'abc', '123', None)
+        self.assertRaises(AttributeError, create_job, 'abc', '123', '')
+
+    def test_create_job_with_invalid_company_id(self):
+        self.assertRaises(ValueError,
+                          create_job, 'invalid_company', '123', 'asd')
 
     def test_create_job_with_location(self):
         location = Location(10, 20)
-        created_job = create_job(location=location,
+        created_job = create_job(company_id=self.company['_id'],
+                                 location=location,
                                  title='test',
                                  description='test description')
 

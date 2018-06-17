@@ -9,7 +9,8 @@ from test.model.job import BaseTestJob
 class TestDeleteJobs(BaseTestJob):
 
     def test_delete_jobs(self):
-        job = create_job(title="title", description="description")
+        job = create_job(company_id=self.company['_id'],
+                         title="title", description="description")
         job_id = job['_id']
         delete_jobs([job_id])
 
@@ -21,7 +22,8 @@ class TestDeleteJobs(BaseTestJob):
 
         with freeze_time("2015-10-26"):
             created_date = datetime.now()
-            job = create_job(title="title", description="description")
+            job = create_job(company_id=self.company['_id'],
+                             title="title", description="description")
 
         with freeze_time("2015-10-27"):
             modified_date = datetime.now()

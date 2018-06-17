@@ -9,7 +9,8 @@ from test.model.job import BaseTestJob
 class TestCreateJob(BaseTestJob):
 
     def test_create_job(self):
-        job = create_job(title='Title', description='Description')
+        job = create_job(company_id=self.company['_id'],
+                         title='Title', description='Description')
         advert = create_advert_for_a_job(job_id=job['_id'],
                                          start_period=datetime.now())
         approve_advert(job_id=job['_id'], advert_id=advert['_id'])
@@ -19,7 +20,8 @@ class TestCreateJob(BaseTestJob):
         self.assertEqual(job['adverts'][0]['status'], AdvertStatus.APPROVED)
 
     def test_create_job_wrong_job_id(self):
-        job = create_job(title='Title', description='Description')
+        job = create_job(company_id=self.company['_id'],
+                         title='Title', description='Description')
         advert = create_advert_for_a_job(job_id=job['_id'],
                                          start_period=datetime.now())
 

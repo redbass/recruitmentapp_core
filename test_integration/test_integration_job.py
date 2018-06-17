@@ -2,7 +2,7 @@ import json
 
 from freezegun import freeze_time
 
-from api.route import JOBS_URL
+from api.route import ADMIN_JOBS_URL
 from db.collections import jobs
 from model.location import Location
 from test_integration import IntegrationTestCase
@@ -48,5 +48,5 @@ class TestCreateJob(IntegrationTestCase):
                 'updated': '2015-10-26T00:00:00',
             }
         }
-        response = self.post_json(JOBS_URL, data)
+        response = self.post_json(ADMIN_JOBS_URL, data)
         return expected_data, response
