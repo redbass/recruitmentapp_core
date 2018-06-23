@@ -46,3 +46,9 @@ def _create_company(company_user, data):
 @json_response
 def get_companies():
     return company.get_companies()
+
+
+@jwt_required
+@json_response
+def get_company(company_id):
+    return company.get_company(company_id=company_id)
