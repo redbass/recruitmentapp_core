@@ -63,43 +63,11 @@ jobs:
           path: test-reports
           destination: test-reports
 
-  integration_test:
-    docker:
-      - image: circleci/python:3.6.4
-      - image: circleci/mongo
-
-    working_directory: ~/repo
-
-    environment:
-      APP_ENV=test_ci
-
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}-{{ checksum "requirements.dev.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run:
-          name: run integration-tests
-          command: |
-            . venv/bin/activate
-            nosetests test
-
-      - store_artifacts:
-          path: test-reports
-          destination: test-reports
-
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
       - unit_test:
-          requires:
-            - build
-      - integration_test:
           requires:
             - build

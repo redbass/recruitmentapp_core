@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from api.route import COMPANIES_URL, ADMIN_COMPANIES_URL
+from api.route import COMPANIES_URL, ADMIN_COMPANIES_URL, COMPANY_URL
 from model.user import UserType
 from test.api import TestApi
 
@@ -111,10 +111,19 @@ class TestCreateCompany(TestApi):
 class TestGetCompany(TestApi):
 
     @patch('api.company.company')
-    def test_create_company(self, company_mock):
+    def test_get_companies(self, company_mock):
 
         url = self.url_for(COMPANIES_URL)
         response = self.get_json(url)
 
         self.assertEqual(200, response.status_code)
         company_mock.get_companies.assert_called_once()
+
+    @patch('api.company.company')
+    def test_get_company(self, company_mock):
+        company_id = '1'
+        url = self.url_for(COMPANY_URL, company_id=company_id)
+        response = self.get_json(url)
+
+        self.assertEqual(200, response.status_code)
+        company_mock.get_company.assert_called_with(company_id=company_id)

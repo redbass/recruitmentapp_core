@@ -4,6 +4,7 @@ USERS_URL = '/api/user'
 GET_USERS_BY_TYPE_URL = '/api/user/<user_type>'
 
 COMPANIES_URL = '/api/company'
+COMPANY_URL = '/api/company/<company_id>'
 
 JOBS_URL = '/api/job'
 
@@ -43,6 +44,11 @@ def add_company_routes(app):
     app.add_url_rule(COMPANIES_URL,
                      'get_companies',
                      company.get_companies,
+                     methods=['GET'])
+
+    app.add_url_rule(COMPANY_URL,
+                     'get_company',
+                     company.get_company,
                      methods=['GET'])
 
 
