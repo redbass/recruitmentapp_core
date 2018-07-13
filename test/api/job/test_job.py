@@ -1,14 +1,14 @@
 from json import loads
 from unittest.mock import patch
 
-from api.route import ADMIN_JOBS_URL
+from api.routes.admin_routes import JOBS_URL
 from test.api import TestApi
 
 
 class TestApiCreateJob(TestApi):
 
     @patch('api.job.job')
-    def test_admin_create_job(self, job):
+    def test_create_job(self, job):
         company_id = '123'
         title = 'title'
         description = 'description'
@@ -22,7 +22,7 @@ class TestApiCreateJob(TestApi):
             'result': 'result'}
         job.create_job.return_value = expected_job
 
-        url = self.url_for(ADMIN_JOBS_URL)
+        url = self.url_for_admin(JOBS_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
@@ -34,7 +34,7 @@ class TestApiCreateJob(TestApi):
         self.assertEqual(loads(response.data), expected_job)
 
     @patch('api.job.job')
-    def test_admin_create_job_with_location(self, job):
+    def test_create_job_with_location(self, job):
         company_id = '123'
         title = 'title'
         description = 'description'
@@ -53,7 +53,7 @@ class TestApiCreateJob(TestApi):
             'result': 'result'}
         job.create_job.return_value = expected_job
 
-        url = self.url_for(ADMIN_JOBS_URL)
+        url = self.url_for_admin(JOBS_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
@@ -64,7 +64,7 @@ class TestApiCreateJob(TestApi):
         self.assertEqual(call_args[1]['location'].longitude, location['lng'])
         self.assertEqual(loads(response.data), expected_job)
 
-    def test_admin_create_job_no_input(self):
-        url = self.url_for(ADMIN_JOBS_URL)
+    def test_create_job_no_input(self):
+        url = self.url_for_admin(JOBS_URL)
         response = self.post_json(url, {})
         self.assertEqual(400, response.status_code)

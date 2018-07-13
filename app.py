@@ -1,7 +1,7 @@
 from flask import Flask
 
 from api import set_flask_json_encoder
-from api.route import add_routes
+from api.routes import add_routes
 from auth.jwt import setup_jwt
 from config import settings
 from lib.healthchecks import set_health_check

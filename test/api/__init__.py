@@ -2,6 +2,7 @@ import json
 
 from flask import Response
 
+from api.routes.admin_routes import ADMIN_PREFIX
 from app import get_app
 from test import UnitTestCase
 
@@ -11,6 +12,11 @@ class TestApi(UnitTestCase):
     def setUp(self):
         super().setUp()
         self.test_app = get_app().test_client()
+
+    @staticmethod
+    def url_for_admin(endpoint_url, **url_args):
+        url = "/{prefix}/{url}".format(prefix=ADMIN_PREFIX, url=endpoint_url)
+        return TestApi.url_for(url, **url_args)
 
     @staticmethod
     def url_for(endpoint_url, **url_args):
