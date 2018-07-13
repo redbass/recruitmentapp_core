@@ -1,7 +1,7 @@
 import json
 from unittest.mock import patch
 
-from api.route import SEARCH_ADVERTS_BY_RADIUS_URL
+from api.routes.routes import SEARCH_ADVERTS_BY_RADIUS_URL
 from test.api import TestApi
 
 
