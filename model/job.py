@@ -5,7 +5,7 @@ from db.collections import jobs
 from exceptions.model import GenericError
 from model import create_id
 from model.advert import create_advert, AdvertStatus
-from model.company import get_company
+from model.company.company import get_company
 from model.location import Location
 from model.period import create_period
 

@@ -1,5 +1,5 @@
 from db.collections import users, companies, jobs
-from model.company import create_company
+from model.company.company import create_company
 from model.user import create_user, UserType
 from test import UnitTestCase
 

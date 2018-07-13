@@ -2,7 +2,8 @@ from flask import request
 
 from api.handler import json_response
 from auth.jwt import jwt_required
-from model import company, user
+from model import user
+from model.company import company
 from model.user import UserType
 
 

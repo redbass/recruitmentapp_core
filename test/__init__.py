@@ -15,7 +15,6 @@ class UnitTestCase(TestCase):
         super().tearDownClass()
         db_name = get_db_name()
         db.client.drop_database(db_name)
-        pass
 
     def setUp(self):
         if not settings.TEST_MODE:
