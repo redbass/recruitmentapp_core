@@ -6,6 +6,7 @@ ADMIN_PREFIX = 'admin'
 COMPANIES_URL = '/api/company'
 COMPANY_URL = '/api/company/<company_id>'
 JOBS_URL = '/api/job'
+JOB_URL = '/api/job/<job_id>'
 ADVERTS_URL = '/api/job/<job_id>/advert'
 APPROVE_ADVERT_URL = '/api/job/<job_id>/advert/<advert_id>/approve'
 
@@ -49,6 +50,12 @@ def _add_job_routes(app):
                         JOBS_URL,
                         'get_jobs',
                         job.get_jobs,
+                        methods=['GET'])
+
+    _add_admin_url_rule(app,
+                        JOB_URL,
+                        'get_job',
+                        job.get_job,
                         methods=['GET'])
 
     _add_admin_url_rule(app,

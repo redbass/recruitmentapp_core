@@ -2,7 +2,8 @@ from datetime import datetime
 
 from freezegun import freeze_time
 
-from model.job import create_job, get_job
+from model.job.job import get_job
+from model.job.create_job import create_job
 from model.location import Location
 from test.model.job import BaseTestJob
 

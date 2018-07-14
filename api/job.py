@@ -3,7 +3,7 @@ from flask import request
 from api.handler import json_response
 from auth.jwt import jwt_required
 from exceptions.api import ParametersException
-from model import job
+from model.job import job, create_job
 from model.location import Location
 
 
@@ -11,6 +11,12 @@ from model.location import Location
 @json_response
 def get_jobs():
     return job.get_jobs()
+
+
+@jwt_required
+@json_response
+def get_job(job_id):
+    return job.get_job(job_id=job_id)
 
 
 @jwt_required
@@ -34,6 +40,6 @@ def admin_create_job():
                 'Location require a latitude and longitude')
 
         location = Location(latitude, longitude)
-    new_job = job.create_job(company_id=company_id, title=title,
-                             description=description, location=location)
+    new_job = create_job.create_job(company_id=company_id, title=title,
+                                    description=description, location=location)
     return new_job

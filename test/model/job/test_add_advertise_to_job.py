@@ -4,7 +4,8 @@ from freezegun import freeze_time
 
 from db.collections import jobs
 from model.advert import create_advert
-from model.job import create_job, create_advert_for_a_job
+from model.job.create_job import create_job
+from model.job.job_advert import create_advert_for_a_job
 from model.period import create_period
 from test.model.job import BaseTestJob
 

@@ -1,7 +1,7 @@
 from db.collections import jobs, companies, users
 from lib.geo import km2rad
 from model.company.company import create_company
-from model.job import create_job
+from model.job.create_job import create_job
 from model.user import create_user, UserType
 from search.job import search_adverts_by_radius
 from test import UnitTestCase
