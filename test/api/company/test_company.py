@@ -7,8 +7,8 @@ from test.api import TestApi
 
 class TestCreateCompany(TestApi):
 
-    @patch('api.company.company')
-    @patch('api.company.user')
+    @patch('api.company.company.company')
+    @patch('api.company.company.user')
     def test_create_company(self, user_mock, company_mock):
         data = {
             "name": "ACME Inc.",
@@ -67,7 +67,7 @@ class TestCreateCompany(TestApi):
                           400,
                           "Username, email, password are all required")
 
-    @patch('api.company.user')
+    @patch('api.company.company.user')
     def test_create_company_no_company_name_raise_return_error(self, _):
         data = {
             "name": "",

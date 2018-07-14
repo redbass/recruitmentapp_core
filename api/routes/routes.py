@@ -1,4 +1,5 @@
-from api import search, company
+from api import search
+from api.company import company
 
 SEARCH_ADVERTS_BY_RADIUS_URL = '/api/job/search/advert/radius'
 

@@ -1,4 +1,5 @@
-from api import company, job, advert, user
+import api.company.admin_company
+from api import job, advert, user
 
 ADMIN_PREFIX = 'admin'
 
@@ -21,20 +22,26 @@ def _add_company_routes(app):
     _add_admin_url_rule(app,
                         COMPANIES_URL,
                         'create_company',
-                        company.admin_create_company,
+                        api.company.admin_company.create_company,
                         methods=['POST'])
 
     _add_admin_url_rule(app,
                         COMPANIES_URL,
                         'get_companies',
-                        company.get_companies,
+                        api.company.admin_company.get_companies,
                         methods=['GET'])
 
     _add_admin_url_rule(app,
                         COMPANY_URL,
                         'get_company',
-                        company.get_company,
+                        api.company.admin_company.get_company,
                         methods=['GET'])
+
+    _add_admin_url_rule(app,
+                        COMPANY_URL,
+                        'edit_company',
+                        api.company.admin_company.edit_company,
+                        methods=['POST'])
 
 
 def _add_job_routes(app):
@@ -71,7 +78,7 @@ def _add_user_routes(app):
 
 
 def _add_admin_url_rule(app, rule, endpoint=None, view_func=None, **options):
-    rule = "/{prefix}/{rule}".format(prefix=ADMIN_PREFIX, rule=rule)
+    rule = "/{prefix}{rule}".format(prefix=ADMIN_PREFIX, rule=rule)
     endpoint = "{prefix}_{endpoint}".format(prefix=ADMIN_PREFIX,
                                             endpoint=endpoint)
 
