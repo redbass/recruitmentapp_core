@@ -36,10 +36,41 @@ class TestEditCompany(BaseTestCompany):
         self.assertEqual(self.company['name'], updated_company['name'])
         self.assertEqual(new_description, updated_company['description'])
 
-    def test_cannot_update_name_to_null(self):
+    def test_cannot_update_name_to_null_or_empty_string(self):
         company_id = self.company['_id']
 
         with self.assertRaisesRegex(
-                ValueError, 'Company name and description are required'):
+                ValueError, 'Company name and description cannot be null '
+                            'or empty string'):
+            edit_company(company_id=company_id, new_name=None,
+                         new_description="New Description")
+
+        with self.assertRaisesRegex(
+                ValueError, 'Company name and description cannot be null '
+                            'or empty string'):
+            edit_company(company_id=company_id, new_name="",
+                         new_description="New Description")
+
+    def test_cannot_update_description_to_null_or_empty_string(self):
+        company_id = self.company['_id']
+
+        with self.assertRaisesRegex(
+                ValueError, 'Company name and description cannot be null '
+                            'or empty string'):
             edit_company(company_id=company_id, new_name="new name",
                          new_description=None)
+
+        with self.assertRaisesRegex(
+                ValueError, 'Company name and description cannot be null '
+                            'or empty string'):
+            edit_company(company_id=company_id, new_name="new name",
+                         new_description="")
+
+    def test_company_id_does_not_exists(self):
+
+        company_id = "SOMETHING"
+        with self.assertRaisesRegex(
+                ValueError, 'Company id "{company_id}" does not exists'
+                .format(company_id=company_id)):
+
+            edit_company(company_id=company_id, new_name="New Name")

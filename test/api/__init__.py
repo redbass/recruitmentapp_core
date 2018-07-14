@@ -15,7 +15,7 @@ class TestApi(UnitTestCase):
 
     @staticmethod
     def url_for_admin(endpoint_url, **url_args):
-        url = "/{prefix}/{url}".format(prefix=ADMIN_PREFIX, url=endpoint_url)
+        url = "/{prefix}{url}".format(prefix=ADMIN_PREFIX, url=endpoint_url)
         return TestApi.url_for(url, **url_args)
 
     @staticmethod
