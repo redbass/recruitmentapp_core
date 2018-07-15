@@ -11,7 +11,7 @@ def get_job(job_id: str):
     job = jobs.find_one({'_id': job_id})
 
     if not job:
-        raise ValueError("Impossible to find the job '{job_id}"
+        raise ValueError("Job id '{job_id}' invalid or not found"
                          .format(job_id=job_id))
     return job
 

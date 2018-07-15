@@ -2,13 +2,14 @@ from json import loads
 from unittest.mock import patch
 
 from api.routes.admin_routes import JOBS_URL
+from model import NOT_PROVIDED
 from test.api import TestApi
 
 
 class TestApiCreateJob(TestApi):
 
     @patch('api.job.create_job')
-    def test_create_job(self, job):
+    def test_create_job(self, create_job):
         company_id = '123'
         title = 'title'
         description = 'description'
@@ -20,21 +21,21 @@ class TestApiCreateJob(TestApi):
 
         expected_job = {
             'result': 'result'}
-        job.create_job.return_value = expected_job
+        create_job.return_value = expected_job
 
         url = self.url_for_admin(JOBS_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
-        job.create_job.assert_called_once_with(
+        create_job.assert_called_once_with(
             company_id=company_id,
             title=title,
             description=description,
-            location=None)
+            location=NOT_PROVIDED)
         self.assertEqual(loads(response.data), expected_job)
 
     @patch('api.job.create_job')
-    def test_create_job_with_location(self, job):
+    def test_create_job_with_location(self, create_job):
         company_id = '123'
         title = 'title'
         description = 'description'
@@ -49,15 +50,14 @@ class TestApiCreateJob(TestApi):
             'location': location
         }
 
-        expected_job = {
-            'result': 'result'}
-        job.create_job.return_value = expected_job
+        expected_job = {'result': 'result'}
+        create_job.return_value = expected_job
 
         url = self.url_for_admin(JOBS_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
-        call_args = job.create_job.call_args
+        call_args = create_job.call_args
         self.assertEqual(call_args[1]['title'], title)
         self.assertEqual(call_args[1]['description'], description)
         self.assertEqual(call_args[1]['location'].latitude, location['lat'])
@@ -68,3 +68,21 @@ class TestApiCreateJob(TestApi):
         url = self.url_for_admin(JOBS_URL)
         response = self.post_json(url, {})
         self.assertEqual(400, response.status_code)
+
+    @patch('api.job.create_job')
+    def test_invalid_location(self, _):
+        data = {
+            'title': "Title",
+            'description': "Description",
+            'location': {'lat': 12.345}
+        }
+
+        url = self.url_for_admin(JOBS_URL)
+
+        response = self.post_json(url, data)
+        self.assertEqual(400, response.status_code)
+        self.assertEqual(loads(response.data), {
+            "exception": "ValueError",
+            "message": "Provided invalid location: {'lat': 12.345}",
+            "refId": ""
+        })

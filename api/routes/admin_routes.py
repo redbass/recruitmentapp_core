@@ -49,19 +49,25 @@ def _add_job_routes(app):
     _add_admin_url_rule(app,
                         JOBS_URL,
                         'get_jobs',
-                        job.get_jobs,
+                        job.api_get_jobs,
                         methods=['GET'])
 
     _add_admin_url_rule(app,
                         JOB_URL,
                         'get_job',
-                        job.get_job,
+                        job.api_get_job,
                         methods=['GET'])
 
     _add_admin_url_rule(app,
                         JOBS_URL,
                         'create_job',
-                        job.admin_create_job,
+                        job.api_create_job,
+                        methods=['POST'])
+
+    _add_admin_url_rule(app,
+                        JOB_URL,
+                        'edit_job',
+                        job.api_edit_job,
                         methods=['POST'])
 
     _add_admin_url_rule(app,
