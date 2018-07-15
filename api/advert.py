@@ -4,7 +4,7 @@ from flask import request
 from api.handler import json_response
 from auth.jwt import jwt_required
 from exceptions.api import ParametersException
-from model import job
+from model.job import job_advert
 
 
 @jwt_required
@@ -26,16 +26,15 @@ def create_advert(job_id: str):
     except Exception:
         raise ValueError("Period dates have to be in ISO format")
 
-    return job.create_advert_for_a_job(job_id=job_id,
-                                       start_period=start,
-                                       end_period=end)
+    return job_advert.create_advert_for_a_job(job_id=job_id,
+                                              start_period=start,
+                                              end_period=end)
 
 
 @jwt_required
 @json_response
 def approve_advert(job_id: str, advert_id: str):
-
-    job.approve_advert(job_id=job_id, advert_id=advert_id)
+    job_advert.approve_advert(job_id=job_id, advert_id=advert_id)
 
     return {
         'job_id': job_id,

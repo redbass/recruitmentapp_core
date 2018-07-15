@@ -1,8 +1,9 @@
 from datetime import datetime
 
 from model.advert import AdvertStatus
-from model.job import create_job, create_advert_for_a_job, approve_advert, \
-    get_job
+from model.job.job import get_job
+from model.job.create_job import create_job
+from model.job.job_advert import create_advert_for_a_job, approve_advert
 from test.model.job import BaseTestJob
 
 

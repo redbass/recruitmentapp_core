@@ -2,7 +2,8 @@ from datetime import datetime
 
 from freezegun import freeze_time
 
-from model.job import create_job, delete_jobs, get_job
+from model.job.job import delete_jobs, get_job
+from model.job.create_job import create_job
 from test.model.job import BaseTestJob
 
 

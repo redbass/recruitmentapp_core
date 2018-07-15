@@ -8,7 +8,7 @@ from test.api import TestApi
 
 class TestApiCreateAdvert(TestApi):
 
-    @patch('api.advert.job')
+    @patch('api.advert.job_advert')
     def test_create_advert(self, job):
         job_id = '1'
         start_period = datetime.now()
@@ -32,7 +32,7 @@ class TestApiCreateAdvert(TestApi):
 
         self.assertEqual(expected_response, loads(response.data))
 
-    @patch('api.advert.job')
+    @patch('api.advert.job_advert')
     def test_create_advert_without_start_date(self, job):
         periods = [
             {},
@@ -57,7 +57,7 @@ class TestApiCreateAdvert(TestApi):
 
 class TestApiApproveAdvert(TestApi):
 
-    @patch('api.advert.job')
+    @patch('api.advert.job_advert')
     def test_approve_advert(self, job):
         job_id = '1'
         advert_id = '1'
@@ -70,7 +70,7 @@ class TestApiApproveAdvert(TestApi):
         job.approve_advert.assert_called_once_with(job_id=job_id,
                                                    advert_id=advert_id)
 
-    @patch('api.advert.job')
+    @patch('api.advert.job_advert')
     def test_approve_advert_raise_error_if_not_in_draft(self, job):
         job.approve_advert.side_effect = ValueError("")
         url = self.url_for_admin(APPROVE_ADVERT_URL, job_id='1', advert_id='1')

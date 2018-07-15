@@ -1,70 +1,26 @@
-from json import loads
 from unittest.mock import patch
 
-from api.routes.admin_routes import JOBS_URL
+from api.routes.admin_routes import JOBS_URL, JOB_URL
 from test.api import TestApi
 
 
-class TestApiCreateJob(TestApi):
+class TestApiGetJobs(TestApi):
 
-    @patch('api.job.job')
-    def test_create_job(self, job):
-        company_id = '123'
-        title = 'title'
-        description = 'description'
-        data = {
-            'company_id': company_id,
-            'title': title,
-            'description': description
-        }
-
-        expected_job = {
-            'result': 'result'}
-        job.create_job.return_value = expected_job
+    @patch('api.job.get_jobs')
+    def test_get_jobs(self, get_jobs):
 
         url = self.url_for_admin(JOBS_URL)
-        response = self.post_json(url, data)
+        response = self.get_json(url)
 
         self.assertEqual(200, response.status_code)
-        job.create_job.assert_called_once_with(
-            company_id=company_id,
-            title=title,
-            description=description,
-            location=None)
-        self.assertEqual(loads(response.data), expected_job)
+        get_jobs.assert_called_once()
 
-    @patch('api.job.job')
-    def test_create_job_with_location(self, job):
-        company_id = '123'
-        title = 'title'
-        description = 'description'
-        location = {
-            'lat': 12.345,
-            'lng': 54.321
-        }
-        data = {
-            'company_id': company_id,
-            'title': title,
-            'description': description,
-            'location': location
-        }
+    @patch('api.job.get_job')
+    def test_get_job(self, get_job):
+        job_id = '123'
 
-        expected_job = {
-            'result': 'result'}
-        job.create_job.return_value = expected_job
-
-        url = self.url_for_admin(JOBS_URL)
-        response = self.post_json(url, data)
+        url = self.url_for_admin(JOB_URL, job_id=job_id)
+        response = self.get_json(url)
 
         self.assertEqual(200, response.status_code)
-        call_args = job.create_job.call_args
-        self.assertEqual(call_args[1]['title'], title)
-        self.assertEqual(call_args[1]['description'], description)
-        self.assertEqual(call_args[1]['location'].latitude, location['lat'])
-        self.assertEqual(call_args[1]['location'].longitude, location['lng'])
-        self.assertEqual(loads(response.data), expected_job)
-
-    def test_create_job_no_input(self):
-        url = self.url_for_admin(JOBS_URL)
-        response = self.post_json(url, {})
-        self.assertEqual(400, response.status_code)
+        get_job.assert_called_once_with(job_id=job_id)
