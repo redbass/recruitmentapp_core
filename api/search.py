@@ -3,6 +3,7 @@ import json
 from flask import request
 
 from api.handler import json_response
+from auth.api_token import api_token_required
 from auth.jwt import jwt_required
 from exceptions.api import ParametersException
 from model.location import Location
@@ -51,6 +52,7 @@ def _get_location():
 
 
 @json_response
+@api_token_required
 def search():
     return {
         "jobs": {

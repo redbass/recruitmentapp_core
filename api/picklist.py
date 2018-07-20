@@ -1,7 +1,9 @@
 from api.handler import json_response
+from auth.api_token import api_token_required
 
 
 @json_response
+@api_token_required
 def picklist(name):
     picklists = {
         "roletitles": [
