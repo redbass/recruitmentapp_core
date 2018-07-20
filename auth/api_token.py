@@ -11,9 +11,9 @@ def api_token_required(fn):
 
     @wraps(fn)
     def wrapped(*args, **qwargs):
-        auth = request.headers.get('Authorization', '')
+        api_key = request.values.get('apiKey', '')
 
-        if not auth.strip().endswith(TOKEN):
+        if api_key != TOKEN:
             raise AuthenticationError("Invalid api token")
         return fn(*args, ** qwargs)
 
