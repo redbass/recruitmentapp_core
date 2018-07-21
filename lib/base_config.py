@@ -1,4 +1,6 @@
 import os
+from datetime import timedelta
+
 from Crypto.Cipher import AES
 
 
@@ -6,6 +8,8 @@ class BaseConfig(object):
 
     ENC_SEED = 'aaaaaaaaaaaaaaaa'
     ENC_PSWD = None
+
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=5)
 
     DEBUG_MODE = False
     TEST = False

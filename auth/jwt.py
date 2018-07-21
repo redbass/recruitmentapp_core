@@ -1,11 +1,12 @@
 from functools import wraps
-from flask_jwt_extended import jwt_required as flask_jwt_required
 
 from flask import request, jsonify
 from flask_jwt_extended import (
     JWTManager, create_access_token, jwt_refresh_token_required,
-    get_jwt_identity, set_access_cookies, unset_jwt_cookies
+    get_jwt_identity, unset_jwt_cookies
 )
+from flask_jwt_extended import jwt_required as flask_jwt_required, \
+    create_refresh_token
 
 from config import settings
 from lib.password import check_password
@@ -18,6 +19,8 @@ def setup_jwt(app) -> JWTManager:
     global __jwt
 
     if not __jwt:
+        app.config['JWT_ACCESS_TOKEN_EXPIRES'] = \
+            settings.JWT_ACCESS_TOKEN_EXPIRES
         # Configure application to store JWTs in cookies
         app.config['JWT_TOKEN_LOCATION'] = ['headers']
         # Only allow JWT cookies to be sent over https. In production, this
@@ -68,12 +71,13 @@ def _setup_endpoints(app):
 
         # Create the tokens we will be sending back to the user
         access_token = create_access_token(identity=username)
-        # refresh_token = create_refresh_token(identity=username)
+        refresh_token = create_refresh_token(identity=username)
 
         # Set the JWTs and the CSRF double submit protection cookies
         # in this response
         resp = jsonify({
-            'token': access_token,
+            'accessToken': access_token,
+            'refreshToken': refresh_token,
             'username': username
         })
         # set_access_cookies(resp, access_token)
@@ -83,15 +87,11 @@ def _setup_endpoints(app):
     @app.route('/token/refresh', methods=['POST'])
     @jwt_refresh_token_required
     def refresh():
-        # Create the new access token
         current_user = get_jwt_identity()
-        access_token = create_access_token(identity=current_user)
-
-        # Set the access JWT and CSRF double submit protection cookies
-        # in this response
-        resp = jsonify({'refresh': True})
-        set_access_cookies(resp, access_token)
-        return resp, 200
+        ret = {
+            'accessToken': create_access_token(identity=current_user)
+        }
+        return jsonify(ret), 200
 
     @app.route('/token/remove', methods=['POST'])
     def logout():
