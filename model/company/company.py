@@ -40,8 +40,9 @@ def get_company(company_id: str):
     return companies.find_one({'_id': company_id})
 
 
-def get_companies():
-    return companies.find({})
+def get_companies(ids: list=None):
+    query = {} if not ids else {'_id': {'$in': ids}}
+    return companies.find(query)
 
 
 def get_company_by_admin_user(admin_user_id: str):

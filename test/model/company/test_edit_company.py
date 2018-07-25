@@ -10,7 +10,7 @@ class TestEditCompany(BaseTestCompany):
 
         self.company = create_company(
             name="old name", description="old description",
-            admin_user_id=self.hiring_manager['_id'])
+            admin_user_id=self.hiring_manager1['_id'])
 
     def test_edit_company(self):
         new_name = "new name"

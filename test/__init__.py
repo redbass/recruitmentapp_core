@@ -14,7 +14,10 @@ class UnitTestCase(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         db_name = get_db_name()
-        db.client.drop_database(db_name)
+        try:
+            db.client.drop_database(db_name)
+        except AttributeError:
+            pass
 
     def setUp(self):
         if not settings.TEST_MODE:

@@ -23,6 +23,7 @@ class DevConfig(BaseConfig):
 
 class TestConfig(DevConfig):
     LOGIN_REQUIRED = False
+    API_TOKEN_REQUIRED = False
     TEST_MODE = True
     DATABASE_DB_SUFFIX = 'test'
 

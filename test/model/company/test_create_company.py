@@ -34,12 +34,12 @@ class TestCreateCompany(BaseTestCompany):
             '_id': '1',
             'name': 'ACME Inc.',
             'description': 'some description',
-            'admin_user_ids': [self.hiring_manager['_id']],
+            'admin_user_ids': [self.hiring_manager1['_id']],
             'hire_managers_ids': []
         }
 
         company = create_company(name=expected_company['name'],
-                                 admin_user_id=self.hiring_manager['_id'],
+                                 admin_user_id=self.hiring_manager1['_id'],
                                  description=expected_company['description'])
 
         created_company = get_company(company['_id'])
@@ -69,10 +69,11 @@ class TestCreateCompany(BaseTestCompany):
             create_company(name="random", admin_user_id=user['_id'])
 
     def test_create_company_with_same_admin_user_raises_error(self):
-        create_company(name="random", admin_user_id=self.hiring_manager['_id'])
+        create_company(name="random",
+                       admin_user_id=self.hiring_manager1['_id'])
 
         with self.assertRaisesRegex(ValueError,
                                     "A company with the same "
                                     "admin user `.*` already exists"):
             create_company(name="random",
-                           admin_user_id=self.hiring_manager['_id'])
+                           admin_user_id=self.hiring_manager1['_id'])
