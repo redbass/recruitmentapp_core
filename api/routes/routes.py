@@ -1,7 +1,8 @@
-from api import search, picklist
+from api import picklist, search
 from api.company import company
 
 SEARCH_ADVERTS_BY_RADIUS_URL = '/api/job/search/advert/radius'
+SEARCH_STATIC = '/api/job/search_static'
 SEARCH = '/api/job/search'
 
 COMPANIES_URL = '/api/company'
@@ -18,6 +19,11 @@ def add_public_routes(app):
     app.add_url_rule(SEARCH_ADVERTS_BY_RADIUS_URL,
                      'search_advert_by_radius',
                      search.search_adverts_by_radius,
+                     methods=['GET'])
+
+    app.add_url_rule(SEARCH_STATIC,
+                     'search_static',
+                     search.search_static,
                      methods=['GET'])
 
     app.add_url_rule(SEARCH,

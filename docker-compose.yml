@@ -1,5 +1,5 @@
 
 mongodb:
-    image: mongo:3.3
+    image: mongo:3.6-jessie
     ports:
       - 27017:27017

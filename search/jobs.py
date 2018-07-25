@@ -26,3 +26,26 @@ def search_adverts_by_radius(location: Location,
     }
 
     return jobs.find(query)
+
+
+def search(query: str):
+    pipeline = [
+        {'$match': {'$text': {'$search': query}}},
+
+        {
+            '$lookup': {
+                'from': "companies",
+                'let': {'c_id': "'$company_id"},
+                'pipeline': [
+                    {'$match': {'$expr': {'$eq': ["'$_id", "'$'$c_id"]}}}
+                ],
+                'as': "companies"
+            }
+        },
+
+        {'$addFields': {'company': {'$arrayElemAt': ["$companies", 0]}}},
+
+        {'$project': {'companies': 0}}
+    ]
+
+    return jobs.aggregate(pipeline)

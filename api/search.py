@@ -7,7 +7,8 @@ from auth.api_token import api_token_required
 from auth.jwt import jwt_required
 from exceptions.api import ParametersException
 from model.location import Location
-from search import job
+from search import jobs
+from search.static_results import static_jobs
 
 
 @jwt_required
@@ -16,7 +17,7 @@ def search_adverts_by_radius():
     radius = _get_radius()
     location = _get_location()
 
-    results = job.search_adverts_by_radius(location, radius)
+    results = jobs.search_adverts_by_radius(location, radius)
 
     return results
 
@@ -54,111 +55,25 @@ def _get_location():
 @json_response
 @api_token_required
 def search():
+    query = request.args.get('query', '')
+    results = jobs.search(query)
     return {
-        "jobs": {
-            "data": [
-                {
-                    "title": "Electrician",
-                    "description": "summary text Lorem ipsum dolor sit amet, "
-                                   "consectetur adipiscing elit. Aenean "
-                                   "euismod bibendum laoreet. Proin gravi "
-                                   "dolor sit amet lacus accumsa…",
-                    "type": "Contract",
-                    "duration": "6 weeks",
-                    "location": "Bristol",
-                    "company": [
-                        {
-                            "name": "Primoris Electrical",
-                            "recruiting_contact": "Bob James",
-                            "contact_phonenumber": "0773588632",
-                            "logo": "/wp-content/uploads/2018/06/"
-                                    "placeholder-image4.jpg"
-                        }
-                    ],
-                    "rate": "£18 per hour",
-                    "adverts": "xxx",
-                    "skills": "xxx",
-                    "qualifications": "xxx",
-                    "advert": [
-                        {
-                            "_id": "1",
-                            "date": [
-                                {
-                                    "published": "13/06/2018",
-                                    "days_ago": "10"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "title": "Plumber",
-                    "description": "summary text Lorem ipsum dolor sit amet, "
-                                   "consectetur adipiscing elit. Aenean "
-                                   "euismod bibendum laoreet. Proin gravi "
-                                   "dolor sit amet lacus accumsa…",
-                    "type": "Contract",
-                    "duration": "4 months",
-                    "location": "Bristol",
-                    "company": [
-                        {
-                            "name": "Leaky Pete's Plumbing Services Ltd",
-                            "recruiting_contact": "JJ Johnston",
-                            "contact_phonenumber": "0773588632",
-                            "logo": "/wp-content/uploads/2018/06/"
-                                    "placeholder-image4.jpg"
-                        }
-                    ],
-                    "rate": "£150 per day",
-                    "adverts": "xxx",
-                    "skills": "xxx",
-                    "qualifications": "xxx",
-                    "advert": [
-                        {
-                            "_id": "2",
-                            "date": [
-                                {
-                                    "published": "13/06/2018",
-                                    "days_ago": "2"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "title": "Plasterer",
-                    "description": "summary text Lorem ipsum dolor sit amet, "
-                                   "consectetur adipiscing elit. Aenean "
-                                   "euismod bibendum laoreet. Proin gravi "
-                                   "dolor sit amet lacus accumsa…",
-                    "type": "Contract",
-                    "duration": "2 months",
-                    "location": "Bristol",
-                    "company": [
-                        {
-                            "name": "Express Plastering Services Ltd",
-                            "recruiting_contact": "Amanda Kiss",
-                            "contact_phonenumber": "0773588632",
-                            "logo": "/wp-content/uploads/2018/06/"
-                                    "placeholder-image4.jpg"
-                        }
-                    ],
-                    "rate": "£5 per square metre",
-                    "adverts": "xxx",
-                    "skills": "xxx",
-                    "qualifications": "xxx",
-                    "advert": [
-                        {
-                            "_id": "3",
-                            "date": [
-                                {
-                                    "published": "14/06/2018",
-                                    "days_ago": "13"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
+        "jobs": results,
+        "query": {
+            "string": query
+        }
+    }
+
+
+@json_response
+@api_token_required
+def search_static():
+
+    query = ""
+
+    return {
+        "jobs": static_jobs,
+        "query": {
+            "string": query
         }
     }

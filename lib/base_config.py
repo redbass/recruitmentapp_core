@@ -9,13 +9,14 @@ class BaseConfig(object):
     ENC_SEED = 'aaaaaaaaaaaaaaaa'
     ENC_PSWD = None
 
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=5)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=60)
 
     DEBUG_MODE = False
     TEST = False
     DEFAULT_PORT = None
 
     LOGIN_REQUIRED = True
+    API_TOKEN_REQUIRED = False
 
     DATABASE_HOST = ''
     DATABASE_PORT = None
