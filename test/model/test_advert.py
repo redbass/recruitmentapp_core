@@ -1,4 +1,5 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+
 from freezegun import freeze_time
 
 from db.collections import jobs
@@ -28,21 +29,26 @@ class TestCreateAdvert(BaseTestAdvert):
 
     @freeze_time(freeze_date)
     def test_create_advert(self):
-        publication_date = datetime.now() + timedelta(days=30)
+        duration = 30
+        advert = create_advert(duration=duration)
         expected_advert = {
+            '_id': advert['_id'],
             'status': AdvertStatus.DRAFT,
             'deleted': False,
+            'duration': duration,
             'date': {
                 'created': datetime.utcnow(),
-                'updated': datetime.utcnow(),
-                'published': publication_date,
-                'expire': None
+                'updated': datetime.utcnow()
             }
         }
-        advert = create_advert(publication_date=publication_date)
-        self.assertIsNotNone(advert.pop('_id'))
         self.assertEqual(expected_advert, advert)
 
     def test_create_advert_with_wrong_period(self):
-        with self.assertRaises(ValueError):
-            create_advert(publication_date=None)
+        self._assert_invalid_duration(0)
+        self._assert_invalid_duration(-1)
+
+    def _assert_invalid_duration(self, duration):
+        with self.assertRaisesRegex(
+                ValueError,
+                '{d} is not a valid duration period'.format(d=duration)):
+            create_advert(duration=duration)

@@ -1,55 +1,41 @@
-from datetime import datetime, timedelta
+from model.advert import AdvertStatus
+from datetime import datetime
 
 from freezegun import freeze_time
 
 from db.collections import jobs
-from model.advert import create_advert
 from model.job.create_job import create_job
 from model.job.job_advert import create_advert_for_a_job
-from model.period import create_period
 from test.model.job import BaseTestJob
 
 
 class TestAddAdvertToJob(BaseTestJob):
 
-    @freeze_time("2015-10-26")
+    frozen_date = datetime(year=2015, month=10, day=26)
+
     def test_create_advert_for_a_job(self):
-        title = "Some title"
-        description = "Some description"
         job = create_job(company_id=self.company['_id'],
-                         title=title,
-                         description=description)
-
-        start_period = datetime.now()
-        end_period = datetime.now() + timedelta(days=30)
-        period1 = create_period(start=start_period, end=end_period)
-        period2 = create_period(start=start_period, end=end_period)
+                         title="Some title",
+                         description="Some description")
         job_id = job['_id']
+        expected_duration = 10
 
-        create_advert_for_a_job(job_id=job_id, start_period=start_period,
-                                end_period=end_period)
-        create_advert_for_a_job(job_id=job_id, start_period=start_period,
-                                end_period=end_period)
+        with freeze_time(self.frozen_date):
+            create_advert_for_a_job(job_id=job_id,
+                                    advert_duration=expected_duration)
+        job = jobs.find_one({'_id': job_id})
+        advert = job['adverts'][0]
 
-        result = jobs.find_one({'_id': job_id})
-
-        expected_adverts = [create_advert(period1), create_advert(period2)]
-
-        self.assertEqual(result['_id'], job_id)
-
-        for advert, expected in zip(result['adverts'], expected_adverts):
-            advert.pop('_id')
-            expected.pop('_id')
-            self.assertEqual(advert, expected)
+        self.assertEqual(AdvertStatus.DRAFT, advert['status'])
+        self.assertEqual(expected_duration, advert['duration'])
+        self.assertEqual(self.frozen_date, advert['date']['created'])
 
     def test_create_advert_for_a_job_with_invalid_id(self):
         with self.assertRaises(ValueError):
-            create_advert_for_a_job(job_id=None, start_period=datetime.now(),
-                                    end_period=datetime.now())
+            create_advert_for_a_job(job_id=None, advert_duration=1)
 
         with self.assertRaises(ValueError):
-            create_advert_for_a_job(job_id="", start_period=datetime.now(),
-                                    end_period=datetime.now())
+            create_advert_for_a_job(job_id="", advert_duration=1)
 
         result = jobs.find({}).count()
         self.assertEqual(0, result)
@@ -57,14 +43,13 @@ class TestAddAdvertToJob(BaseTestJob):
     def test_create_advert_for_a_job_not_in_db(self):
 
         with self.assertRaises(ValueError):
-            create_advert_for_a_job(job_id="1", start_period=datetime.now(),
-                                    end_period=datetime.now())
+            create_advert_for_a_job(job_id="1", advert_duration=1)
 
         result = jobs.find({}).count()
         self.assertEqual(0, result)
 
     def test_job_date_updated(self):
-        with freeze_time("2015-10-26"):
+        with freeze_time(self.frozen_date):
             expected_creation_date = datetime.now()
             create_job(company_id=self.company['_id'],
                        title="title",
@@ -76,10 +61,7 @@ class TestAddAdvertToJob(BaseTestJob):
 
         with freeze_time("2015-10-27"):
             expected_modification_date = datetime.now()
-            create_advert_for_a_job(
-                job_id=job.get('_id'),
-                start_period=datetime.now(),
-                end_period=datetime.now() + timedelta(days=30))
+            create_advert_for_a_job(job_id=job.get('_id'), advert_duration=1)
             job = jobs.find_one({})
             date = job.get('date')
             self.assertEqual(date.get('created'), expected_creation_date)
