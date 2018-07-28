@@ -12,3 +12,9 @@ Then setup `Git` hooks
 ```
 make setup_git_hooks 
 ```
+
+Development
+-----------
+
+To run the local database:
+docker-compose up

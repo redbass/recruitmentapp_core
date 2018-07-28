@@ -3,3 +3,5 @@ mongodb:
     image: mongo:3.6-jessie
     ports:
       - 27017:27017
+    volumes:
+      - .mongo_data:/data/db
