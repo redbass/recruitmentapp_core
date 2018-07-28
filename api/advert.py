@@ -1,9 +1,7 @@
-from dateutil.parser import parse
 from flask import request
 
 from api.handler import json_response
 from auth.jwt import jwt_required
-from exceptions.api import ParametersException
 from model.job import job_advert
 
 
@@ -12,23 +10,16 @@ from model.job import job_advert
 def create_advert(job_id: str):
     data = request.json
 
-    period = data.get('period', {})
-
-    start = period.get('start')
-    if start is None:
-        raise ParametersException('Start period is required')
-
-    end = period.get('end')
+    duration = data.get('duration')
 
     try:
-        start = parse(start)
-        end = parse(end) if end else None
+        duration = int(duration)
     except Exception:
-        raise ValueError("Period dates have to be in ISO format")
+        raise ValueError("'{duration}' is not an integer duration"
+                         .format(duration=duration))
 
     return job_advert.create_advert_for_a_job(job_id=job_id,
-                                              start_period=start,
-                                              end_period=end)
+                                              advert_duration=duration)
 
 
 @jwt_required

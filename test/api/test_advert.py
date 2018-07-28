@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 from json import loads
 from unittest.mock import patch
 
@@ -11,48 +10,31 @@ class TestApiCreateAdvert(TestApi):
     @patch('api.advert.job_advert')
     def test_create_advert(self, job):
         job_id = '1'
-        start_period = datetime.now()
-        end_period = datetime.now() + timedelta(days=30)
-        data = {
-            'period': {
-                'start': start_period.isoformat(),
-                'end': end_period.isoformat(),
-            }}
+        expected_duration = 10
+        expected_response = {'response': job_id}
 
-        expected_response = {
-            'job_id': job_id}
         job.create_advert_for_a_job.return_value = expected_response
 
         url = self.url_for_admin(ADVERTS_URL, job_id=job_id)
+        data = {'duration': expected_duration}
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
         job.create_advert_for_a_job.assert_called_once_with(
-            job_id=job_id, start_period=start_period, end_period=end_period)
+            job_id=job_id, advert_duration=expected_duration)
 
         self.assertEqual(expected_response, loads(response.data))
 
-    @patch('api.advert.job_advert')
-    def test_create_advert_without_start_date(self, job):
-        periods = [
-            {},
-            {
-                'start': ""},
-            {
-                'start': "asd"},
-            {
-                'start': datetime.now().isoformat(),
-                'end': "asd"},
-        ]
-        for period in periods:
-            job_id = 1
-            data = {
-                'period': period}
-            url = self.url_for_admin(ADVERTS_URL, job_id=job_id)
+    def test_create_advert_with_invalid_duration(self):
+        duration = "INVALID DURATION"
+        url = self.url_for_admin(ADVERTS_URL, job_id="RANDOM")
+        data = {'duration': duration}
+        response = self.post_json(url, data)
 
-            response = self.post_json(url, data)
-            self.assertEqual(400, response.status_code)
-            job.create_advert_for_a_job.assert_not_called()
+        self.assert_error(response,
+                          400,
+                          "'{duration}' is not an integer duration"
+                          .format(duration=duration))
 
 
 class TestApiApproveAdvert(TestApi):
