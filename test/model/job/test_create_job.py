@@ -17,7 +17,6 @@ class TestCreateJob(BaseTestJob):
             'title': 'title',
             'description': 'description',
             'location': None,
-            'deleted': False,
             'date': {
                 'created': datetime.utcnow(),
                 'updated': datetime.utcnow()

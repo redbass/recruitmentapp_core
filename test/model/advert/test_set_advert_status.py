@@ -5,11 +5,11 @@ from freezegun import freeze_time
 from model.advert import AdvertStatus
 from model.job.job import get_job
 from model.job.create_job import create_job
-from model.job.job_advert import create_advert_for_a_job, approve_advert
+from model.job.job_advert import create_advert_for_a_job, update_advert_status
 from test.model.job import BaseTestJob
 
 
-class TestApproveAdvert(BaseTestJob):
+class TestSetAdvertStatus(BaseTestJob):
 
     def setUp(self):
         super().setUp()
@@ -22,30 +22,40 @@ class TestApproveAdvert(BaseTestJob):
             self.advert = create_advert_for_a_job(
                 job_id=self.job['_id'], advert_duration=self.advert_duration)
 
-    def test_approve_advert(self):
-        advert_approved_at = datetime(year=1234, month=12, day=12)
-        with freeze_time(advert_approved_at):
-            approve_advert(
-                job_id=self.job['_id'], advert_id=self.advert['_id'])
+    def _assert_set_status(self, new_status):
+        advert_updated_at = datetime(year=1234, month=12, day=12)
+
+        with freeze_time(advert_updated_at):
+            update_advert_status(job_id=self.job['_id'],
+                                 advert_id=self.advert['_id'],
+                                 new_status=new_status)
 
         retrieved_job = get_job(self.job['_id'])
         retrieved_advert = retrieved_job['adverts'][0]
         expected_advert = {
             '_id': self.advert['_id'],
-            'status': AdvertStatus.APPROVED,
+            'status': new_status,
             'duration': self.advert_duration,
             'date': {
-                'approved': advert_approved_at,
+                new_status.lower(): advert_updated_at,
                 'created': self.advert_created_at,
-                'updated': advert_approved_at
+                'updated': advert_updated_at
             },
-            'deleted': False
+            'status_log': [{
+                'status': new_status,
+                'date': advert_updated_at
+            }]
         }
-
-        self.assertEqual(advert_approved_at, retrieved_job['date']['updated'])
+        self.assertEqual(advert_updated_at, retrieved_job['date']['updated'])
         self.assertEqual(expected_advert, retrieved_advert)
 
-    def test_approve_advert_wrong_id(self):
+    def test_publish_advert(self):
+        self._assert_set_status(new_status=AdvertStatus.PUBLISHED)
+
+    def test_approve_advert(self):
+        self._assert_set_status(new_status=AdvertStatus.APPROVED)
+
+    def test_set_status_with_wrong_id(self):
         self._assert_approve_advert_wrong_ids(job_id="123",
                                               advert_id="RANDOM")
         self._assert_approve_advert_wrong_ids(job_id=self.job['_id'],
@@ -55,4 +65,5 @@ class TestApproveAdvert(BaseTestJob):
         with self.assertRaisesRegex(
                 ValueError, 'The advert is not in `DRAFT` or does not exists:'
                             '\(job: `.*, advert: `.*`\)'):
-            approve_advert(job_id=job_id, advert_id=advert_id)
+            update_advert_status(job_id=job_id, advert_id=advert_id,
+                                 new_status=AdvertStatus.APPROVED)

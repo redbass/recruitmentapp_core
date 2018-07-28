@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from db.collections import jobs
-from model.advert import create_advert, AdvertStatus
+from model.advert import create_advert
 
 
 def create_advert_for_a_job(job_id: str,
@@ -25,22 +25,38 @@ def create_advert_for_a_job(job_id: str,
     return advert
 
 
-def approve_advert(job_id: str, advert_id: str):
+def update_advert_status(advert_id, job_id, new_status):
     job = jobs.find_one(
-        {'_id': job_id, 'adverts._id': advert_id, 'adverts.status': 'DRAFT'}
+        {
+            '_id': job_id,
+            'adverts._id': advert_id,
+            'adverts.status': 'DRAFT'
+        }
     )
-
     if not job:
         raise ValueError('The advert is not in `DRAFT` or does not exists:'
                          '(job: `{job_id}`, advert: `{advert_id}`)'
                          .format(job_id=job_id, advert_id=advert_id))
 
+    updated_date = datetime.utcnow()
+    new_status_log = {
+        'status': new_status,
+        'date': updated_date
+    }
+
     jobs.update_one(
-        {'_id': job_id, 'adverts._id': advert_id},
-        {'$set': {
-            'date.updated': datetime.utcnow(),
-            'adverts.$.status': AdvertStatus.APPROVED,
-            'adverts.$.date.approved': datetime.utcnow(),
-            'adverts.$.date.updated': datetime.utcnow()
-        }}
+        {
+            '_id': job_id,
+            'adverts._id': advert_id},
+        {
+            '$set': {
+                'date.updated': updated_date,
+                'adverts.$.status': new_status,
+                'adverts.$.date.' + new_status.lower(): updated_date,
+                'adverts.$.date.updated': updated_date
+            },
+            '$addToSet': {
+                'adverts.$.status_log': new_status_log
+            }
+        }
     )

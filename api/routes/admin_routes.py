@@ -8,7 +8,7 @@ COMPANY_URL = '/api/company/<company_id>'
 JOBS_URL = '/api/job'
 JOB_URL = '/api/job/<job_id>'
 ADVERTS_URL = '/api/job/<job_id>/advert'
-APPROVE_ADVERT_URL = '/api/job/<job_id>/advert/<advert_id>/approve'
+SET_ADVERT_STATUS_URL = '/api/job/<job_id>/advert/<advert_id>/<action>'
 
 GET_USERS_BY_TYPE_URL = '/api/user/<user_type>'
 
@@ -17,6 +17,7 @@ def add_admin_routes(app):
     _add_job_routes(app)
     _add_user_routes(app)
     _add_company_routes(app)
+    _add_advert_routes(app)
 
 
 def _add_company_routes(app):
@@ -70,15 +71,17 @@ def _add_job_routes(app):
                         job.api_edit_job,
                         methods=['POST'])
 
+
+def _add_advert_routes(app):
     _add_admin_url_rule(app,
                         ADVERTS_URL,
                         'create_advert',
                         advert.create_advert,
                         methods=['POST'])
     _add_admin_url_rule(app,
-                        APPROVE_ADVERT_URL,
-                        'approve_advert',
-                        advert.approve_advert,
+                        SET_ADVERT_STATUS_URL,
+                        'set_advert_status',
+                        advert.set_advert_status,
                         methods=['POST'])
 
 

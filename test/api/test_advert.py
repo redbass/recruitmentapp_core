@@ -1,7 +1,8 @@
 from json import loads
 from unittest.mock import patch
 
-from api.routes.admin_routes import ADVERTS_URL, APPROVE_ADVERT_URL
+from api.routes.admin_routes import ADVERTS_URL, SET_ADVERT_STATUS_URL
+from model.advert import AdvertStatus
 from test.api import TestApi
 
 
@@ -37,25 +38,34 @@ class TestApiCreateAdvert(TestApi):
                           .format(duration=duration))
 
 
-class TestApiApproveAdvert(TestApi):
+class TestApiSetAdvertStatus(TestApi):
 
     @patch('api.advert.job_advert')
-    def test_approve_advert(self, job):
+    def test_set_advert_status(self, job):
         job_id = '1'
         advert_id = '1'
 
-        url = self.url_for_admin(APPROVE_ADVERT_URL,
-                                 job_id=job_id, advert_id=advert_id)
+        new_status = AdvertStatus.APPROVED
+        action = 'approve'
+        url = self.url_for_admin(SET_ADVERT_STATUS_URL,
+                                 job_id=job_id,
+                                 advert_id=advert_id,
+                                 action=action)
         response = self.post_json(url)
 
         self.assertEqual(200, response.status_code)
-        job.approve_advert.assert_called_once_with(job_id=job_id,
-                                                   advert_id=advert_id)
+        job.update_advert_status.assert_called_once_with(
+            job_id=job_id, advert_id=advert_id, new_status=new_status)
 
     @patch('api.advert.job_advert')
-    def test_approve_advert_raise_error_if_not_in_draft(self, job):
+    def test_set_advert_status_raise_error_if_not_in_draft(self, job):
+        action = "RANDOM_ACTION"
         job.approve_advert.side_effect = ValueError("")
-        url = self.url_for_admin(APPROVE_ADVERT_URL, job_id='1', advert_id='1')
+        url = self.url_for_admin(SET_ADVERT_STATUS_URL,
+                                 job_id=2,
+                                 advert_id=3,
+                                 action=action)
         response = self.post_json(url)
 
-        self.assertEqual(400, response.status_code)
+        self.assert_error(response, 400,
+                          'Invalid action "{action}"'.format(action=action))

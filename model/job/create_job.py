@@ -28,7 +28,6 @@ def create_job(company_id: str,
         'title': title,
         'description': description,
         'location': location.get_geo_json_point() if location else None,
-        'deleted': False,
         'date': {
             'created': datetime.utcnow(),
             'updated': datetime.utcnow()

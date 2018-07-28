@@ -9,6 +9,7 @@ DEFAULT_ADVERTS_PAGINATION_LIMIT = 10
 class AdvertStatus:
     DRAFT = 'DRAFT'
     APPROVED = 'APPROVED'
+    PUBLISHED = 'PUBLISHED'
 
 
 def create_advert(duration: int) -> dict:
@@ -20,8 +21,7 @@ def create_advert(duration: int) -> dict:
     advert = {
         '_id': _id,
         'status': AdvertStatus.DRAFT,
-        'duration': duration,
-        'deleted': False
+        'duration': duration
     }
     update_object_modification_date(advert)
     return advert

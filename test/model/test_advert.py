@@ -34,7 +34,6 @@ class TestCreateAdvert(BaseTestAdvert):
         expected_advert = {
             '_id': advert['_id'],
             'status': AdvertStatus.DRAFT,
-            'deleted': False,
             'duration': duration,
             'date': {
                 'created': datetime.utcnow(),
