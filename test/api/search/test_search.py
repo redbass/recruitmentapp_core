@@ -7,7 +7,7 @@ from test.api import TestApi
 
 class TestAPISearch(TestApi):
 
-    @patch('api.search.jobs')
+    @patch('api.services.search.jobs')
     def test_search(self, mock_jobs):
         query = "something"
         expected_results = [1, 2, 3]

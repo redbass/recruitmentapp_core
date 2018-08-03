@@ -7,7 +7,7 @@ from test.api import TestApi
 
 class TestAPISearchByArea(TestApi):
 
-    @patch('api.search.jobs.search_adverts_by_radius')
+    @patch('api.services.search.jobs.search_adverts_by_radius')
     def test_search_advert_by_radius(self, search_by_radius):
         expected_data = [1, 2, 3]
         location = [12.345, 54.321]
