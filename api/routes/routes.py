@@ -1,5 +1,5 @@
-from api import picklist, search
 from api.company import company
+from api.services import postcode, picklist, search
 
 SEARCH_ADVERTS_BY_RADIUS_URL = '/api/job/search/advert/radius'
 SEARCH_STATIC = '/api/job/search_static'
@@ -8,6 +8,8 @@ SEARCH = '/api/job/search'
 COMPANIES_URL = '/api/company'
 
 PICKLIST = '/api/picklist/<name>'
+
+POSTCODE_SEARCH = '/api/postcode/<postcode>'
 
 
 def add_public_routes(app):
@@ -35,3 +37,7 @@ def add_public_routes(app):
                      'picklist',
                      picklist.picklist,
                      methods=['GET'])
+
+    app.add_url_rule(POSTCODE_SEARCH,
+                     'postcode',
+                     postcode.get_postcode)

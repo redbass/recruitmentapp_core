@@ -16,7 +16,7 @@ class BaseConfig(object):
     DEFAULT_PORT = None
 
     LOGIN_REQUIRED = True
-    API_TOKEN_REQUIRED = False
+    API_TOKEN_REQUIRED = True
 
     DATABASE_HOST = ''
     DATABASE_PORT = None
