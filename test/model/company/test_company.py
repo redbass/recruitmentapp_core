@@ -14,11 +14,14 @@ class TestGetCompanies(BaseTestCompany):
                            user_type=UserType.HIRING_MANAGER)
 
         self.company_1 = create_company(
-            name="c1", admin_user_id=self.hiring_manager1['_id'])
+            name="c1", admin_user_ids=[self.hiring_manager1['_id']],
+            description='')
         self.company_2 = create_company(
-            name="c2", admin_user_id=user['_id'])
+            name="c2", admin_user_ids=[user['_id']],
+            description='')
         self.company_3 = create_company(
-            name="c3", admin_user_id=self.hiring_manager2['_id'])
+            name="c3", admin_user_ids=[self.hiring_manager2['_id']],
+            description='')
 
     def test_get_companies(self):
         result = get_companies()
@@ -39,7 +42,8 @@ class TestGetCompanyById(BaseTestCompany):
         super().setUp()
 
         self.company_1 = create_company(
-            name="c1", admin_user_id=self.hiring_manager1['_id'])
+            name="c1", admin_user_ids=[self.hiring_manager1['_id']],
+            description='')
 
     def test_get_company_by_admin_user(self):
         stored_company1 = get_company_by_admin_user(

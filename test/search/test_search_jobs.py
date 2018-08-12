@@ -17,7 +17,8 @@ class TestSearchJobs(UnitTestCase):
                                  user_type=UserType.ADMIN)
 
         self.company = create_company(name='Company A',
-                                      admin_user_id=self.admin['_id'])
+                                      admin_user_ids=[self.admin['_id']],
+                                      description='')
 
         self.job_1 = create_job(company_id=self.company['_id'],
                                 title="Title one",
@@ -36,7 +37,8 @@ class TestSearchJobs(UnitTestCase):
         users.drop()
         job_ids = [j['_id'] for j in [self.job_1, self.job_2, self.job_3]]
         jobs.delete_many({
-            '_id': {'$in': job_ids}
+            '_id': {
+                '$in': job_ids}
         })
         super().tearDown()
 

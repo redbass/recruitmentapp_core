@@ -1,5 +1,7 @@
-from model.company.company import create_company, get_company
+from model.company.company import create_company, get_company, \
+    _validate_admin_id
 from model.user import create_user, UserType
+from test import load_example_model
 from test.model.company import BaseTestCompany
 
 
@@ -10,55 +12,17 @@ class TestCreateCompany(BaseTestCompany):
                             email="test2@g.mail",
                             password='test',
                             user_type=UserType.ADMIN)
-        expected_company = {
-            '_id': '1',
-            'name': 'ACME Inc.',
-            'description': 'some description',
-            'admin_user_ids': [admin['_id']],
-            'hire_managers_ids': []
-        }
 
-        company = create_company(name=expected_company['name'],
-                                 admin_user_id=admin['_id'],
-                                 description=expected_company['description'])
-
-        created_company = get_company(company['_id'])
-
-        expected_company.pop('_id')
-
-        self.assertIsNotNone(created_company.pop('_id'))
-        self.assertEqual(expected_company, created_company)
+        self._assert_create_company(admin)
 
     def test_create_company_as_hiring_manager(self):
-        expected_company = {
-            '_id': '1',
-            'name': 'ACME Inc.',
-            'description': 'some description',
-            'admin_user_ids': [self.hiring_manager1['_id']],
-            'hire_managers_ids': []
-        }
+        self._assert_create_company(self.hiring_manager1)
 
-        company = create_company(name=expected_company['name'],
-                                 admin_user_id=self.hiring_manager1['_id'],
-                                 description=expected_company['description'])
-
-        created_company = get_company(company['_id'])
-
-        expected_company.pop('_id')
-
-        self.assertIsNotNone(created_company.pop('_id'))
-        self.assertEqual(expected_company, created_company)
-
-    def test_create_company_without_name_raise_error(self):
-        with self.assertRaisesRegex(ValueError,
-                                    "Company `name` is a required field"):
-            create_company(name="", admin_user_id="1")
-
-    def test_create_company_with_invalid_user_id_raise_error(self):
+    def test_validate_admin_id_with_invalid_user_id_raise_error(self):
         with self.assertRaisesRegex(ValueError,
                                     "The given user admin id `.*` is not "
                                     "valid"):
-            create_company(name="random", admin_user_id="1")
+            _validate_admin_id(admin_user_id="1")
 
     def test_create_company_with_invalid_user_type_raise_error(self):
         user = create_user(username='test', email="test@g.mail",
@@ -66,14 +30,26 @@ class TestCreateCompany(BaseTestCompany):
         with self.assertRaisesRegex(ValueError,
                                     "The given user admin id `.*` is not a "
                                     "`hiring manager` or an `admin`"):
-            create_company(name="random", admin_user_id=user['_id'])
+            _validate_admin_id(admin_user_id=user['_id'])
 
     def test_create_company_with_same_admin_user_raises_error(self):
-        create_company(name="random",
-                       admin_user_id=self.hiring_manager1['_id'])
+        self._assert_create_company(user=self.hiring_manager1)
 
         with self.assertRaisesRegex(ValueError,
                                     "A company with the same "
                                     "admin user `.*` already exists"):
-            create_company(name="random",
-                           admin_user_id=self.hiring_manager1['_id'])
+            _validate_admin_id(admin_user_id=self.hiring_manager1['_id'])
+
+    def _assert_create_company(self, user):
+        create_company_input = load_example_model('create_company_input')
+        company = create_company(admin_user_ids=[user['_id']],
+                                 **create_company_input)
+        expected_company = {
+            '_id': company['_id'],
+            'hire_managers_ids': [user['_id']],
+            'admin_user_ids': [user['_id']]
+        }
+        expected_company.update(create_company_input)
+        created_company = get_company(company['_id'])
+        self.assertIsNotNone(created_company['_id'])
+        self.assertEqual(expected_company, created_company)

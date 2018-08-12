@@ -1,0 +1,25 @@
+{
+    "name": "The Name",
+    "description": "this is a description",
+    "vat": "123456",
+    "contacts": {
+        "address": {
+            "number": "6 (1f1)",
+            "street": "Drum Terrace",
+            "city": "Edinburgh",
+            "town": "Edinburgh",
+            "postcode": "eh7 7gq",
+            "country": "United Kingdom"
+        },
+        "email": "test@gma.il",
+        "phone_number": "+44078735123"
+    },
+    "metadata": {
+        "trades": [
+            "trade 1",
+            "trade 2"
+        ]
+    }
+}
+
+

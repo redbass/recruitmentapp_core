@@ -2,31 +2,21 @@ from unittest.mock import patch
 
 from api.routes.admin_routes import COMPANIES_URL, COMPANY_URL
 from model import NOT_PROVIDED
+from test import load_example_model
 from test.api import TestApi
+from test.model.user import UserFactory
 
 
 class TestCreateCompany(TestApi):
 
-    @patch('api.company.admin_company.company')
-    @patch('api.company.admin_company.user')
-    def test_create_company(self, user_mock, company_mock):
-        data = {
-            "name": "ACME Inc.",
-            "description": "Some description"
-        }
-        super_user = 'super_user'
-        user_mock.get_user.return_value = {"_id": super_user}
-        company_mock.create_company.return_value = {"company": "created"}
+    def test_create_company(self):
+        UserFactory().create(username='super_user')
+        data = load_example_model('create_company_input')
 
         url = self.url_for_admin(COMPANIES_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
-
-        company_mock.create_company.assert_called_once_with(
-            name=data['name'],
-            description=data['description'],
-            admin_user_id=super_user)
 
 
 class TestEditCompany(TestApi):

@@ -26,4 +26,4 @@ def create_company():
 
     return company.create_company(name=name,
                                   description=description,
-                                  admin_user_id=company_user['_id'])
+                                  admin_user_ids=[company_user['_id']])
