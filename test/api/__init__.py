@@ -28,9 +28,9 @@ class TestApi(UnitTestCase):
     def get_json(self, url):
         return self.test_app.get(url)
 
-    def post_json(self, url, data={}):
+    def post_json(self, url, data=None):
         return self.test_app.post(url,
-                                  data=json.dumps(data),
+                                  data=json.dumps(data or {}),
                                   content_type='application/json')
 
     def assert_error(self,

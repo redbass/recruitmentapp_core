@@ -30,6 +30,10 @@ class UnitTestCase(TestCase):
         with open(path, 'r') as f:
             return load(f)
 
+    @classmethod
+    def create_from_factory(cls, factory, **qwargs):
+        return factory().create(**qwargs)
+
 
 def load_example_model(model_name):
     file_name = 'example_models/{name}.json'.format(name=model_name)

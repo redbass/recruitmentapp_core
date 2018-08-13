@@ -16,13 +16,11 @@
                         "postcode": { "type": "string" },
                         "country": { "type": "string" }
                     },
-                    "required": ["number", "street", "city", "postcode"],
                      "additionalProperties": false
                 },
                 "email": { "type": "string", "minLength": 1, "maxLength": 50 },
                 "phone_number": { "type": "string", "minLength": 1, "maxLength": 25 }
             },
-            "required": ["address", "email", "phone_number"],
             "additionalProperties": false
         },
         "metadata": {
@@ -34,10 +32,8 @@
                     "uniqueItems": true
                 }
             },
-            "required": ["trades"],
             "additionalProperties": false
         }
     },
-     "required": ["name", "description", "vat", "contacts", "metadata"],
      "additionalProperties": false
 }

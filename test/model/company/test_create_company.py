@@ -1,17 +1,15 @@
-from model.company.company import create_company, get_company, \
+from model.company.company import get_company, \
     _validate_admin_id
-from model.user import create_user, UserType
+from model.user import UserType
 from test import load_example_model
-from test.model.company import BaseTestCompany
+from test.model.company import BaseTestCompany, CompanyFactory
+from test.model.user import UserFactory
 
 
 class TestCreateCompany(BaseTestCompany):
 
     def test_create_company_as_admin(self):
-        admin = create_user(username='test2',
-                            email="test2@g.mail",
-                            password='test',
-                            user_type=UserType.ADMIN)
+        admin = self.create_from_factory(UserFactory)
 
         self._assert_create_company(admin)
 
@@ -25,8 +23,8 @@ class TestCreateCompany(BaseTestCompany):
             _validate_admin_id(admin_user_id="1")
 
     def test_create_company_with_invalid_user_type_raise_error(self):
-        user = create_user(username='test', email="test@g.mail",
-                           password='test')
+        user = self.create_from_factory(UserFactory,
+                                        user_type=UserType.CANDIDATE)
         with self.assertRaisesRegex(ValueError,
                                     "The given user admin id `.*` is not a "
                                     "`hiring manager` or an `admin`"):
@@ -42,8 +40,9 @@ class TestCreateCompany(BaseTestCompany):
 
     def _assert_create_company(self, user):
         create_company_input = load_example_model('create_company_input')
-        company = create_company(admin_user_ids=[user['_id']],
-                                 **create_company_input)
+        company = self.create_from_factory(
+            CompanyFactory, admin_user_ids=[user['_id']],
+            **create_company_input)
         expected_company = {
             '_id': company['_id'],
             'hire_managers_ids': [user['_id']],

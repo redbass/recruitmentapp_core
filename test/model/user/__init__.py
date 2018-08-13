@@ -4,11 +4,17 @@ from test.factory import ModelFactory
 
 
 class UserFactory(ModelFactory):
-    MODEL_NAME = 'user'
+    EXAMPLE_MODEL_NAME = 'create_user_input'
 
     def create(self, **qwargs):
 
-        default_values = load_example_model('create_user_input')
+        default_values = load_example_model(self.EXAMPLE_MODEL_NAME)
+
+        if 'username' not in qwargs:
+            default_values['username'] = self.fake.user_name()
+
+        if 'email' not in qwargs:
+            default_values['email'] = self.fake.email()
 
         default_values.update(qwargs)
 
