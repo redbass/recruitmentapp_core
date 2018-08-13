@@ -19,10 +19,10 @@ class SearchAdvertByRadiusTestCase(UnitTestCase):
                                  user_type=UserType.ADMIN)
         self.zoo = create_company(name="Edinburgh Zoo",
                                   description="desc",
-                                  admin_user_id=self.admin['_id'])
+                                  admin_user_ids=[self.admin['_id']])
         self.chapel = create_company(name="Edinburgh Roselin chapel",
                                      description="desc",
-                                     admin_user_id=self.admin['_id'])
+                                     admin_user_ids=[self.admin['_id']])
         self._create_jobs()
 
     def tearDown(self):

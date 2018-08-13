@@ -12,7 +12,7 @@ class BaseTestJob(UnitTestCase):
                                       email='email@posta.it',
                                       password='password',
                                       user_type=UserType.ADMIN)
-        self.company = create_company(admin_user_id=self.admin_user['_id'],
+        self.company = create_company(admin_user_ids=[self.admin_user['_id']],
                                       name='Company Name',
                                       description='some Description')
 

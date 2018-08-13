@@ -1,6 +1,7 @@
 from functools import wraps
 
 from flask.json import jsonify
+from jsonschema import ValidationError
 
 from exceptions.api import ParametersException
 from exceptions.service import ServiceError
@@ -8,6 +9,7 @@ from exceptions.service import ServiceError
 EXCEPTIONS = {
     ParametersException: 400,
     ValueError: 400,
+    ValidationError: 400,
 
     ServiceError: 503
 }

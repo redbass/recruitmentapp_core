@@ -35,7 +35,7 @@ class TestCreateCompany(TestApi):
         company_mock.create_company.assert_called_once_with(
             name=data['name'],
             description=data['description'],
-            admin_user_id=data['username'])
+            admin_user_ids=[data['username']])
 
     def test_create_company_no_email_raise_return_error(self):
         data = {
@@ -66,19 +66,3 @@ class TestCreateCompany(TestApi):
         self.assert_error(response,
                           400,
                           "Username, email, password are all required")
-
-    @patch('api.company.company.user')
-    def test_create_company_no_company_name_raise_return_error(self, _):
-        data = {
-            "name": "",
-            "description": "Some description",
-            "email": "email@io.com",
-            "password": "password"
-        }
-
-        url = self.url_for(COMPANIES_URL)
-        response = self.post_json(url, data)
-
-        self.assert_error(response,
-                          400,
-                          "Company `name` is a required field")

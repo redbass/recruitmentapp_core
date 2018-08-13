@@ -1,4 +1,4 @@
-from json import load
+from json import load, loads
 from unittest import TestCase
 
 import pkg_resources
@@ -29,3 +29,13 @@ class UnitTestCase(TestCase):
             'resources', 'fixtures/' + file_name + '.json')
         with open(path, 'r') as f:
             return load(f)
+
+    @classmethod
+    def create_from_factory(cls, factory, **qwargs):
+        return factory().create(**qwargs)
+
+
+def load_example_model(model_name):
+    file_name = 'example_models/{name}.json'.format(name=model_name)
+    model = pkg_resources.resource_string('resources', file_name)
+    return loads(model)
