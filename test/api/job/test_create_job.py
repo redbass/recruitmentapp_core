@@ -8,7 +8,7 @@ from test.api import TestApi
 
 class TestApiCreateJob(TestApi):
 
-    @patch('api.job.create_job')
+    @patch('api.job.job.create_job')
     def test_create_job(self, create_job):
         company_id = '123'
         title = 'title'
@@ -34,7 +34,7 @@ class TestApiCreateJob(TestApi):
             location=NOT_PROVIDED)
         self.assertEqual(loads(response.data), expected_job)
 
-    @patch('api.job.create_job')
+    @patch('api.job.job.create_job')
     def test_create_job_with_location(self, create_job):
         company_id = '123'
         title = 'title'
@@ -69,7 +69,7 @@ class TestApiCreateJob(TestApi):
         response = self.post_json(url, {})
         self.assertEqual(400, response.status_code)
 
-    @patch('api.job.create_job')
+    @patch('api.job.job.create_job')
     def test_invalid_location(self, _):
         data = {
             'title': "Title",

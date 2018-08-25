@@ -8,7 +8,7 @@ from test.api import TestApi
 
 class EditJob(TestApi):
 
-    @patch('api.job.edit_job')
+    @patch('api.job.job.edit_job')
     def test_edit_job(self, edit_job):
         job_id = '123'
         title = 'title'
@@ -39,7 +39,7 @@ class EditJob(TestApi):
                          location['lng'])
         self.assertEqual(loads(response.data), expected_job)
 
-    @patch('api.job.edit_job')
+    @patch('api.job.job.edit_job')
     def test_partial_edit_job(self, edit_job):
         edit_job.return_value = {'result': 'result'}
         job_id = '123'
@@ -54,7 +54,7 @@ class EditJob(TestApi):
             new_location=NOT_PROVIDED)
         self.assertEqual(loads(response.data), edit_job.return_value)
 
-    @patch('api.job.edit_job')
+    @patch('api.job.job.edit_job')
     def test_invalid_location(self, _):
         job_id = '123'
         data = {'location': {'lat': 12.345}}

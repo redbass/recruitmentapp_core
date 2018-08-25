@@ -1,5 +1,6 @@
 import api.company.admin_company
-from api import job, advert, user
+from api import advert, user
+from api.job import job
 
 ADMIN_PREFIX = 'admin'
 

@@ -6,7 +6,7 @@ from test.api import TestApi
 
 class TestApiGetJobs(TestApi):
 
-    @patch('api.job.get_jobs')
+    @patch('api.job.job.get_jobs')
     def test_get_jobs(self, get_jobs):
 
         url = self.url_for_admin(JOBS_URL)
@@ -15,7 +15,7 @@ class TestApiGetJobs(TestApi):
         self.assertEqual(200, response.status_code)
         get_jobs.assert_called_once()
 
-    @patch('api.job.get_job')
+    @patch('api.job.job.get_job')
     def test_get_job(self, get_job):
         job_id = '123'
 
