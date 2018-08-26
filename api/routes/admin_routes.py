@@ -1,4 +1,5 @@
 import api.company.admin_company
+import api.job.admin_job
 from api import advert, user
 from api.job import job
 
@@ -63,13 +64,13 @@ def _add_job_routes(app):
     _add_admin_url_rule(app,
                         JOBS_URL,
                         'create_job',
-                        job.api_create_job,
+                        api.job.admin_job.api_create_job,
                         methods=['POST'])
 
     _add_admin_url_rule(app,
                         JOB_URL,
                         'edit_job',
-                        job.api_edit_job,
+                        api.job.admin_job.api_edit_job,
                         methods=['POST'])
 
 

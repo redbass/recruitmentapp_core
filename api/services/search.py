@@ -1,12 +1,10 @@
-import json
-
 from flask import request
 
 from api.handler import json_response
 from auth.api_token import api_token_required
 from auth.jwt import jwt_required
 from exceptions.api import ParametersException
-from model.location import Location
+from model.geo_location import validate_lat_long_values
 from search import jobs
 from search.static_results import static_jobs
 
@@ -14,10 +12,11 @@ from search.static_results import static_jobs
 @jwt_required
 @json_response
 def search_adverts_by_radius():
-    radius = _get_radius()
-    location = _get_location()
 
-    results = jobs.search_adverts_by_radius(location, radius)
+    radius = _get_radius()
+    coordinates = _get_coordinates()
+
+    results = jobs.search_adverts_by_radius(coordinates, radius)
 
     return results
 
@@ -26,7 +25,6 @@ def _get_radius():
     radius = request.args.get('radius')
 
     try:
-        radius = json.loads(radius)
         radius = float(radius)
 
     except Exception:
@@ -35,21 +33,21 @@ def _get_radius():
     return radius
 
 
-def _get_location():
+def _get_coordinates():
     location = request.args.get('location')
 
     try:
-        location = json.loads(location)
+        coordinates = [float(c) for c in location.split(',')]
 
-        if len(location) < 2 or 2 < len(location):
+        if len(coordinates) != 2:
             raise Exception()
 
-        location = Location(*location)
+        validate_lat_long_values(*coordinates)
 
     except Exception:
         raise ParametersException("Invalid location format")
 
-    return location
+    return coordinates
 
 
 @json_response

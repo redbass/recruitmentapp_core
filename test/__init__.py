@@ -1,4 +1,4 @@
-from json import load, loads
+from json import loads
 from unittest import TestCase
 
 import pkg_resources
@@ -6,6 +6,7 @@ import pkg_resources
 from config import settings
 from db import get_db_name
 from db.collections import db
+from lib.schema_validation import validate
 
 
 class UnitTestCase(TestCase):
@@ -23,19 +24,23 @@ class UnitTestCase(TestCase):
         if not settings.TEST_MODE:
             raise Exception('Test have to run in test mode')
 
-    @staticmethod
-    def load_fixture(file_name: str) -> dict:
-        path = pkg_resources.resource_filename(
-            'resources', 'fixtures/' + file_name + '.json')
-        with open(path, 'r') as f:
-            return load(f)
-
     @classmethod
     def create_from_factory(cls, factory, **qwargs):
         return factory().create(**qwargs)
 
+    @staticmethod
+    def assert_validate_json_schema(json_schema_name, data):
+        try:
+            validate(json_schema_name, data)
+        except Exception as e:
+            assert False, "The provided data is not a valid `{schema}`: {msg}"\
+                .format(schema=json_schema_name, msg=str(e))
 
-def load_example_model(model_name):
-    file_name = 'example_models/{name}.json'.format(name=model_name)
-    model = pkg_resources.resource_string('resources', file_name)
-    return loads(model)
+    @staticmethod
+    def load_example_model(model_name):
+        file_name = 'example_models/{name}.json'.format(name=model_name)
+        model = pkg_resources.resource_string('resources', file_name)
+        return loads(model)
+
+
+load_example_model = UnitTestCase.load_example_model

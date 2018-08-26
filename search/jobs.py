@@ -1,24 +1,24 @@
 from pymongo.cursor import Cursor
 
 from db.collections import jobs
-from model.location import Location
 
 
-def search_adverts_by_radius(location: Location,
+def search_adverts_by_radius(coordinates: [float],
                              radius: float) -> Cursor:
     """
     Search all the Adverts in a circular area with the given `radius` and the
     center in `location`
-    :param location: The center of the search area
+    :param coordinates: The center of the search area, as GEO_JSON point
+                        location
     :param radius: The radius of the area in radians
     :return:
     """
 
     query = {
-        "location": {
+        "location.geo_location": {
             "$geoWithin": {
                 "$centerSphere": [
-                    [location.longitude, location.latitude],
+                    coordinates,
                     radius
                 ]
             }

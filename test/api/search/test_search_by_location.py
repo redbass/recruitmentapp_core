@@ -1,21 +1,25 @@
 import json
-from unittest.mock import patch
 
 from api.routes.routes import SEARCH_ADVERTS_BY_RADIUS_URL
+from lib.geo import km2rad
+from model.geo_location import get_location
 from test.api import TestApi
+from test.model.company import CompanyFactory
+from test.model.job import JobFactory
+from test.search import EDINBURGH_ZOO, EDINBURGH_EICA, EDINBURGH_CENTER
 
 
 class TestAPISearchByArea(TestApi):
 
-    @patch('api.services.search.jobs.search_adverts_by_radius')
-    def test_search_advert_by_radius(self, search_by_radius):
-        expected_data = [1, 2, 3]
-        location = [12.345, 54.321]
-        radius = 12
-        search_by_radius.return_value = expected_data
+    def test_search_advert_by_radius(self):
+        self._create_jobs()
+        expected_jobs_id = [self.zoo_job['_id'], self.eica_job['_id']]
+        coordinates = \
+            get_location(**EDINBURGH_CENTER)['geo_location']['coordinates']
+        radius = km2rad(15)
 
         url_params = '?location={location}&radius={radius}'.format(
-            location=location, radius=radius)
+            location=','.join(str(c) for c in coordinates), radius=radius)
 
         url = SEARCH_ADVERTS_BY_RADIUS_URL + url_params
         response = self.test_app.get(url)
@@ -23,13 +27,8 @@ class TestAPISearchByArea(TestApi):
         self.assertEqual(response.status_code, 200)
 
         adverts = json.loads(response.data)
-        self.assertEqual(adverts, expected_data)
-
-        location_call = search_by_radius.call_args[0][0]
-        radius_call = search_by_radius.call_args[0][1]
-        self.assertEqual(location_call.latitude, location[0])
-        self.assertEqual(location_call.longitude, location[1])
-        self.assertEqual(radius_call, radius)
+        expected_job_ids = [a['_id'] for a in adverts]
+        self.assertEqual(expected_jobs_id, expected_job_ids)
 
     def test_search_advert_with_location_as_less_then_2_values(self):
         self._assert_search_parameters(
@@ -69,3 +68,24 @@ class TestAPISearchByArea(TestApi):
         self.assertEqual(response.status_code, 400)
         error = json.loads(response.data)
         self.assertEqual(error['message'], expected_msg_error)
+
+    def _create_jobs(self):
+        self.zoo = self.create_from_factory(CompanyFactory, name="ZOO")
+        self.zoo_job_input = self.load_example_model('create_job_input')
+        self.zoo_job_input.update({
+            'company_id': self.zoo['_id'],
+            'title': "Breeder",
+            'location': EDINBURGH_ZOO
+        })
+        self.zoo_job = self.create_from_factory(
+            JobFactory, **self.zoo_job_input)
+
+        self.eica = self.create_from_factory(CompanyFactory, name="EICA")
+        self.eica_job_input = self.load_example_model('create_job_input')
+        self.eica_job_input.update({
+            'company_id': self.eica['_id'],
+            'title': "Climber",
+            'location': EDINBURGH_EICA
+        })
+        self.eica_job = self.create_from_factory(
+            JobFactory, **self.eica_job_input)

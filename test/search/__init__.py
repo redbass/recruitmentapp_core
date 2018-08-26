@@ -1,7 +1,19 @@
-from model.location import Location
+EDINBURGH_CENTER = {
+    "postcode": "EH3 9DZ", "latitude": 55.946998, "longitude": -3.201549
+}
 
-EDINBURGH_CENTER = Location(55.946998, -3.201549)
-EDINBURGH_ZOO = Location(55.9421766, -3.2848378)
-EDINBURGH_ARTHURS_SEAT = Location(55.9400444, -3.192663)
-EDINBURGH_EICA = Location(55.923412, -3.3998947)
-EDINBURGH_ROSELIN_CHAPEL = Location(55.8538158, -3.1861218)
+EDINBURGH_ZOO = {
+    "postcode": "EH3 9DZ", "latitude": 55.9421766, "longitude": -3.2848378
+}
+
+EDINBURGH_ARTHURS_SEAT = {
+    "postcode": "EH3 9DZ", "latitude": 55.9400444, "longitude": --3.192663
+}
+
+EDINBURGH_EICA = {
+    "postcode": "EH3 9DZ", "latitude": 55.923412, "longitude": -3.3998947
+}
+
+EDINBURGH_ROSELIN_CHAPEL = {
+    "postcode": "EH3 9DZ", "latitude": 55.8538158, "longitude": -3.1861218
+}
