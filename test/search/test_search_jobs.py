@@ -1,9 +1,7 @@
 from db.collections import companies, users, jobs, _create_text_index
-from model.company.company import create_company
-from model.job.create_job import create_job
-from model.user import create_user, UserType
 from search.jobs import search
 from test import UnitTestCase
+from test.model.job import JobFactory
 
 
 class TestSearchJobs(UnitTestCase):
@@ -11,35 +9,20 @@ class TestSearchJobs(UnitTestCase):
     def setUp(self):
         super().setUp()
         _create_text_index()
-        self.admin = create_user(username="user_1",
-                                 email="email@test.it",
-                                 password="password",
-                                 user_type=UserType.ADMIN)
 
-        self.company = create_company(name='Company A',
-                                      admin_user_ids=[self.admin['_id']],
-                                      description='')
+        self.job_1 = self.create_from_factory(
+            JobFactory, title="Title one", description="Description ten")
 
-        self.job_1 = create_job(company_id=self.company['_id'],
-                                title="Title one",
-                                description="Description ten")
+        self.job_2 = self.create_from_factory(
+            JobFactory, title="Title two", description="Something Else")
 
-        self.job_2 = create_job(company_id=self.company['_id'],
-                                title="Title two",
-                                description="Something Else")
-
-        self.job_3 = create_job(company_id=self.company['_id'],
-                                title="Tree",
-                                description="Description eleven")
+        self.job_3 = self.create_from_factory(
+            JobFactory, title="Tree", description="Description eleven")
 
     def tearDown(self):
         companies.drop()
         users.drop()
-        job_ids = [j['_id'] for j in [self.job_1, self.job_2, self.job_3]]
-        jobs.delete_many({
-            '_id': {
-                '$in': job_ids}
-        })
+        jobs.drop()
         super().tearDown()
 
     def test_search_jobs_by_title(self):

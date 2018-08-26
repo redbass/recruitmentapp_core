@@ -4,9 +4,8 @@ from freezegun import freeze_time
 
 from model.advert import AdvertStatus
 from model.job.job import get_job
-from model.job.create_job import create_job
 from model.job.job_advert import create_advert_for_a_job, update_advert_status
-from test.model.job import BaseTestJob
+from test.model.job import BaseTestJob, JobFactory
 
 
 class TestSetAdvertStatus(BaseTestJob):
@@ -17,10 +16,21 @@ class TestSetAdvertStatus(BaseTestJob):
         self.advert_duration = 30
 
         with freeze_time(self.advert_created_at):
-            self.job = create_job(company_id=self.company['_id'],
-                                  title='Title', description='Description')
+            self.job = self.create_from_factory(JobFactory)
             self.advert = create_advert_for_a_job(
                 job_id=self.job['_id'], advert_duration=self.advert_duration)
+
+    def test_publish_advert(self):
+        self._assert_set_status(new_status=AdvertStatus.PUBLISHED)
+
+    def test_approve_advert(self):
+        self._assert_set_status(new_status=AdvertStatus.APPROVED)
+
+    def test_set_status_with_wrong_id(self):
+        self._assert_approve_advert_wrong_ids(job_id="123",
+                                              advert_id="RANDOM")
+        self._assert_approve_advert_wrong_ids(job_id=self.job['_id'],
+                                              advert_id="RANDOM")
 
     def _assert_set_status(self, new_status):
         advert_updated_at = datetime(year=1234, month=12, day=12)
@@ -48,18 +58,6 @@ class TestSetAdvertStatus(BaseTestJob):
         }
         self.assertEqual(advert_updated_at, retrieved_job['date']['updated'])
         self.assertEqual(expected_advert, retrieved_advert)
-
-    def test_publish_advert(self):
-        self._assert_set_status(new_status=AdvertStatus.PUBLISHED)
-
-    def test_approve_advert(self):
-        self._assert_set_status(new_status=AdvertStatus.APPROVED)
-
-    def test_set_status_with_wrong_id(self):
-        self._assert_approve_advert_wrong_ids(job_id="123",
-                                              advert_id="RANDOM")
-        self._assert_approve_advert_wrong_ids(job_id=self.job['_id'],
-                                              advert_id="RANDOM")
 
     def _assert_approve_advert_wrong_ids(self, job_id, advert_id):
         with self.assertRaisesRegex(

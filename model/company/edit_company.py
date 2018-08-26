@@ -6,7 +6,7 @@ from model.company.company import get_company
 def edit_company(_id: str,
                  **new_values):
 
-    if not companies.find_one({"_id": _id}):
+    if not get_company(_id):
         raise ValueError('Company id "{company_id}" does not exists'
                          .format(company_id=_id))
 

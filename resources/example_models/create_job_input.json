@@ -1,0 +1,20 @@
+{
+    "company_id": "1234123412341234",
+    "title": "Some title",
+    "description": "Some long description",
+    "duration_days": 28,
+    "location": {
+        "postcode": "eh8 8hf",
+        "latitude": -3.168018,
+        "longitude": 55.95511
+    },
+    "metadata":{
+        "trades": ["software_engineer"],
+        "job_type": "developer"
+    },
+    "rate": {
+        "type": "other",
+        "units": "lines of code",
+        "value": 0.1
+    }
+}

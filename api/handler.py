@@ -38,6 +38,9 @@ def _error_handler(e):
     if type(e) in EXCEPTIONS:
         code = EXCEPTIONS[type(e)]
 
+    if isinstance(e, ValidationError):
+        e_msg = e.message
+
     return jsonify({
         'exception': type(e).__name__,
         'message': e_msg,
