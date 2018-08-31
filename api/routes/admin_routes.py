@@ -1,6 +1,6 @@
 import api.company.admin_company
 import api.job.admin_job
-from api import advert, user
+from api import user
 from api.job import job
 
 ADMIN_PREFIX = 'admin'
@@ -19,7 +19,6 @@ def add_admin_routes(app):
     _add_job_routes(app)
     _add_user_routes(app)
     _add_company_routes(app)
-    _add_advert_routes(app)
 
 
 def _add_company_routes(app):
@@ -73,17 +72,15 @@ def _add_job_routes(app):
                         api.job.admin_job.api_edit_job,
                         methods=['POST'])
 
-
-def _add_advert_routes(app):
     _add_admin_url_rule(app,
                         ADVERTS_URL,
                         'create_advert',
-                        advert.create_advert,
+                        api.job.admin_job.api_add_advert_to_job,
                         methods=['POST'])
     _add_admin_url_rule(app,
                         SET_ADVERT_STATUS_URL,
                         'set_advert_status',
-                        advert.set_advert_status,
+                        api.job.admin_job.set_advert_status,
                         methods=['POST'])
 
 

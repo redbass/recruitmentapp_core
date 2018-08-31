@@ -1,6 +1,7 @@
 import json
 
 from api.routes.routes import SEARCH_ADVERTS_BY_RADIUS_URL
+from db.collections import users, companies, jobs
 from lib.geo import km2rad
 from model.geo_location import get_location
 from test.api import TestApi
@@ -10,6 +11,12 @@ from test.search import EDINBURGH_ZOO, EDINBURGH_EICA, EDINBURGH_CENTER
 
 
 class TestAPISearchByArea(TestApi):
+
+    def tearDown(self):
+        users.drop()
+        companies.drop()
+        jobs.drop()
+        super().tearDown()
 
     def test_search_advert_by_radius(self):
         self._create_jobs()

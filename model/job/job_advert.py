@@ -1,21 +1,28 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from db.collections import jobs
-from model.advert import create_advert
+from model import create_id
+from model.job.job import get_job
 
 
-def create_advert_for_a_job(job_id: str,
-                            advert_duration: int):
-    if not job_id:
-        raise ValueError('job_id cannot be none')
+class AdvertStatus:
+    DRAFT = 'DRAFT'
+    APPROVED = 'APPROVED'
+    PUBLISHED = 'PUBLISHED'
 
-    advert = create_advert(duration=advert_duration)
+
+def add_advert_to_job(job_id: str,
+                      advert_duration_days: int):
+    advert = _create_advert_dict(duration=advert_duration_days)
 
     job = jobs.update_one(
-        {'_id': job_id},
         {
-            '$push': {'adverts': advert},
-            '$set': {'date.updated': datetime.utcnow()}
+            '_id': job_id},
+        {
+            '$push': {
+                'adverts': advert},
+            '$set': {
+                'date.updated': datetime.utcnow()}
         })
 
     if job.matched_count == 0:
@@ -25,38 +32,69 @@ def create_advert_for_a_job(job_id: str,
     return advert
 
 
-def update_advert_status(advert_id, job_id, new_status):
-    job = jobs.find_one(
+def approve_job_advert(advert_id, job_id):
+    return _update_advert_status(advert_id=advert_id, job_id=job_id,
+                                 current_status=AdvertStatus.DRAFT,
+                                 new_status=AdvertStatus.APPROVED)
+
+
+def publish_job_advert(advert_id, job_id):
+    return _update_advert_status(advert_id=advert_id, job_id=job_id,
+                                 current_status=AdvertStatus.APPROVED,
+                                 new_status=AdvertStatus.PUBLISHED)
+
+
+def _create_advert_dict(duration: int) -> dict:
+    if not duration or not isinstance(duration, int) or duration < 0:
+        raise ValueError(
+            "'{d}' is not a valid duration".format(d=duration))
+
+    _id = create_id()
+    return {
+        '_id': _id,
+        'status': AdvertStatus.DRAFT,
+        'duration': duration,
+        'date': {
+            'created': datetime.utcnow(),
+            'updated': datetime.utcnow()
+        }
+    }
+
+
+def _update_advert_status(advert_id, job_id, current_status, new_status):
+    updated_date = datetime.utcnow()
+
+    new_values = {
+        'adverts.$.status': new_status,
+        'adverts.$.date.updated': updated_date,
+        'adverts.$.date.' + new_status.lower(): updated_date,
+    }
+
+    if new_status == AdvertStatus.PUBLISHED:
+        job = get_job(job_id)
+        if job and 'adverts' in job and job.get('adverts'):
+            duration = job['adverts'][0]['duration']
+            expire_date = datetime.now() + timedelta(days=duration)
+            new_values['adverts.$.date.expires'] = expire_date
+
+    job = jobs.update_one(
         {
             '_id': job_id,
             'adverts._id': advert_id,
-            'adverts.status': 'DRAFT'
-        }
-    )
-    if not job:
-        raise ValueError('The advert is not in `DRAFT` or does not exists:'
-                         '(job: `{job_id}`, advert: `{advert_id}`)'
-                         .format(job_id=job_id, advert_id=advert_id))
-
-    updated_date = datetime.utcnow()
-    new_status_log = {
-        'status': new_status,
-        'date': updated_date
-    }
-
-    jobs.update_one(
+            'adverts.status': current_status
+        },
         {
-            '_id': job_id,
-            'adverts._id': advert_id},
-        {
-            '$set': {
-                'date.updated': updated_date,
-                'adverts.$.status': new_status,
-                'adverts.$.date.' + new_status.lower(): updated_date,
-                'adverts.$.date.updated': updated_date
-            },
+            '$set': new_values,
             '$addToSet': {
-                'adverts.$.status_log': new_status_log
+                'adverts.$.status_log': {
+                    'status': new_status,
+                    'date': updated_date
+                }
             }
         }
     )
+
+    if job.matched_count == 0:
+        raise ValueError('Impossible to update the advert status')
+
+    return job
