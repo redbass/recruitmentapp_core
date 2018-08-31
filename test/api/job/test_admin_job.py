@@ -1,13 +1,26 @@
 from json import loads
 
-from api.routes.admin_routes import JOBS_URL, JOB_URL
+from api.routes.admin_routes import JOBS_URL, JOB_URL, ADVERTS_URL, \
+    SET_ADVERT_STATUS_URL
+from db.collections import users, companies, jobs
 from model.job.job import get_job
+from model.job.job_advert import add_advert_to_job, AdvertStatus, \
+    approve_job_advert
 from test.api import TestApi
 from test.model.company import CompanyFactory
 from test.model.job import JobFactory
 
 
-class TestApiCreateJob(TestApi):
+class BaseTestApiJob(TestApi):
+
+    def tearDown(self):
+        users.drop()
+        companies.drop()
+        jobs.drop()
+        super().tearDown()
+
+
+class TestApiCreateJob(BaseTestApiJob):
 
     def setUp(self):
         super().setUp()
@@ -57,7 +70,7 @@ class TestApiCreateJob(TestApi):
         })
 
 
-class EditJob(TestApi):
+class TestEditJob(BaseTestApiJob):
 
     def setUp(self):
         super().setUp()
@@ -93,3 +106,72 @@ class EditJob(TestApi):
 
         self.assertEqual(400, response.status_code)
         self.assertEqual(expected_response, loads(response.data))
+
+
+class TestJobAdvert(BaseTestApiJob):
+
+    def setUp(self):
+        super().setUp()
+        self.job = self.create_from_factory(JobFactory)
+        self.job_id = self.job['_id']
+
+    def test_api_add_advert_to_job(self):
+        expected_duration = 10
+
+        url = self.url_for_admin(ADVERTS_URL, job_id=self.job_id)
+        data = {'duration': expected_duration}
+
+        response = self.post_json(url, data)
+
+        self.assertEqual(200, response.status_code)
+
+        stored_job = get_job(job_id=self.job_id)
+
+        self.assertEquals(AdvertStatus.DRAFT,
+                          stored_job['adverts'][0]['status'])
+
+    def test_api_add_advert_to_job_return_error_invalid_duration(self):
+        duration = "INVALID DURATION"
+        url = self.url_for_admin(ADVERTS_URL, job_id="RANDOM")
+        data = {'duration': duration}
+        response = self.post_json(url, data)
+
+        self.assert_error(response,
+                          400,
+                          "'{duration}' is not a valid duration"
+                          .format(duration=duration))
+
+    def test_approve_advert(self):
+        self.advert = add_advert_to_job(job_id=self.job_id,
+                                        advert_duration_days=15)
+        url = self.url_for_admin(SET_ADVERT_STATUS_URL,
+                                 job_id=self.job_id,
+                                 advert_id=self.advert['_id'],
+                                 action="approve")
+
+        response = self.post_json(url)
+
+        self.assertEqual(200, response.status_code)
+
+        stored_job = get_job(job_id=self.job_id)
+
+        self.assertEquals(AdvertStatus.APPROVED,
+                          stored_job['adverts'][0]['status'])
+
+    def test_publish_advert(self):
+        self.advert = add_advert_to_job(job_id=self.job_id,
+                                        advert_duration_days=15)
+        approve_job_advert(job_id=self.job_id, advert_id=self.advert['_id'])
+        url = self.url_for_admin(SET_ADVERT_STATUS_URL,
+                                 job_id=self.job_id,
+                                 advert_id=self.advert['_id'],
+                                 action="publish")
+
+        response = self.post_json(url)
+
+        self.assertEqual(200, response.status_code)
+
+        stored_job = get_job(job_id=self.job_id)
+
+        self.assertEquals(AdvertStatus.PUBLISHED,
+                          stored_job['adverts'][0]['status'])

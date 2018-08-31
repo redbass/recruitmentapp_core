@@ -21,8 +21,10 @@ class TestGetCompanies(BaseTestCompany):
 
     def test_get_companies(self):
         result = get_companies()
-        self.assertEqual(
-            [self.company_1, self.company_2, self.company_3], list(result))
+        expected_companies = [c['_id'] for c in
+                              [self.company_1, self.company_2, self.company_3]]
+        results = [c['_id'] for c in list(result)]
+        self.assertEqual(expected_companies, results)
 
     def test_get_companies_by_id(self):
         expected_ids = [self.company_1['_id'], self.company_3['_id']]

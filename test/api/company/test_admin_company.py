@@ -1,13 +1,22 @@
 from unittest.mock import patch
 
 from api.routes.admin_routes import COMPANIES_URL, COMPANY_URL
+from db.collections import users, companies
 from test import load_example_model
 from test.api import TestApi
 from test.model.company import CompanyFactory
 from test.model.user import UserFactory
 
 
-class TestCreateCompany(TestApi):
+class BaseTestCompany(TestApi):
+
+    def tearDown(self):
+        users.drop()
+        companies.drop()
+        super().tearDown()
+
+
+class TestCreateCompany(BaseTestCompany):
 
     def test_create_company(self):
         self.create_from_factory(UserFactory, username='super_user')
@@ -19,7 +28,7 @@ class TestCreateCompany(TestApi):
         self.assertEqual(200, response.status_code)
 
 
-class TestEditCompany(TestApi):
+class TestEditCompany(BaseTestCompany):
 
     def test_edit_company(self):
         company = self.create_from_factory(CompanyFactory)
@@ -35,7 +44,7 @@ class TestEditCompany(TestApi):
         self.assertEqual(200, response.status_code)
 
 
-class TestGetCompany(TestApi):
+class TestGetCompany(BaseTestCompany):
 
     @patch('api.company.admin_company.company')
     def test_get_companies(self, company_mock):
