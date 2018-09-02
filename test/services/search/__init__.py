@@ -17,3 +17,7 @@ EDINBURGH_EICA = {
 EDINBURGH_ROSELIN_CHAPEL = {
     "postcode": "EH3 9DZ", "latitude": 55.8538158, "longitude": -3.1861218
 }
+
+ITALY = {
+    "postcode": "", "latitude": 46.056057, "longitude": 13.2091431
+}
