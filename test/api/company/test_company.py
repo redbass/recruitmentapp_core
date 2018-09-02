@@ -1,11 +1,17 @@
 from unittest.mock import patch
 
 from api.routes.routes import COMPANIES_URL
+from db.collections import users, companies
 from model.user import UserType
 from test.api import TestApi
 
 
 class TestCreateCompany(TestApi):
+
+    def tearDown(self):
+        users.drop()
+        companies.drop()
+        super().tearDown()
 
     @patch('api.company.company.company')
     @patch('api.company.company.user')

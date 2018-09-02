@@ -19,6 +19,10 @@ class TestGetCompanies(BaseTestCompany):
         self.company_3 = self.create_from_factory(
             CompanyFactory, admin_user_ids=[self.hiring_manager2['_id']])
 
+    def tearDown(self):
+
+        super().tearDown()
+
     def test_get_companies(self):
         result = get_companies()
         expected_companies = [c['_id'] for c in
