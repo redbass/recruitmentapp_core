@@ -43,6 +43,24 @@ def search(query: str="",
 
         {"$addFields": {"company": {"$arrayElemAt": ["$companies", 0]}}},
 
+        {"$addFields": {
+            "location.address": {
+                "postcode": "$location.postcode",
+                "address": "This is the address",
+                "city": "Test Town",
+            }
+        }},
+
+        {"$addFields": {"metadata.rate.pretty_print": "100£ per day"}},
+
+        {"$addFields": {"metadata.company_referent.full_name": "John Doe"}},
+
+        {"$addFields": {"duration.pretty_print": "3 months and 2 weeks"}},
+
+        {"$addFields": {"company.logo": "http://findastart.palmerminto.com/"
+                                        "wp-content/uploads/2018/06/"
+                                        "cropped-Find-a-Start-logo@2x.png"}},
+
         {"$project": {"companies": 0}}
     ]
 
