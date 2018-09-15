@@ -54,6 +54,8 @@ def search(query: str="",
         {"$addFields": {"metadata.rate.pretty_print": "100£ per day"}},
 
         {"$addFields": {"metadata.company_referent.full_name": "John Doe"}},
+        {"$addFields": {
+            "metadata.company_referent.phone_number": "+44 7873590126"}},
 
         {"$addFields": {"duration.pretty_print": "3 months and 2 weeks"}},
 
