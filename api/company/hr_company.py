@@ -1,6 +1,6 @@
 from flask import request
 
-from api.handler import json_response
+from auth.api_token import api_token_required
 from auth.jwt import jwt_required
 from lib.schema_validation import validate
 from model import user
@@ -10,7 +10,7 @@ from model.user import UserType
 
 
 @jwt_required()
-@json_response
+@api_token_required
 def sign_in_company():
     data = request.json
 

@@ -3,7 +3,6 @@
     "properties": {
         "hm_email": { "type": "string", "minLength": 1, "maxLength": 50 },
         "hm_password": { "type": "string", "minLength": 1, "maxLength": 50 },
-        "hm_confirm_password": { "type": "string", "minLength": 1, "maxLength": 50 },
         "hm_title": {
             "type": "string",
             "enum": ["Mr", "Mrs", "Ms", "Dr"] },
@@ -14,7 +13,7 @@
         "company_description": { "type": "string", "minLength": 1, "maxLength": 500  }
     },
      "required": [
-         "hm_email", "hm_password", "hm_confirm_password", "hm_first_name", "hm_last_name",
+         "hm_email", "hm_password", "hm_first_name", "hm_last_name",
          "company_name", "company_description"
      ],
      "additionalProperties": false
