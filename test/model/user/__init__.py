@@ -11,10 +11,7 @@ class UserFactory(ModelFactory):
         default_values = load_example_model(self.EXAMPLE_MODEL_NAME)
 
         if 'username' not in qwargs:
-            default_values['username'] = self.fake.user_name()
-
-        if 'email' not in qwargs:
-            default_values['email'] = self.fake.email()
+            default_values['username'] = self.fake.email()
 
         default_values.update(qwargs)
 

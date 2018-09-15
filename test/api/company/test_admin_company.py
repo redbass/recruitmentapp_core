@@ -1,31 +1,30 @@
+from json import loads
 from unittest.mock import patch
 
 from api.routes.admin_routes import COMPANIES_URL, COMPANY_URL
-from db.collections import users, companies
+from auth.jwt import TEST_IDENTITY
 from test import load_example_model
-from test.api import TestApi
+from test.api.company import BaseTestCompany
 from test.model.company import CompanyFactory
 from test.model.user import UserFactory
-
-
-class BaseTestCompany(TestApi):
-
-    def tearDown(self):
-        users.drop()
-        companies.drop()
-        super().tearDown()
 
 
 class TestCreateCompany(BaseTestCompany):
 
     def test_create_company(self):
-        self.create_from_factory(UserFactory, username='super_user')
+        self.create_from_factory(UserFactory,
+                                 username=TEST_IDENTITY['username'])
         data = load_example_model('create_company_input')
 
         url = self.url_for_admin(COMPANIES_URL)
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
+
+        result_company = loads(response.data)
+
+        self.assertEqual(data['name'], result_company['name'])
+        self.assertEqual(data['description'], result_company['description'])
 
 
 class TestEditCompany(BaseTestCompany):
@@ -42,6 +41,12 @@ class TestEditCompany(BaseTestCompany):
         response = self.post_json(url, data)
 
         self.assertEqual(200, response.status_code)
+
+        result_company = loads(response.data)
+
+        self.assertEqual(data['name'], result_company['name'])
+        self.assertEqual(data['description'],
+                         result_company['description'])
 
 
 class TestGetCompany(BaseTestCompany):

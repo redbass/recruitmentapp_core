@@ -1,6 +1,8 @@
 {
-    "username": "the_admin_user",
     "email": "test_email@some.domain.com",
     "password": "$3b$12$8UdxurWwpT0BJuCw3/34ouen54iToj0ExSgX0LWrY0a0M4wXCUdqm",
+    "title": "Mr",
+    "first_name": "Silent",
+    "last_name": "Bob",
     "user_type": "ADMIN"
 }

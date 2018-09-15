@@ -14,6 +14,8 @@ from model.user import get_user
 
 __jwt = None
 
+TEST_IDENTITY = {'username': 'super@user.com'}
+
 
 def setup_jwt(app) -> JWTManager:
     global __jwt
@@ -45,17 +47,29 @@ def setup_jwt(app) -> JWTManager:
     return __jwt
 
 
-def jwt_required(fn):
+def jwt_required(get_identity=False):
 
-    @wraps(fn)
-    def wrapped(*args, **qwargs):
+    def decorated(fn):
 
-        if not settings.LOGIN_REQUIRED:
-            return fn(*args, ** qwargs)
+        @wraps(fn)
+        def wrapped(*args, **qwargs):
 
-        return flask_jwt_required(fn)(*args, ** qwargs)
+            if not settings.LOGIN_REQUIRED:
+                if get_identity:
+                    qwargs['identity'] = TEST_IDENTITY
+                return fn(*args, **qwargs)
 
-    return wrapped
+            def jwt_fn():
+                identity = get_jwt_identity()
+                if get_identity:
+                    qwargs['identity'] = identity
+                return fn(*args, **qwargs)
+
+            return flask_jwt_required(jwt_fn)()
+
+        return wrapped
+
+    return decorated
 
 
 def _setup_endpoints(app):
@@ -70,8 +84,9 @@ def _setup_endpoints(app):
             return jsonify({'login': False}), 401
 
         # Create the tokens we will be sending back to the user
-        access_token = create_access_token(identity=username)
-        refresh_token = create_refresh_token(identity=username)
+        identity = _create_identity_object(username)
+        access_token = create_access_token(identity=identity)
+        refresh_token = create_refresh_token(identity=identity)
 
         # Set the JWTs and the CSRF double submit protection cookies
         # in this response
@@ -87,9 +102,11 @@ def _setup_endpoints(app):
     @app.route('/token/refresh', methods=['POST'])
     @jwt_refresh_token_required
     def refresh():
-        current_user = get_jwt_identity()
+        identity = get_jwt_identity()
+        current_user = identity['username']
         ret = {
-            'accessToken': create_access_token(identity=current_user)
+            'accessToken': create_access_token(
+                identity=_create_identity_object(current_user))
         }
         return jsonify(ret), 200
 
@@ -98,3 +115,6 @@ def _setup_endpoints(app):
         resp = jsonify({'logout': True})
         unset_jwt_cookies(resp)
         return resp, 200
+
+    def _create_identity_object(username):
+        return {"username": username}
