@@ -1,0 +1,10 @@
+{
+    "hm_email": "username@email.test",
+    "hm_password": "password",
+    "hm_confirm_password": "password",
+    "hm_first_name": "First",
+    "hm_last_name": "Last",
+    "hm_title": "Mr",
+    "company_name": "Company One",
+    "company_description": "This is a description"
+}
