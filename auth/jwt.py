@@ -93,7 +93,8 @@ def _setup_endpoints(app):
         resp = jsonify({
             'accessToken': access_token,
             'refreshToken': refresh_token,
-            'username': username
+            'username': username,
+            'role': user['type']
         })
         # set_access_cookies(resp, access_token)
         # set_refresh_cookies(resp, refresh_token)
