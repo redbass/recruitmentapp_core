@@ -72,32 +72,30 @@ def _setup_endpoints(app):
             return jsonify({'login': False}), 401
 
         # Create the tokens we will be sending back to the user
-        identity = _create_identity_object(username)
+        identity = _create_identity_object(user)
         access_token = create_access_token(identity=identity)
         refresh_token = create_refresh_token(identity=identity)
 
         # Set the JWTs and the CSRF double submit protection cookies
         # in this response
-        resp = jsonify({
+        resp = {
             'accessToken': access_token,
             'refreshToken': refresh_token,
-            'username': username,
-            'role': user['type']
-        })
+        }
+        resp.update(identity)
         # set_access_cookies(resp, access_token)
         # set_refresh_cookies(resp, refresh_token)
-        return resp, 200
+        return jsonify(resp), 200
 
     @app.route('/token/refresh', methods=['POST'])
     @jwt_refresh_token_required
     def refresh():
         identity = get_jwt_identity()
-        current_user = identity['username']
-        ret = {
-            'accessToken': create_access_token(
-                identity=_create_identity_object(current_user))
+        resp = {
+            'accessToken': create_access_token(identity=identity)
         }
-        return jsonify(ret), 200
+        resp.update(identity)
+        return jsonify(resp), 200
 
     @app.route('/token/remove', methods=['POST'])
     def logout():
@@ -106,5 +104,8 @@ def _setup_endpoints(app):
         return resp, 200
 
 
-def _create_identity_object(username):
-    return {"username": username}
+def _create_identity_object(user):
+    return {
+        'username': user['_id'],
+        'role': user['type']
+    }

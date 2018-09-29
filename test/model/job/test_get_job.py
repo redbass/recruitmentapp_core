@@ -45,3 +45,24 @@ class TestGetJob(BaseTestJob):
         self.assertEqual(
             [company['name'], company['name']],
             [j['company_name'] for j in jobs])
+
+    def test_get_company_jobs(self):
+        company_1 = self.create_from_factory(CompanyFactory)
+        company_2 = self.create_from_factory(CompanyFactory)
+        company_1_id = company_1['_id']
+
+        job_1 = self.create_from_factory(JobFactory, title="Title 1",
+                                         company_id=company_1_id)
+        self.create_from_factory(JobFactory, title="Title 1",
+                                 company_id=company_2['_id'])
+        job_3 = self.create_from_factory(JobFactory, title="Title 1",
+                                         company_id=company_1_id)
+        self.create_from_factory(JobFactory, title="Title 1",
+                                 company_id=company_2['_id'])
+
+        expected_jobs = [job_1, job_3]
+
+        jobs = list(get_jobs(company_1_id))
+
+        self.assertEqual([j['_id'] for j in expected_jobs],
+                         [j['_id'] for j in jobs])

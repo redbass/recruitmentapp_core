@@ -3,7 +3,7 @@ from datetime import datetime
 from db.collections import jobs
 
 
-def get_jobs():
+def get_jobs(company_id=None):
     pipeline = [
         {
             "$lookup": {
@@ -23,6 +23,9 @@ def get_jobs():
         {"$addFields": {"company_name": "$company.name"}},
         {"$project": {"companies": 0, "company": 0}}
     ]
+
+    if company_id:
+        pipeline.insert(0, {"$match": {"company_id": company_id}})
 
     results = jobs.aggregate(pipeline)
 
