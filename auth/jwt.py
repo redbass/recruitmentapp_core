@@ -10,6 +10,7 @@ from flask_jwt_extended import jwt_required as flask_jwt_required, \
 
 from config import settings
 from lib.password import check_password
+from model.company.company import get_company_by_admin_user
 from model.user import get_user
 
 __jwt = None
@@ -105,7 +106,10 @@ def _setup_endpoints(app):
 
 
 def _create_identity_object(user):
+    admin_username = user['_id']
+    company = get_company_by_admin_user(admin_username)
     return {
-        'username': user['_id'],
-        'role': user['type']
+        'username': admin_username,
+        'role': user['type'],
+        'company_id': company['_id']
     }

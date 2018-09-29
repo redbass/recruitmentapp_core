@@ -7,8 +7,9 @@ from api.routes.admin_routes import ADMIN_PREFIX
 from app import get_app
 from auth.jwt import _create_identity_object
 from db.collections import create_indexes
-from model.user import create_user, UserType
 from test import UnitTestCase
+from test.model.company import CompanyFactory
+from test.model.user import UserFactory
 
 TEST_USER = 'test@user.com'
 
@@ -21,18 +22,19 @@ class TestApi(UnitTestCase):
         self.test_app = get_app().test_client()
 
         with get_app().test_request_context():
-            self._user = self._create_test_user()
+            self._user, self._company = self._create_test_user()
+
             self._identity = _create_identity_object(self._user)
             self._token = create_access_token(self._identity)
             self._headers = {
                 'Authorization': 'Bearer {}'.format(self._token)
             }
 
-    @staticmethod
-    def _create_test_user():
-        return create_user(username=TEST_USER, password="password",
-                           first_name="first", last_name="last",
-                           user_type=UserType.ADMIN)
+    def _create_test_user(self):
+        user = self.create_from_factory(UserFactory, username=TEST_USER)
+        company = self.create_from_factory(CompanyFactory,
+                                           admin_user_ids=[user['_id']])
+        return user, company
 
     @staticmethod
     def url_for_admin(endpoint_url, **url_args):
