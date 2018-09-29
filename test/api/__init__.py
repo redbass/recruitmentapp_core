@@ -21,9 +21,9 @@ class TestApi(UnitTestCase):
         self.test_app = get_app().test_client()
 
         with get_app().test_request_context():
-            self._create_test_user()
-            self.identity = _create_identity_object(TEST_USER)
-            self._token = create_access_token(self.identity)
+            self._user = self._create_test_user()
+            self._identity = _create_identity_object(self._user)
+            self._token = create_access_token(self._identity)
             self._headers = {
                 'Authorization': 'Bearer {}'.format(self._token)
             }
