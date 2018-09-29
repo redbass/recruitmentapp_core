@@ -31,8 +31,7 @@ class TestApiGetJobs(BaseTestApiJob):
         self.assertEqual(expected_job['_id'], loads(response.data)['_id'])
 
     def _create_jobs(self):
-        company_1 = self.create_from_factory(
-            CompanyFactory, admin_user_ids=[self._user['_id']])
+        company_1 = self._company
         company_2 = self.create_from_factory(CompanyFactory)
         job_1 = self.create_from_factory(JobFactory,
                                          company_id=company_1['_id'])
