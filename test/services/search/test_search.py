@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-from db.collections import companies, users, jobs, _create_text_index
+from db.collections import jobs, _create_text_index
 from lib.geo import km2rad
 from model.geo_location import get_location
 from model.job.job_advert import add_advert_to_job, approve_job_advert, \
@@ -42,12 +42,6 @@ class BaseSearchTestCase(UnitTestCase):
         self.job_not_publish = self.create_from_factory(
             JobFactory, title="Climber", description="Description eleven",
             location=EDINBURGH_ARTHURS_SEAT)
-
-    def tearDown(self):
-        companies.drop()
-        users.drop()
-        jobs.drop()
-        super().tearDown()
 
     @classmethod
     def _crate_job(cls, duration=15, expired=False, **job_args):

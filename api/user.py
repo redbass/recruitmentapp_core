@@ -4,7 +4,7 @@ from model import user
 from model.user import UserType
 
 
-@jwt_required()
+@jwt_required
 @json_response
 def get_users(user_type: str = None):
 

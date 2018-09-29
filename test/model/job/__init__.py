@@ -1,4 +1,3 @@
-from db.collections import users, companies, jobs
 from model.job.create_job import create_job
 from test import UnitTestCase
 from test import load_example_model
@@ -7,12 +6,7 @@ from test.model.company import CompanyFactory
 
 
 class BaseTestJob(UnitTestCase):
-
-    def tearDown(self):
-        super().tearDown()
-        users.drop()
-        companies.drop()
-        jobs.drop()
+    pass
 
 
 class JobFactory(ModelFactory):

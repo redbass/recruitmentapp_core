@@ -15,7 +15,7 @@ map_advert_action = {
 }
 
 
-@jwt_required()
+@jwt_required
 @json_response
 def api_create_job():
     data = request.json
@@ -25,7 +25,7 @@ def api_create_job():
     return create_job(**data)
 
 
-@jwt_required()
+@jwt_required
 @json_response
 def api_edit_job(job_id):
     data = request.json
@@ -35,7 +35,7 @@ def api_edit_job(job_id):
     return edit_job(_id=job_id, **data)
 
 
-@jwt_required()
+@jwt_required
 @json_response
 def api_add_advert_to_job(job_id: str):
     data = request.json
@@ -44,7 +44,7 @@ def api_add_advert_to_job(job_id: str):
     return add_advert_to_job(job_id=job_id, advert_duration_days=duration)
 
 
-@jwt_required()
+@jwt_required
 @json_response
 def set_advert_status(job_id: str, advert_id: str, action: str):
 

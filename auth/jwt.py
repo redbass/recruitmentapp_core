@@ -47,29 +47,17 @@ def setup_jwt(app) -> JWTManager:
     return __jwt
 
 
-def jwt_required(get_identity=False):
+def jwt_required(fn):
 
-    def decorated(fn):
+    @wraps(fn)
+    def wrapped(*args, **qwargs):
 
-        @wraps(fn)
-        def wrapped(*args, **qwargs):
+        if not settings.LOGIN_REQUIRED:
+            return fn(*args, ** qwargs)
 
-            if not settings.LOGIN_REQUIRED:
-                if get_identity:
-                    qwargs['identity'] = TEST_IDENTITY
-                return fn(*args, **qwargs)
+        return flask_jwt_required(fn)(*args, ** qwargs)
 
-            def jwt_fn():
-                identity = get_jwt_identity()
-                if get_identity:
-                    qwargs['identity'] = identity
-                return fn(*args, **qwargs)
-
-            return flask_jwt_required(jwt_fn)()
-
-        return wrapped
-
-    return decorated
+    return wrapped
 
 
 def _setup_endpoints(app):
@@ -117,5 +105,6 @@ def _setup_endpoints(app):
         unset_jwt_cookies(resp)
         return resp, 200
 
-    def _create_identity_object(username):
-        return {"username": username}
+
+def _create_identity_object(username):
+    return {"username": username}
