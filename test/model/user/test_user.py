@@ -1,4 +1,3 @@
-from db.collections import users
 from lib.password import check_password
 from model.user import UserType, get_user, get_users
 from test import UnitTestCase
@@ -6,10 +5,7 @@ from test.model.user import UserFactory
 
 
 class BaseUserTestCase(UnitTestCase):
-
-    def tearDown(self):
-        users.drop()
-        super().tearDown()
+    pass
 
 
 class CreateUserTestCase(BaseUserTestCase):

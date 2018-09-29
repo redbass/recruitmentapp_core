@@ -2,7 +2,6 @@ import json
 from urllib.parse import urlencode
 
 from api.routes.routes import SEARCH
-from db.collections import create_indexes, users, companies, jobs
 from model.job.job_advert import add_advert_to_job, approve_job_advert, \
     publish_job_advert
 from test.api import TestApi
@@ -15,19 +14,12 @@ class TestAPISearch(TestApi):
 
     def setUp(self):
         super().setUp()
-        create_indexes()
         self.job_1 = self._crate_job(title="job 1",
                                      location=EDINBURGH_ROSELIN_CHAPEL)
         self.job_2 = self._crate_job(title="Something 2",
                                      location=EDINBURGH_ARTHURS_SEAT)
         self.job_3 = self._crate_job(title="job 3",
                                      location=ITALY)
-
-    def tearDown(self):
-        users.drop()
-        companies.drop()
-        jobs.drop()
-        super().tearDown()
 
     def test_search(self):
         query = "job"
@@ -51,7 +43,7 @@ class TestAPISearch(TestApi):
         })
 
         url = "{root}?{params}".format(root=SEARCH, params=params)
-        response = self.test_app.get(url)
+        response = self.get_json(url)
 
         self.assertEqual(200, response.status_code)
 

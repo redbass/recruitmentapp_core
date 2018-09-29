@@ -1,4 +1,3 @@
-from db.collections import companies, users
 from model.company.company import create_company
 from model.user import UserType
 from test import UnitTestCase, load_example_model
@@ -16,11 +15,6 @@ class BaseTestCompany(UnitTestCase):
 
         self.hiring_manager2 = self.create_from_factory(
             UserFactory, user_type=UserType.HIRING_MANAGER)
-
-    def tearDown(self):
-        companies.drop()
-        users.drop()
-        super().tearDown()
 
 
 class CompanyFactory(ModelFactory):

@@ -5,7 +5,7 @@ import pkg_resources
 
 from config import settings
 from db import get_db_name
-from db.collections import db
+from db.collections import db, companies, users, jobs
 from lib.schema_validation import validate
 
 
@@ -23,6 +23,12 @@ class UnitTestCase(TestCase):
     def setUp(self):
         if not settings.TEST_MODE:
             raise Exception('Test have to run in test mode')
+
+    def tearDown(self):
+        companies.drop()
+        users.drop()
+        jobs.drop()
+        super().tearDown()
 
     @classmethod
     def create_from_factory(cls, factory, **qwargs):

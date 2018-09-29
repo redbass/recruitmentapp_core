@@ -2,22 +2,12 @@ from json import loads
 
 from api.routes.admin_routes import JOBS_URL, JOB_URL, ADVERTS_URL, \
     SET_ADVERT_STATUS_URL
-from db.collections import users, companies, jobs
 from model.job.job import get_job
 from model.job.job_advert import add_advert_to_job, AdvertStatus, \
     approve_job_advert
-from test.api import TestApi
+from test.api.job import BaseTestApiJob
 from test.model.company import CompanyFactory
 from test.model.job import JobFactory
-
-
-class BaseTestApiJob(TestApi):
-
-    def tearDown(self):
-        users.drop()
-        companies.drop()
-        jobs.drop()
-        super().tearDown()
 
 
 class TestApiCreateJob(BaseTestApiJob):

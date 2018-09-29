@@ -1,17 +1,10 @@
 from unittest.mock import patch
 
 from api.routes.admin_routes import JOBS_URL, JOB_URL
-from db.collections import users, companies, jobs
-from test.api import TestApi
+from test.api.job import BaseTestApiJob
 
 
-class TestApiGetJobs(TestApi):
-
-    def tearDown(self):
-        users.drop()
-        companies.drop()
-        jobs.drop()
-        super().tearDown()
+class TestApiGetJobs(BaseTestApiJob):
 
     @patch('api.job.job.get_jobs')
     def test_get_jobs(self, get_jobs):
