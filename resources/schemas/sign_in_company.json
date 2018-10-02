@@ -1,0 +1,20 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "hm_email": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "hm_password": { "type": "string", "minLength": 6, "maxLength": 20 },
+        "hm_title": {
+            "type": "string",
+            "enum": ["Mr", "Mrs", "Ms", "Dr"] },
+        "hm_first_name": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "hm_last_name": { "type": "string", "minLength": 1, "maxLength": 50 },
+
+        "company_name": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "company_description": { "type": "string", "minLength": 1, "maxLength": 500  }
+    },
+     "required": [
+         "hm_email", "hm_password", "hm_first_name", "hm_last_name",
+         "company_name", "company_description"
+     ],
+     "additionalProperties": false
+}

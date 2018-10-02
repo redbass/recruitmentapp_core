@@ -1,8 +1,18 @@
 from functools import wraps
 
 from flask.json import jsonify
+from jsonschema import ValidationError
 
-from exceptions import api
+from exceptions.api import ParametersException
+from exceptions.service import ServiceError
+
+EXCEPTIONS = {
+    ParametersException: 400,
+    ValueError: 400,
+    ValidationError: 400,
+
+    ServiceError: 503
+}
 
 
 def json_response(f):
@@ -25,12 +35,14 @@ def _error_handler(e):
     e_msg = str(e)
     code = 500
 
-    #  400 Bad Request
-    if type(e) in [api.ParametersException]:
-        code = 400
+    if type(e) in EXCEPTIONS:
+        code = EXCEPTIONS[type(e)]
+
+    if isinstance(e, ValidationError):
+        e_msg = e.message
 
     return jsonify({
         'exception': type(e).__name__,
-        'msg': e_msg,
+        'message': e_msg,
         'refId': getattr(e, 'ref_id', "")
     }), code

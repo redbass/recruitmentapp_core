@@ -1,7 +1,7 @@
 from json import loads
 
 from api.handler import json_response
-from app import app
+from app import get_app
 from test.api import TestApi
 
 
@@ -17,7 +17,7 @@ class TestHandler(TestApi):
         def _test_foo():
             return _test_foo_data
 
-        with app.app_context():
+        with get_app().app_context():
             result, code = _test_foo()
             self.assertEqual(loads(result), _test_foo_data)
             self.assertEqual(code, 200)

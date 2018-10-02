@@ -1,24 +1,52 @@
-from os import environ
+import os
+
+from lib.base_config import BaseConfig
 
 
-class Config:
+class StagingConfig(BaseConfig):
+    ENC_SEED = 'G2kPfCexw9IRKEro'
+
+    DATABASE_HOST = 'ds229909.mlab.com'
+    DATABASE_PORT = 29909
+    DATABASE_USER = 'dev_recruitment_app'
+    DATABASE_DB_SUFFIX = ''
+    DATABASE_PASSWORD = '076970ce739732354c51bae004fd9f9b'
+    DATABASE_NAME = 'heroku_3kh06v65'
+
+
+class DevConfig(BaseConfig):
+    DEBUG_MODE = True
+
+    DATABASE_HOST = 'localhost'
+    DATABASE_PORT = 27017
+
+
+class TestConfig(DevConfig):
+    LOGIN_REQUIRED = True
+    API_TOKEN_REQUIRED = True
     TEST_MODE = True
+    DATABASE_DB_SUFFIX = 'test'
 
-    DATABASE = {
-        'url': 'localhost',
-        'port': 27017,
+
+class TestCIConfig(TestConfig):
+    DATABASE_DB_SUFFIX = 'test'
+
+
+def _get_settings():
+    app_env = os.environ.get('APP_ENV')
+
+    app_configs = {
+        'test': TestConfig,
+        'test_ci': TestCIConfig,
+        'dev': DevConfig,
+        'staging': StagingConfig
     }
 
+    if app_env not in app_configs.keys():
+        raise Exception(
+            'APP_ENV "{app_env}" not supported'.format(app_env=app_env))
 
-class TestConfig(Config):
-    TEST_MODE = False
-
-
-def get_config():
-    if _is_in_debug_mode():
-        return TestConfig
-    return Config
+    return app_configs.get(app_env)()
 
 
-def _is_in_debug_mode():
-    return environ.get('TEST_MODE', False)
+settings = _get_settings()

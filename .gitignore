@@ -1,3 +1,7 @@
+.virtualenv
 .idea
 .DS_Store
+.mongo_data
 __pycache__/
+
+node_modules
