@@ -3,6 +3,18 @@ import os
 from lib.base_config import BaseConfig
 
 
+class ProductionConfig(BaseConfig):
+    ENC_SEED = 'Erw9IfxRokPG2CKe'
+
+    DATABASE_HOST = 'ds221003.mlab.com'
+    DATABASE_PORT = 21003
+    DATABASE_USER = 'staging_recruitment_app'
+    DATABASE_DB_SUFFIX = ''
+    DATABASE_PASSWORD = \
+        '3c2fbea9fe1e6f01ad4321ecd73b47c202c42afdc10726f71a82fae31220a299'
+    DATABASE_NAME = 'heroku_x8bftx89'
+
+
 class StagingConfig(BaseConfig):
     ENC_SEED = 'G2kPfCexw9IRKEro'
 
@@ -39,7 +51,8 @@ def _get_settings():
         'test': TestConfig,
         'test_ci': TestCIConfig,
         'dev': DevConfig,
-        'staging': StagingConfig
+        'staging': StagingConfig,
+        'production': ProductionConfig
     }
 
     if app_env not in app_configs.keys():

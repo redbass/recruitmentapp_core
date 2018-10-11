@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta
 
-from Crypto.Cipher import AES
+from lib.password import decrypt_system_password, encrypt_system_password
 
 
 class BaseConfig(object):
@@ -31,11 +31,8 @@ class BaseConfig(object):
         if self.DATABASE_PASSWORD:
             self.DATABASE_PASSWORD = self.decrypt(self.DATABASE_PASSWORD)
 
-    def encrypt(self, msg: str):
-        aes = AES.new(self.ENC_PSWD, AES.MODE_CBC, self.ENC_SEED)
-        return aes.encrypt(msg).hex()
+    def encrypt(self, password: str):
+        return encrypt_system_password(password, self.ENC_PSWD, self.ENC_SEED)
 
-    def decrypt(self, cipher_hex: str):
-        b_cipher_hex = bytes(bytearray.fromhex(cipher_hex))
-        aes = AES.new(self.ENC_PSWD, AES.MODE_CBC, self.ENC_SEED)
-        return aes.decrypt(b_cipher_hex).decode()
+    def decrypt(self, hex: str):
+        return decrypt_system_password(hex, self.ENC_PSWD, self.ENC_SEED)
