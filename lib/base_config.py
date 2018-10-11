@@ -9,6 +9,9 @@ class BaseConfig(object):
     ENC_SEED = 'aaaaaaaaaaaaaaaa'
     ENC_PSWD = None
 
+    FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
+    DEFAULT_API_KEY = os.environ.get('DEFAULT_API_KEY')
+
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(seconds=60)
 
     DEBUG_MODE = False

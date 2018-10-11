@@ -4,9 +4,10 @@ from flask import request
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended.exceptions import NoAuthorizationError
 
+from config import settings
 from exceptions.auth import AuthenticationError
 
-TOKEN = "token"
+API_KEI_TOKEN = "token"
 
 
 def api_token_required(fn):
@@ -21,7 +22,7 @@ def api_token_required(fn):
 
         api_key = request.values.get('apiKey', '')
 
-        if api_key != TOKEN:
+        if api_key != settings.DEFAULT_API_KEY or API_KEI_TOKEN:
             raise AuthenticationError("Invalid api token")
         return fn(*args, ** qwargs)
 
