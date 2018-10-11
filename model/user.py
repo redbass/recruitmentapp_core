@@ -1,7 +1,7 @@
 from pymongo.errors import DuplicateKeyError
 
 from db.collections import users
-from lib.password import encrypt_password
+from lib.password import encrypt_user_password
 from lib.validation import validate_email
 
 
@@ -24,7 +24,7 @@ def create_user(username: str,
 
     new_user = {
         '_id': username,
-        'password': encrypt_password(password),
+        'password': encrypt_user_password(password),
         'type': user_type,
         'first_name': first_name,
         'last_name': last_name,

@@ -1,4 +1,4 @@
-from lib.password import check_password
+from lib.password import check_user_password
 from model.user import UserType, get_user, get_users
 from test import UnitTestCase
 from test.model.user import UserFactory
@@ -26,8 +26,8 @@ class CreateUserTestCase(BaseUserTestCase):
             title=self.title, first_name=self.first_name,
             last_name=self.last_name, user_type=self.user_type)
 
-        self.assertTrue(check_password(self.password,
-                                       stored_user.pop('password')))
+        self.assertTrue(check_user_password(self.password,
+                                            stored_user.pop('password')))
 
         self.assertEquals({
             '_id': self.username,

@@ -9,7 +9,7 @@ from flask_jwt_extended import jwt_required as flask_jwt_required, \
     create_refresh_token
 
 from config import settings
-from lib.password import check_password
+from lib.password import check_user_password
 from model.company.company import get_company_by_admin_user
 from model.user import get_user
 
@@ -69,7 +69,7 @@ def _setup_endpoints(app):
         password = request.json.get('password', None)
 
         user = get_user(username)
-        if not user or not check_password(password, user.get('password')):
+        if not user or not check_user_password(password, user.get('password')):
             return jsonify({'login': False}), 401
 
         # Create the tokens we will be sending back to the user
