@@ -16,7 +16,7 @@ class TestApiGetPostcode(TestApi):
         }
 
         url = self.url_for(POSTCODE_SEARCH, postcode='eh88he')
-        response = self.get_json(url)
+        response = self.get_data(url)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected_response, loads(response.data))
@@ -26,7 +26,7 @@ class TestApiGetPostcode(TestApi):
         lib_get_postcode.return_value = {"invalid": "data"}
 
         url = self.url_for(POSTCODE_SEARCH, postcode='eh88he')
-        response = self.get_json(url)
+        response = self.get_data(url)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual({}, loads(response.data))

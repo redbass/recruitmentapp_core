@@ -43,7 +43,7 @@ class TestAPISearch(TestApi):
         })
 
         url = "{root}?{params}".format(root=SEARCH, params=params)
-        response = self.get_json(url)
+        response = self.get_data(url)
 
         self.assertEqual(200, response.status_code)
 

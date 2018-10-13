@@ -55,7 +55,7 @@ class TestGetCompany(BaseTestCompany):
     def test_get_companies(self, company_mock):
 
         url = self.url_for_admin(COMPANIES_URL, )
-        response = self.get_json(url)
+        response = self.get_data(url)
 
         self.assertEqual(200, response.status_code)
         company_mock.get_companies.assert_called_once()
@@ -64,7 +64,7 @@ class TestGetCompany(BaseTestCompany):
     def test_get_company(self, company_mock):
         company_id = '1'
         url = self.url_for_admin(COMPANY_URL, company_id=company_id)
-        response = self.get_json(url)
+        response = self.get_data(url)
 
         self.assertEqual(200, response.status_code)
         company_mock.get_company.assert_called_with(company_id=company_id)

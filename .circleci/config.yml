@@ -42,7 +42,8 @@ jobs:
     working_directory: ~/repo
 
     environment:
-      APP_ENV=test_ci
+      APP_ENV: test_ci
+      FLASK_SECRET_KEY: test
 
     steps:
       - checkout

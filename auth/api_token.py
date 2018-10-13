@@ -22,7 +22,7 @@ def api_token_required(fn):
 
         api_key = request.values.get('apiKey', '')
 
-        if api_key != settings.DEFAULT_API_KEY or API_KEI_TOKEN:
+        if api_key != (settings.DEFAULT_API_KEY or API_KEI_TOKEN):
             raise AuthenticationError("Invalid api token")
         return fn(*args, ** qwargs)
 
