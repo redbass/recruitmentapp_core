@@ -111,5 +111,5 @@ def _create_identity_object(user):
     return {
         'username': admin_username,
         'role': user['type'],
-        'company_id': company['_id']
+        'company_id': company['_id'] if company else None
     }
