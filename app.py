@@ -16,7 +16,8 @@ def get_app(*args, **kwarg) -> Flask:
     if not _app:
         _app = Flask(__name__, *args, **kwarg)
         _app.config.update(
-            SECRET_KEY=settings.FLASK_SECRET_KEY
+            SECRET_KEY=settings.FLASK_SECRET_KEY,
+            MAX_CONTENT_LENGTH=settings.MAX_CONTENT_LENGTH
         )
 
         setup_jwt(_app)

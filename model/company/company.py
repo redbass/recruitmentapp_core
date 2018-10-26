@@ -1,5 +1,7 @@
+from io import BytesIO
 from typing import List
 
+from db import get_grid_fs
 from db.collections import companies, users
 from model import create_id
 from model.user import UserType
@@ -51,3 +53,15 @@ def get_companies(ids: list=None):
 
 def get_company_by_admin_user(admin_user_id: str):
     return companies.find_one({'admin_user_ids': admin_user_id})
+
+
+def store_company_logo(company_id: str,
+                       file: BytesIO) -> str:
+
+    fs = get_grid_fs()
+    return fs.put(file, company_id=company_id)
+
+
+def get_company_logo(company_id: str) -> BytesIO:
+    fs = get_grid_fs()
+    return fs.find_one({'company_id': company_id}, sort=[('uploadDate', -1)])

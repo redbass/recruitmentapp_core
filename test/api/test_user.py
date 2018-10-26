@@ -17,7 +17,7 @@ class TestAPIGetUsers(TestApi):
 
         url = self.url_for_admin(GET_USERS_BY_TYPE_URL,
                                  user_type=user_type.lower())
-        response = self.get_json(url)
+        response = self.get_data(url)
 
         self.assertEqual(200, response.status_code)
         mock_user.get_users.assert_called_with(user_type=user_type)
@@ -26,7 +26,7 @@ class TestAPIGetUsers(TestApi):
     def test_get_users_error_with_wrong_user_type(self):
         user_type = "ABC"
         url = self.url_for_admin(GET_USERS_BY_TYPE_URL, user_type=user_type)
-        response = self.get_json(url)
+        response = self.get_data(url)
 
         self.assertEqual(400, response.status_code)
         self.assertEqual(

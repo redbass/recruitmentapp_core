@@ -26,7 +26,7 @@ class TestApiGetJobs(BaseTestApiJob):
         expected_job, _, __, ___ = self._create_jobs()
 
         url = self.url_for_admin(JOB_URL, job_id=expected_job['_id'])
-        response = self.get_json(url)
+        response = self.get_data(url)
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected_job['_id'], loads(response.data)['_id'])
 
@@ -44,7 +44,7 @@ class TestApiGetJobs(BaseTestApiJob):
         return job_1, job_2, job_3, job_4
 
     def _assert_get_jobs(self, expected_jobs, url):
-        response = self.get_json(url)
+        response = self.get_data(url)
         self.assertEqual(200, response.status_code)
         result_jobs = loads(response.data)
         self.assertEqual([j['_id'] for j in expected_jobs],

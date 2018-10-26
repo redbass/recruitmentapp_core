@@ -1,11 +1,11 @@
-from db.collections import jobs, create_indexes
+from db.collections import jobs, setup_database
 from test import UnitTestCase
 
 
 class TestCollections(UnitTestCase):
 
     def test_job_search_index_created(self):
-        create_indexes()
+        setup_database()
         indexes = jobs.index_information()
         search_index = indexes.get('search_index')
 

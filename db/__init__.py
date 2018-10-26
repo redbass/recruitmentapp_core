@@ -1,3 +1,4 @@
+import gridfs
 from pymongo import MongoClient
 from pymongo.database import Database
 
@@ -5,8 +6,42 @@ from config import settings
 
 DATABASE_NAME = 'recruitment_app'
 
+_db = None
+_fs = None
 
-def get_client() -> MongoClient:
+
+def get_db() -> Database:
+    global _db
+
+    if not _db:
+        client = _get_client()
+        db_name = get_db_name()
+        _db = client[db_name]
+
+    return _db
+
+
+def get_grid_fs() -> gridfs.GridFS:
+    global _fs
+
+    if not _fs:
+        db = get_db()
+        _fs = gridfs.GridFS(db)
+
+    return _fs
+
+
+def get_db_name():
+
+    db_name = settings.DATABASE_NAME or DATABASE_NAME
+
+    if settings.DATABASE_DB_SUFFIX:
+        db_name = db_name + '_' + settings.DATABASE_DB_SUFFIX
+
+    return db_name
+
+
+def _get_client() -> MongoClient:
 
     url = 'mongodb://{host}:{port}/{db_name}'.format(
         host=settings.DATABASE_HOST,
@@ -22,23 +57,4 @@ def get_client() -> MongoClient:
         'serverSelectionTimeoutMS': 10000
     }
 
-    client = MongoClient(url, **params)
-    return client
-
-
-def get_db() -> Database:
-    client = get_client()
-
-    db_name = get_db_name()
-
-    return client[db_name]
-
-
-def get_db_name():
-
-    db_name = settings.DATABASE_NAME or DATABASE_NAME
-
-    if settings.DATABASE_DB_SUFFIX:
-        db_name = db_name + '_' + settings.DATABASE_DB_SUFFIX
-
-    return db_name
+    return MongoClient(url, **params)

@@ -9,6 +9,7 @@ class BaseConfig(object):
     ENC_SEED = 'aaaaaaaaaaaaaaaa'
     ENC_PSWD = None
 
+    MAX_CONTENT_LENGTH = 400000
     FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
     DEFAULT_API_KEY = os.environ.get('DEFAULT_API_KEY')
 
