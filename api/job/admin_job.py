@@ -7,11 +7,12 @@ from model.job.create_job import create_job
 from model.job.edit_job import edit_job
 from model.job.job import get_job
 from model.job.job_advert import approve_job_advert, publish_job_advert, \
-    add_advert_to_job
+    add_advert_to_job, pay_job_advert
 
 map_advert_action = {
-    'publish': publish_job_advert,
+    'pay': pay_job_advert,
     'approve': approve_job_advert,
+    'publish': publish_job_advert,
 }
 
 

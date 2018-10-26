@@ -104,6 +104,8 @@ class TestJobAdvert(BaseTestApiJob):
         super().setUp()
         self.job = self.create_from_factory(JobFactory)
         self.job_id = self.job['_id']
+        self.advert = add_advert_to_job(job_id=self.job_id,
+                                        advert_duration_days=15)
 
     def test_api_add_advert_to_job(self):
         expected_duration = 10
@@ -132,36 +134,28 @@ class TestJobAdvert(BaseTestApiJob):
                           .format(duration=duration))
 
     def test_approve_advert(self):
-        self.advert = add_advert_to_job(job_id=self.job_id,
-                                        advert_duration_days=15)
-        url = self.url_for_admin(SET_ADVERT_STATUS_URL,
-                                 job_id=self.job_id,
-                                 advert_id=self.advert['_id'],
-                                 action="approve")
+        self._assert_set_status(action="approve",
+                                expected_action=AdvertStatus.APPROVED)
 
-        response = self.post_json(url)
+    def test_pay_advert(self):
+        approve_job_advert(job_id=self.job_id, advert_id=self.advert['_id'])
 
-        self.assertEqual(200, response.status_code)
-
-        stored_job = get_job(job_id=self.job_id)
-
-        self.assertEquals(AdvertStatus.APPROVED,
-                          stored_job['adverts'][0]['status'])
+        self._assert_set_status(action="pay",
+                                expected_action=AdvertStatus.PAYED)
 
     def test_publish_advert(self):
-        self.advert = add_advert_to_job(job_id=self.job_id,
-                                        advert_duration_days=15)
         approve_job_advert(job_id=self.job_id, advert_id=self.advert['_id'])
+
+        self._assert_set_status(action="publish",
+                                expected_action=AdvertStatus.PUBLISHED)
+
+    def _assert_set_status(self, action, expected_action):
         url = self.url_for_admin(SET_ADVERT_STATUS_URL,
                                  job_id=self.job_id,
                                  advert_id=self.advert['_id'],
-                                 action="publish")
-
+                                 action=action)
         response = self.post_json(url)
-
         self.assertEqual(200, response.status_code)
-
         stored_job = get_job(job_id=self.job_id)
-
-        self.assertEquals(AdvertStatus.PUBLISHED,
+        self.assertEquals(expected_action,
                           stored_job['adverts'][0]['status'])

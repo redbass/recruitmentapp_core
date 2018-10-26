@@ -8,6 +8,7 @@ from model.job.job import get_job
 class AdvertStatus:
     DRAFT = 'DRAFT'
     APPROVED = 'APPROVED'
+    PAYED = 'PAYED'
     PUBLISHED = 'PUBLISHED'
 
 
@@ -34,13 +35,20 @@ def add_advert_to_job(job_id: str,
 
 def approve_job_advert(advert_id, job_id):
     return _update_advert_status(advert_id=advert_id, job_id=job_id,
-                                 current_status=AdvertStatus.DRAFT,
+                                 current_statuses=[AdvertStatus.DRAFT],
                                  new_status=AdvertStatus.APPROVED)
+
+
+def pay_job_advert(advert_id, job_id):
+    return _update_advert_status(advert_id=advert_id, job_id=job_id,
+                                 current_statuses=[AdvertStatus.APPROVED],
+                                 new_status=AdvertStatus.PAYED)
 
 
 def publish_job_advert(advert_id, job_id):
     return _update_advert_status(advert_id=advert_id, job_id=job_id,
-                                 current_status=AdvertStatus.APPROVED,
+                                 current_statuses=[AdvertStatus.APPROVED,
+                                                   AdvertStatus.PAYED],
                                  new_status=AdvertStatus.PUBLISHED)
 
 
@@ -61,7 +69,7 @@ def _create_advert_dict(duration: int) -> dict:
     }
 
 
-def _update_advert_status(advert_id, job_id, current_status, new_status):
+def _update_advert_status(advert_id, job_id, current_statuses, new_status):
     updated_date = datetime.utcnow()
 
     new_values = {
@@ -81,7 +89,7 @@ def _update_advert_status(advert_id, job_id, current_status, new_status):
         {
             '_id': job_id,
             'adverts._id': advert_id,
-            'adverts.status': current_status
+            'adverts.status': {"$in": current_statuses}
         },
         {
             '$set': new_values,
