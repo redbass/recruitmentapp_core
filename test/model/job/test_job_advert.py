@@ -4,7 +4,7 @@ from freezegun import freeze_time
 
 from model.job.job import get_job
 from model.job.job_advert import add_advert_to_job, _create_advert_dict, \
-    AdvertStatus, approve_job_advert, publish_job_advert
+    AdvertStatus, approve_job_advert, publish_job_advert, pay_job_advert
 from test.model.job import BaseTestJob, JobFactory
 
 
@@ -52,24 +52,34 @@ class TestSetStatusJobAdvert(BaseTestJobAdvert):
 
     def test_approve_job(self):
         approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+        self._assert_job_status(AdvertStatus.APPROVED)
 
-        stored_job = get_job(job_id=self.job_id)
-        stored_advert = stored_job['adverts'][0]
-
-        self.assertEquals(AdvertStatus.APPROVED, stored_advert['status'])
-        self.assertEquals(self.days, stored_advert['duration'])
+    def test_pay_job(self):
+        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+        pay_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+        self._assert_job_status(AdvertStatus.PAYED)
 
     @freeze_time("2015-10-26")
-    def test_publish_job(self):
+    def test_publish_approved_job(self):
+        expected_status = AdvertStatus.PUBLISHED
+
         approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
         publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+
+        stored_advert = self._assert_job_status(expected_status)
+
         expires_at = datetime.now() + timedelta(days=self.days)
+        self.assertEquals(expires_at, stored_advert['date']['expires'])
 
-        stored_job = get_job(job_id=self.job_id)
-        stored_advert = stored_job['adverts'][0]
+    @freeze_time("2015-10-26")
+    def test_publish_payed_job(self):
+        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+        pay_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+        publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
 
-        self.assertEquals(AdvertStatus.PUBLISHED, stored_advert['status'])
-        self.assertEquals(self.days, stored_advert['duration'])
+        stored_advert = self._assert_job_status(AdvertStatus.PUBLISHED)
+
+        expires_at = datetime.now() + timedelta(days=self.days)
         self.assertEquals(expires_at, stored_advert['date']['expires'])
 
     def test_approve_non_draft_advert(self):
@@ -87,6 +97,21 @@ class TestSetStatusJobAdvert(BaseTestJobAdvert):
         with self.assertRaisesRegex(ValueError,
                                     'Impossible to update the advert status'):
             publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+
+    def test_pay_non_approved_advert(self):
+        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+        publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+
+        with self.assertRaisesRegex(ValueError,
+                                    'Impossible to update the advert status'):
+            pay_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+
+    def _assert_job_status(self, expected_status):
+        stored_job = get_job(job_id=self.job_id)
+        stored_advert = stored_job['adverts'][0]
+        self.assertEquals(expected_status, stored_advert['status'])
+        self.assertEquals(self.days, stored_advert['duration'])
+        return stored_advert
 
 
 class TestJobAdvertMethods(BaseTestJob):
