@@ -5,7 +5,7 @@ import pkg_resources
 
 from config import settings
 from db import get_db_name
-from db.collections import db, companies, users, jobs
+from db.collections import db, companies, users, jobs, payments
 from lib.schema_validation import validate
 
 
@@ -28,6 +28,7 @@ class UnitTestCase(TestCase):
         companies.drop()
         users.drop()
         jobs.drop()
+        payments.drop()
         super().tearDown()
 
     @classmethod

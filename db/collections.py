@@ -6,6 +6,7 @@ db = get_db()
 jobs = db.jobs
 users = db.users
 companies = db.companies
+payments = db.payments
 files = db['fs.files']
 
 # Indexes
