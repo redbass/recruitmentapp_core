@@ -6,26 +6,26 @@ from auth.jwt import setup_jwt
 from config import settings
 from lib.healthchecks import set_health_check
 
-_app = None
+__app__ = None
 
 
 def get_app(*args, **kwarg) -> Flask:
 
-    global _app
+    global __app__
 
-    if not _app:
-        _app = Flask(__name__, *args, **kwarg)
-        _app.config.update(
+    if not __app__:
+        __app__ = Flask(__name__, *args, **kwarg)
+        __app__.config.update(
             SECRET_KEY=settings.FLASK_SECRET_KEY,
             MAX_CONTENT_LENGTH=settings.MAX_CONTENT_LENGTH
         )
 
-        setup_jwt(_app)
-        add_routes(_app)
-        set_health_check(_app)
-        set_flask_json_encoder(_app)
+        setup_jwt(__app__)
+        add_routes(__app__)
+        set_health_check(__app__)
+        set_flask_json_encoder(__app__)
 
-    return _app
+    return __app__
 
 
 if __name__ == '__main__':
