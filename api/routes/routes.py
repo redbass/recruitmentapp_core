@@ -1,4 +1,5 @@
-from api.services import postcode, picklist, search, stripe_webhooks
+from api.services import postcode, picklist, search
+from api.integration import stripe
 from api.company import company
 
 SEARCH_STATIC = '/api/job/search_static'
@@ -10,12 +11,13 @@ POSTCODE_SEARCH = '/api/postcode/<postcode>'
 
 COMPANY_LOGO = '/api/company/<company_id>/logo'
 
-STRIPE_WEBHOOK_CHARGE = '/api/job/charge'
+STRIPE_CHARGE_PROCESSED = '/api/stripe/charge/processed'
 
 
 def add_generic_routes(app):
 
     _add_services_routes(app)
+    _add_integration_routes(app)
     _add_company_routes(app)
 
 
@@ -36,9 +38,12 @@ def _add_services_routes(app):
                      'postcode',
                      postcode.get_postcode,
                      methods=['GET'])
-    app.add_url_rule(STRIPE_WEBHOOK_CHARGE,
-                     'stripe_webhook_charge',
-                     stripe_webhooks.publish_advert_by_stripe_webhook_charge,
+
+
+def _add_integration_routes(app):
+    app.add_url_rule(STRIPE_CHARGE_PROCESSED,
+                     'stripe_charge_processed',
+                     stripe.stripe_charge_processed,
                      methods=['POST'])
 
 

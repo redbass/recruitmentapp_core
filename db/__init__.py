@@ -14,7 +14,7 @@ def get_db() -> Database:
     global _db
 
     if not _db:
-        client = _get_client()
+        client = _get_mongo_client()
         db_name = get_db_name()
         _db = client[db_name]
 
@@ -41,7 +41,7 @@ def get_db_name():
     return db_name
 
 
-def _get_client() -> MongoClient:
+def _get_mongo_client() -> MongoClient:
 
     url = 'mongodb://{host}:{port}/{db_name}'.format(
         host=settings.DATABASE_HOST,
