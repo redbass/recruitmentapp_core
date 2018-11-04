@@ -1,7 +1,6 @@
 from flask import request
 
 from api.handler import json_response
-from services.stripe import pay_job_advert
 from auth.jwt import jwt_required
 from lib.schema_validation import validate
 from model.job.create_job import create_job
@@ -45,7 +44,6 @@ def api_add_advert_to_job(job_id: str):
 def set_advert_status(job_id: str, advert_id: str, action: str):
 
     map_advert_action = {
-        'pay': pay_job_advert,
         'approve': approve_job_advert,
         'publish': publish_job_advert,
     }

@@ -7,7 +7,7 @@ from lib.password import decrypt_system_password, encrypt_system_password
 class BaseConfig(object):
 
     ENC_SEED = 'aaaaaaaaaaaaaaaa'
-    ENC_PSWD = None
+    ENC_PSWD = os.environ.get('ENC_PSWD', None)
 
     MAX_CONTENT_LENGTH = 400000
     FLASK_SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
@@ -29,9 +29,10 @@ class BaseConfig(object):
     DATABASE_NAME = None
     DATABASE_DB_SUFFIX = ''
 
-    def __init__(self):
-        self.ENC_PSWD = os.environ.get('ENC_PSWD', None)
+    STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', None)
+    STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', None)
 
+    def __init__(self):
         if self.DATABASE_PASSWORD:
             self.DATABASE_PASSWORD = self.decrypt(self.DATABASE_PASSWORD)
 

@@ -137,25 +137,26 @@ class TestJobAdvert(BaseTestApiJob):
         self._assert_set_status(action="approve",
                                 expected_action=AdvertStatus.APPROVED)
 
-    def test_pay_advert(self):
-        approve_job_advert(job_id=self.job_id, advert_id=self.advert['_id'])
-
-        self._assert_set_status(action="pay",
-                                expected_action=AdvertStatus.PAYED)
-
     def test_publish_advert(self):
         approve_job_advert(job_id=self.job_id, advert_id=self.advert['_id'])
 
         self._assert_set_status(action="publish",
                                 expected_action=AdvertStatus.PUBLISHED)
 
+    def test_set_non_existent_status(self):
+        response = self._make_set_status_call(action="RANDOM")
+        self.assertEqual(400, response.status_code)
+
     def _assert_set_status(self, action, expected_action):
-        url = self.url_for_admin(SET_ADVERT_STATUS_URL,
-                                 job_id=self.job_id,
-                                 advert_id=self.advert['_id'],
-                                 action=action)
-        response = self.post_json(url)
+        response = self._make_set_status_call(action)
         self.assertEqual(200, response.status_code)
         stored_job = get_job(job_id=self.job_id)
         self.assertEquals(expected_action,
                           stored_job['adverts'][0]['status'])
+
+    def _make_set_status_call(self, action):
+        url = self.url_for_admin(SET_ADVERT_STATUS_URL,
+                                 job_id=self.job_id,
+                                 advert_id=self.advert['_id'],
+                                 action=action)
+        return self.post_json(url)
