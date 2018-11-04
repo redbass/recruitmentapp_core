@@ -11,6 +11,7 @@ JOBS_URL = '/api/job'
 JOB_URL = '/api/job/<job_id>'
 ADVERTS_URL = '/api/job/<job_id>/advert'
 SET_ADVERT_STATUS_URL = '/api/job/<job_id>/advert/<advert_id>/<action>'
+PAY_ADVERT_URL = '/api/job/<job_id>/advert/<advert_id>/pay'
 
 GET_USERS_BY_TYPE_URL = '/api/user/<user_type>'
 

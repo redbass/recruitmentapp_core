@@ -1,10 +1,12 @@
-from datetime import datetime, timedelta
+from datetime import datetime
+from unittest.mock import patch, ANY
 
 from freezegun import freeze_time
 
 from model.job.job import get_job
 from model.job.job_advert import add_advert_to_job, _create_advert_dict, \
-    AdvertStatus, approve_job_advert, publish_job_advert, pay_job_advert
+    AdvertStatus, approve_job_advert, publish_job_advert, pay_job_advert, \
+    publish_payed_job_advert, _update_advert_status
 from test.model.job import BaseTestJob, JobFactory
 
 
@@ -46,72 +48,76 @@ class TestSetStatusJobAdvert(BaseTestJobAdvert):
     def setUp(self):
         super().setUp()
         self.days = 15
+        add_advert_to_job(job_id=self.job_id, advert_duration_days=self.days)
         self.advert = add_advert_to_job(
             job_id=self.job_id, advert_duration_days=self.days)
+        add_advert_to_job(job_id=self.job_id, advert_duration_days=self.days)
         self.advert_id = self.advert['_id']
 
-    def test_approve_job(self):
-        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        self._assert_job_status(AdvertStatus.APPROVED)
+    def test_approve_job_advert(self):
+        self._assert_called_update_advert_status_with(
+            func=approve_job_advert,
+            allowed_statuses=[AdvertStatus.DRAFT],
+            new_status=AdvertStatus.APPROVED)
 
-    def test_pay_job(self):
-        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        pay_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        self._assert_job_status(AdvertStatus.PAYED)
+    def test_pay_job_advert(self):
+        self._assert_called_update_advert_status_with(
+            func=pay_job_advert,
+            allowed_statuses=[AdvertStatus.APPROVED],
+            new_status=AdvertStatus.PAYED)
 
-    @freeze_time("2015-10-26")
-    def test_publish_approved_job(self):
-        expected_status = AdvertStatus.PUBLISHED
+    def test_publish_payed_job_advert(self):
+        self._assert_called_update_advert_status_with(
+            func=publish_payed_job_advert,
+            allowed_statuses=[AdvertStatus.PAYED],
+            new_status=AdvertStatus.PUBLISHED)
 
-        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
+    def test_publish_job_advert(self):
+        self._assert_called_update_advert_status_with(
+            func=publish_job_advert,
+            allowed_statuses=[AdvertStatus.APPROVED,
+                              AdvertStatus.PAYED],
+            new_status=AdvertStatus.PUBLISHED)
 
-        stored_advert = self._assert_job_status(expected_status)
+    def test_update_advert_status_base_case(self):
+        new_status = "random_value"
+        _update_advert_status(advert_id=self.advert_id,
+                              job_id=self.job_id,
+                              allowed_statuses=[AdvertStatus.DRAFT],
+                              new_status=new_status)
+        self._assert_job_status(expected_status=new_status)
 
-        expires_at = datetime.now() + timedelta(days=self.days)
-        self.assertEquals(expires_at, stored_advert['date']['expires'])
+    def test_update_advert_status_new_status_PUBLISHED_set_expire_date(self):
+        new_status = AdvertStatus.PUBLISHED
+        _update_advert_status(advert_id=self.advert_id,
+                              job_id=self.job_id,
+                              allowed_statuses=[AdvertStatus.DRAFT],
+                              new_status=new_status)
+        self._assert_job_status(expected_status=new_status,
+                                expected_expires_date=ANY)
 
-    @freeze_time("2015-10-26")
-    def test_publish_payed_job(self):
-        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        pay_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-
-        stored_advert = self._assert_job_status(AdvertStatus.PUBLISHED)
-
-        expires_at = datetime.now() + timedelta(days=self.days)
-        self.assertEquals(expires_at, stored_advert['date']['expires'])
-
-    def test_approve_non_draft_advert(self):
-        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-
-        with self.assertRaisesRegex(ValueError,
-                                    'Impossible to update the advert status'):
-            approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-
-    def test_publish_non_approved_advert(self):
-        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-
-        with self.assertRaisesRegex(ValueError,
-                                    'Impossible to update the advert status'):
-            publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-
-    def test_pay_non_approved_advert(self):
-        approve_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-        publish_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-
-        with self.assertRaisesRegex(ValueError,
-                                    'Impossible to update the advert status'):
-            pay_job_advert(advert_id=self.advert_id, job_id=self.job_id)
-
-    def _assert_job_status(self, expected_status):
+    def _assert_job_status(self, expected_status, expected_expires_date=None):
+        default_status = AdvertStatus.DRAFT
         stored_job = get_job(job_id=self.job_id)
-        stored_advert = stored_job['adverts'][0]
-        self.assertEquals(expected_status, stored_advert['status'])
-        self.assertEquals(self.days, stored_advert['duration'])
-        return stored_advert
+        first_advert = stored_job['adverts'][0]
+        last_advert = stored_job['adverts'][-1]
+        modified_advert = stored_job['adverts'][1]
+        self.assertEquals(default_status, first_advert['status'])
+        self.assertEquals(expected_status, modified_advert['status'])
+        self.assertEquals(default_status, last_advert['status'])
+        self.assertEquals(self.days, modified_advert['duration'])
+        self.assertEquals(expected_expires_date,
+                          modified_advert['date'].get('expires'))
+
+    def _assert_called_update_advert_status_with(self, func,
+                                                 allowed_statuses, new_status):
+        with patch('model.job.job_advert._update_advert_status') as mock:
+            func(job_id=self.job_id, advert_id=self.advert_id)
+            mock.assert_called_once_with(
+                advert_id=self.advert_id,
+                job_id=self.job_id,
+                allowed_statuses=allowed_statuses,
+                new_status=new_status)
 
 
 class TestJobAdvertMethods(BaseTestJob):

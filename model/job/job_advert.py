@@ -45,6 +45,12 @@ def pay_job_advert(advert_id, job_id):
                                  new_status=AdvertStatus.PAYED)
 
 
+def publish_payed_job_advert(advert_id, job_id):
+    return _update_advert_status(advert_id=advert_id, job_id=job_id,
+                                 allowed_statuses=[AdvertStatus.PAYED],
+                                 new_status=AdvertStatus.PUBLISHED)
+
+
 def publish_job_advert(advert_id, job_id):
     return _update_advert_status(advert_id=advert_id, job_id=job_id,
                                  allowed_statuses=[AdvertStatus.APPROVED,
@@ -88,8 +94,12 @@ def _update_advert_status(advert_id, job_id, allowed_statuses, new_status):
     job = jobs.update_one(
         {
             '_id': job_id,
-            'adverts._id': advert_id,
-            'adverts.status': {"$in": allowed_statuses}
+            'adverts': {
+                '$elemMatch': {
+                    'status': {"$in": allowed_statuses},
+                    '_id': advert_id,
+                }
+            }
         },
         {
             '$set': new_values,
@@ -103,6 +113,7 @@ def _update_advert_status(advert_id, job_id, allowed_statuses, new_status):
     )
 
     if job.matched_count == 0:
-        raise ValueError('Impossible to update the advert status')
+        raise ValueError('Impossible to update the advert status to {status}'
+                         .format(status=new_status))
 
     return job

@@ -17,12 +17,10 @@ class TestPayAdverts(UnitTestCase):
         self.advert_id = response_object['metadata']['advert_id']
 
     def test_store_payment(self):
-        payment_id, job_id, advert_id = store_payment(STRIPE_CHARGE_RESPONSE)
+        store_payment(payment_id=self.payment_id,
+                      payment_content=STRIPE_CHARGE_RESPONSE)
 
         stored_payment = payments.find_one({'_id': self.payment_id})
         stored_content = stored_payment['content']
 
-        self.assertEquals(self.payment_id, payment_id)
-        self.assertEquals(self.job_id, job_id)
-        self.assertEquals(self.advert_id, advert_id)
         self.assertEquals(STRIPE_CHARGE_RESPONSE, stored_content)
