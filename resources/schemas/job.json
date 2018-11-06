@@ -48,6 +48,10 @@
                         "type",
                         "coordinates"
                     ]
+                },
+                "admin_district": {
+                    "type": "string",
+                    "minimum": 1
                 }
             },
             "required": [

@@ -32,6 +32,10 @@
                     "type": "number",
                     "minimum": -180,
                     "maximum": 180
+                },
+                "admin_district": {
+                    "type": "string",
+                    "minimum": 1
                 }
             },
             "required": [

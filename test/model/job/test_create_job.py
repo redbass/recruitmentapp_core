@@ -43,6 +43,7 @@ class TestCreateJob(BaseTestJob):
             "duration_days": 28,
             "location": {
                 "postcode": "eh8 8hf",
+                "admin_district": "Edinburgh",
                 "latitude": -3.168018,
                 "longitude": 55.95511
             },
