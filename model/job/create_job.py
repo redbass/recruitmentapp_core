@@ -24,9 +24,10 @@ def _input_location_to_location(input_location):
     latitude = float(input_location.get('latitude'))
     longitude = float(input_location.get('longitude'))
     postcode = input_location.get('postcode')
+    admin_district = input_location.get('admin_district')
 
     validate_lat_long_values(latitude, longitude)
-    return get_location(postcode, latitude, longitude)
+    return get_location(postcode, admin_district, latitude, longitude)
 
 
 def _validate_company_id(company_id):

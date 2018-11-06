@@ -8,7 +8,8 @@ class TestLocation(TestCase):
     def test_location(self):
         lat = 55.966758728026
         lng = -3.2203674316403
-        location = get_location("EH1 1HE", lat, lng)
+        admin_district = "test district"
+        location = get_location("EH1 1HE", admin_district, lat, lng)
 
         geo_coordinates = self._get_geo_coordinates(location)
 

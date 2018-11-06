@@ -1,9 +1,10 @@
 from geojson import Point
 
 
-def get_location(postcode, latitude, longitude):
+def get_location(postcode, admin_district, latitude, longitude):
     return {
         "postcode": postcode,
+        "admin_district": admin_district,
         "geo_location": get_geo_location(latitude, longitude)
     }
 

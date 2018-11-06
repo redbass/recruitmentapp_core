@@ -121,15 +121,16 @@ class SearchByLocationTestCase(BaseSearchTestCase):
 
     def test_search_advert_by_radius_6km(self):
         rad = km2rad(6)
-        results = search(query="Job", location=self.city_center, radius=rad)
+        results = search(query="Job", location=self.city_center,
+                         radius=rad)
         results = list(results)
 
         self.assertEqual(1, len(results))
 
     def test_search_advert_by_radius_11km(self):
         rad = km2rad(11)
-        results = search(
-            query="Job eleven", location=self.city_center, radius=rad)
+        results = search(query="Job eleven", location=self.city_center,
+                         radius=rad)
         results = list(results)
 
         self.assertEqual(2, len(results))
