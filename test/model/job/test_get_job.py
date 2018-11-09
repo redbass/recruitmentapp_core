@@ -1,6 +1,8 @@
 from freezegun import freeze_time
 
 from model.job.job import get_job, get_jobs
+from model.job.job_advert import request_approval_job_advert, \
+    add_advert_to_job, AdvertStatus
 from test.model.company import CompanyFactory
 from test.model.job import BaseTestJob, JobFactory
 
@@ -66,3 +68,24 @@ class TestGetJob(BaseTestJob):
 
         self.assertEqual([j['_id'] for j in expected_jobs],
                          [j['_id'] for j in jobs])
+
+    def test_get_jobs_filtered_by_advert_type(self):
+        job_1, advert1 = self._create_job_with_advert()
+        _, __ = self._create_job_with_advert()
+        job_3, advert3 = self._create_job_with_advert()
+
+        request_approval_job_advert(job_id=job_1['_id'],
+                                    advert_id=advert1['_id'])
+        request_approval_job_advert(job_id=job_3['_id'],
+                                    advert_id=advert3['_id'])
+
+        expected_job_ids = [job_1['_id'], job_3['_id']]
+
+        jobs = get_jobs(advert_type_filter=AdvertStatus.REQUEST_APPROVAL)
+
+        self.assertEquals(expected_job_ids, [j['_id'] for j in list(jobs)])
+
+    def _create_job_with_advert(self):
+        job = self.create_from_factory(JobFactory)
+        advert = add_advert_to_job(job_id=job['_id'], advert_duration_days=10)
+        return job, advert
