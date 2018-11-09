@@ -81,7 +81,7 @@ class TestGetJob(BaseTestJob):
 
         expected_job_ids = [job_1['_id'], job_3['_id']]
 
-        jobs = get_jobs(advert_type_filter=AdvertStatus.REQUEST_APPROVAL)
+        jobs = get_jobs(adverts_status_filter=AdvertStatus.REQUEST_APPROVAL)
 
         self.assertEquals(expected_job_ids, [j['_id'] for j in list(jobs)])
 

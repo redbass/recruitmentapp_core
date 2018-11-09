@@ -1,6 +1,8 @@
 from api.routes.admin_routes import JOBS_URL, JOB_URL
 from json import loads
 from api.routes.hm_routes import COMPANY_JOBS_URL
+from model.job.job_advert import request_approval_job_advert, AdvertStatus, \
+    add_advert_to_job
 from test.api.job import BaseTestApiJob
 from test.model.company import CompanyFactory
 from test.model.job import JobFactory
@@ -30,6 +32,18 @@ class TestApiGetJobs(BaseTestApiJob):
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected_job['_id'], loads(response.data)['_id'])
 
+    def test_get_jobs_with_request_approve_adverts(self):
+        job_1, job_2, job_3, job_4 = self._create_jobs()
+        self._request_advert_approval(job_1['_id'])
+        self._request_advert_approval(job_3['_id'])
+
+        expected_jobs = [job_1, job_3]
+
+        filter_param = '?advertsStatusFilter={status}'\
+            .format(status=AdvertStatus.REQUEST_APPROVAL)
+        url = self.url_for_admin(JOBS_URL + filter_param)
+        self._assert_get_jobs(expected_jobs, url)
+
     def _create_jobs(self):
         company_1 = self._company
         company_2 = self.create_from_factory(CompanyFactory)
@@ -49,3 +63,7 @@ class TestApiGetJobs(BaseTestApiJob):
         result_jobs = loads(response.data)
         self.assertEqual([j['_id'] for j in expected_jobs],
                          [j['_id'] for j in result_jobs])
+
+    def _request_advert_approval(self, job_id):
+        advert = add_advert_to_job(job_id=job_id, advert_duration_days=10)
+        request_approval_job_advert(job_id=job_id, advert_id=advert['_id'])
