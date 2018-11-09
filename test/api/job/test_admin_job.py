@@ -4,7 +4,7 @@ from api.routes.admin_routes import JOBS_URL, JOB_URL, ADVERTS_URL, \
     SET_ADVERT_STATUS_URL
 from model.job.job import get_job
 from model.job.job_advert import add_advert_to_job, AdvertStatus, \
-    approve_job_advert
+    approve_job_advert, request_approval_job_advert
 from test.api.job import BaseTestApiJob
 from test.model.company import CompanyFactory
 from test.model.job import JobFactory
@@ -134,10 +134,14 @@ class TestJobAdvert(BaseTestApiJob):
                           .format(duration=duration))
 
     def test_approve_advert(self):
+        request_approval_job_advert(job_id=self.job_id,
+                                    advert_id=self.advert['_id'])
         self._assert_set_status(action="approve",
                                 expected_action=AdvertStatus.APPROVED)
 
     def test_publish_advert(self):
+        request_approval_job_advert(job_id=self.job_id,
+                                    advert_id=self.advert['_id'])
         approve_job_advert(job_id=self.job_id, advert_id=self.advert['_id'])
 
         self._assert_set_status(action="publish",

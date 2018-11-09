@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from api.routes.routes import STRIPE_CHARGE_PROCESSED, STRIPE_CHARGE_PAYMENT
 from model.job.job_advert import add_advert_to_job, approve_job_advert, \
-    pay_job_advert
+    pay_job_advert, request_approval_job_advert
 from test.api.job import BaseTestApiJob
 from test.model.job import JobFactory
 
@@ -52,6 +52,7 @@ class TestApiStripeIntegration(BaseTestApiJob):
         advert = add_advert_to_job(job_id=job_id,
                                    advert_duration_days=15)
         advert_id = advert['_id']
+        request_approval_job_advert(job_id=job_id, advert_id=advert_id)
         approve_job_advert(job_id=job_id, advert_id=advert_id)
         pay_job_advert(job_id=job_id, advert_id=advert_id)
         return job_id, advert_id

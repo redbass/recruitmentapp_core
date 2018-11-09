@@ -7,6 +7,7 @@ from model.job.job import get_job
 
 class AdvertStatus:
     DRAFT = 'DRAFT'
+    REQUEST_APPROVAL = 'REQUEST_APPROVAL'
     APPROVED = 'APPROVED'
     PAYED = 'PAYED'
     PUBLISHED = 'PUBLISHED'
@@ -33,29 +34,40 @@ def add_advert_to_job(job_id: str,
     return advert
 
 
+def request_approval_job_advert(advert_id, job_id):
+    return _update_advert_status(
+        advert_id=advert_id, job_id=job_id,
+        allowed_statuses=[AdvertStatus.DRAFT],
+        new_status=AdvertStatus.REQUEST_APPROVAL)
+
+
 def approve_job_advert(advert_id, job_id):
-    return _update_advert_status(advert_id=advert_id, job_id=job_id,
-                                 allowed_statuses=[AdvertStatus.DRAFT],
-                                 new_status=AdvertStatus.APPROVED)
+    return _update_advert_status(
+        advert_id=advert_id, job_id=job_id,
+        allowed_statuses=[AdvertStatus.REQUEST_APPROVAL],
+        new_status=AdvertStatus.APPROVED)
 
 
 def pay_job_advert(advert_id, job_id):
-    return _update_advert_status(advert_id=advert_id, job_id=job_id,
-                                 allowed_statuses=[AdvertStatus.APPROVED],
-                                 new_status=AdvertStatus.PAYED)
+    return _update_advert_status(
+        advert_id=advert_id, job_id=job_id,
+        allowed_statuses=[AdvertStatus.APPROVED],
+        new_status=AdvertStatus.PAYED)
 
 
 def publish_payed_job_advert(advert_id, job_id):
-    return _update_advert_status(advert_id=advert_id, job_id=job_id,
-                                 allowed_statuses=[AdvertStatus.PAYED],
-                                 new_status=AdvertStatus.PUBLISHED)
+    return _update_advert_status(
+        advert_id=advert_id, job_id=job_id,
+        allowed_statuses=[AdvertStatus.PAYED],
+        new_status=AdvertStatus.PUBLISHED)
 
 
 def publish_job_advert(advert_id, job_id):
-    return _update_advert_status(advert_id=advert_id, job_id=job_id,
-                                 allowed_statuses=[AdvertStatus.APPROVED,
-                                                   AdvertStatus.PAYED],
-                                 new_status=AdvertStatus.PUBLISHED)
+    return _update_advert_status(
+        advert_id=advert_id, job_id=job_id,
+        allowed_statuses=[AdvertStatus.APPROVED,
+                          AdvertStatus.PAYED],
+        new_status=AdvertStatus.PUBLISHED)
 
 
 def _create_advert_dict(duration: int) -> dict:
@@ -96,7 +108,8 @@ def _update_advert_status(advert_id, job_id, allowed_statuses, new_status):
             '_id': job_id,
             'adverts': {
                 '$elemMatch': {
-                    'status': {"$in": allowed_statuses},
+                    'status': {
+                        "$in": allowed_statuses},
                     '_id': advert_id,
                 }
             }

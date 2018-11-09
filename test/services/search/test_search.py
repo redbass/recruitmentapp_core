@@ -4,7 +4,7 @@ from db.collections import jobs, _create_text_index
 from lib.geo import km2rad
 from model.geo_location import get_location
 from model.job.job_advert import add_advert_to_job, approve_job_advert, \
-    publish_job_advert
+    publish_job_advert, request_approval_job_advert
 from services.search import search
 from test import UnitTestCase
 from test.model.job import JobFactory
@@ -51,6 +51,7 @@ class BaseSearchTestCase(UnitTestCase):
                                    advert_duration_days=duration)
         advert_id = advert['_id']
 
+        request_approval_job_advert(job_id=job_id, advert_id=advert_id)
         approve_job_advert(job_id=job_id, advert_id=advert_id)
         publish_job_advert(job_id=job_id, advert_id=advert_id)
 

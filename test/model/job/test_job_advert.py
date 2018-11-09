@@ -6,7 +6,9 @@ from freezegun import freeze_time
 from model.job.job import get_job
 from model.job.job_advert import add_advert_to_job, _create_advert_dict, \
     AdvertStatus, approve_job_advert, publish_job_advert, pay_job_advert, \
-    publish_payed_job_advert, _update_advert_status
+    publish_payed_job_advert, request_approval_job_advert, \
+    _update_advert_status
+
 from test.model.job import BaseTestJob, JobFactory
 
 
@@ -54,10 +56,16 @@ class TestSetStatusJobAdvert(BaseTestJobAdvert):
         add_advert_to_job(job_id=self.job_id, advert_duration_days=self.days)
         self.advert_id = self.advert['_id']
 
+    def test_request_approval_job_advert(self):
+        self._assert_called_update_advert_status_with(
+            func=request_approval_job_advert,
+            allowed_statuses=[AdvertStatus.DRAFT],
+            new_status=AdvertStatus.REQUEST_APPROVAL)
+
     def test_approve_job_advert(self):
         self._assert_called_update_advert_status_with(
             func=approve_job_advert,
-            allowed_statuses=[AdvertStatus.DRAFT],
+            allowed_statuses=[AdvertStatus.REQUEST_APPROVAL],
             new_status=AdvertStatus.APPROVED)
 
     def test_pay_job_advert(self):

@@ -3,7 +3,7 @@ from urllib.parse import urlencode
 
 from api.routes.routes import SEARCH
 from model.job.job_advert import add_advert_to_job, approve_job_advert, \
-    publish_job_advert
+    publish_job_advert, request_approval_job_advert
 from test.api import TestApi
 from test.model.job import JobFactory
 from test.services.search import EDINBURGH_CENTER, EDINBURGH_ROSELIN_CHAPEL, \
@@ -62,6 +62,7 @@ class TestAPISearch(TestApi):
                                    advert_duration_days=15)
         advert_id = advert['_id']
 
+        request_approval_job_advert(job_id=job_id, advert_id=advert_id)
         approve_job_advert(job_id=job_id, advert_id=advert_id)
         publish_job_advert(job_id=job_id, advert_id=advert_id)
 
