@@ -10,6 +10,9 @@ class BaseTestCompany(UnitTestCase):
     def setUp(self):
         super().setUp()
 
+        self.admin1 = self.create_from_factory(
+            UserFactory, user_type=UserType.ADMIN)
+
         self.hiring_manager1 = self.create_from_factory(
             UserFactory, user_type=UserType.HIRING_MANAGER)
 

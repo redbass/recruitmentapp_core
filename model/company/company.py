@@ -4,7 +4,7 @@ from typing import List
 from db import get_grid_fs
 from db.collections import companies, users
 from model import create_id
-from model.user import UserType
+from model.user import UserType, create_hidden_hiring_manager
 
 
 def create_company(admin_user_ids: List[str],
@@ -19,6 +19,21 @@ def create_company(admin_user_ids: List[str],
     })
     companies.insert_one(create_company_input)
     return create_company_input
+
+
+def create_company_admin(admin_user_id: str,
+                         **create_company_input):
+    username = create_company_input['contacts']['email']
+    hm = create_hidden_hiring_manager(username=username)
+
+    return create_company(admin_user_ids=[admin_user_id, hm['_id']],
+                          **create_company_input)
+
+
+def create_company_hiring_manager(admin_user_id: str,
+                                  **create_company_input):
+    return create_company(admin_user_ids=[admin_user_id],
+                          **create_company_input)
 
 
 def _validate_admin_ids(admin_user_ids):
