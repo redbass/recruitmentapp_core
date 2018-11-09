@@ -5,9 +5,11 @@ from api.routes.admin_routes import JOBS_URL, JOB_URL, ADVERTS_URL, \
 from model.job.job import get_job
 from model.job.job_advert import add_advert_to_job, AdvertStatus, \
     approve_job_advert, request_approval_job_advert
+from model.user import UserType
 from test.api.job import BaseTestApiJob
 from test.model.company import CompanyFactory
 from test.model.job import JobFactory
+from test.model.user import UserFactory
 
 
 class TestApiCreateJob(BaseTestApiJob):
@@ -80,6 +82,23 @@ class TestEditJob(BaseTestApiJob):
 
         self.assertEqual(data['title'], result_job['title'])
         self.assertEqual(self.job['description'], result_job['description'])
+
+    def test_edit_job_not_allowed_if_draft_and_not_admin(self):
+        self._user = self.create_from_factory(
+            UserFactory, user_type=UserType.HIRING_MANAGER)
+
+        data = {"title": "new title"}
+        job_id = self.job['_id']
+
+        advert = add_advert_to_job(job_id=job_id, advert_duration_days=19)
+        approve_job_advert(job_id=job_id, advert_id=advert['_id'])
+
+        url = self.url_for_admin(JOB_URL, job_id=job_id)
+        response = self.post_json(url, data)
+
+        self.assertEqual(400, response.status_code)
+        self.assertEqual(loads(response.data)['message'],
+                         "User not allowed to edit an approved advert")
 
     def test_invalid_input(self):
         data = {"company_id": "RANDOM"}

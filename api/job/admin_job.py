@@ -1,13 +1,16 @@
 from flask import request
+from flask_jwt_extended import get_jwt_identity
 
 from api.handler import json_response
 from auth.jwt import jwt_required
+from exceptions.api import ActionNotAllowed
 from lib.schema_validation import validate
 from model.job.create_job import create_job
 from model.job.edit_job import edit_job
 from model.job.job import get_job
 from model.job.job_advert import approve_job_advert, publish_job_advert, \
-    add_advert_to_job, request_approval_job_advert
+    add_advert_to_job, request_approval_job_advert, AdvertStatus
+from model.user import UserType
 
 
 @jwt_required
@@ -24,6 +27,12 @@ def api_create_job():
 @json_response
 def api_edit_job(job_id):
     data = request.json
+    identity = get_jwt_identity()
+    job = get_job(job_id)
+
+    if identity['role'] != UserType.ADMIN and \
+            any(adv['status'] != AdvertStatus.DRAFT for adv in job['adverts']):
+        raise ActionNotAllowed("User not allowed to edit an approved advert")
 
     validate('edit_job', data)
 

@@ -7,6 +7,7 @@ from api.routes.admin_routes import ADMIN_PREFIX
 from app import get_app
 from auth.jwt import _create_identity_object
 from db.collections import setup_database
+from model.user import UserType
 from test import UnitTestCase
 from test.model.company import CompanyFactory
 from test.model.user import UserFactory
@@ -23,7 +24,9 @@ class TestApi(UnitTestCase):
         self._user, self._company = self._create_test_user()
 
     def _create_test_user(self):
-        user = self.create_from_factory(UserFactory, username=TEST_USER)
+        user = self.create_from_factory(UserFactory,
+                                        user_type=UserType.ADMIN,
+                                        username=TEST_USER)
         company = self.create_from_factory(CompanyFactory,
                                            admin_user_ids=[user['_id']])
         return user, company
