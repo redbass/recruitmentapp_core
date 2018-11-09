@@ -44,7 +44,8 @@ def request_approval_job_advert(advert_id, job_id):
 def approve_job_advert(advert_id, job_id):
     return _update_advert_status(
         advert_id=advert_id, job_id=job_id,
-        allowed_statuses=[AdvertStatus.REQUEST_APPROVAL],
+        allowed_statuses=[AdvertStatus.DRAFT,
+                          AdvertStatus.REQUEST_APPROVAL],
         new_status=AdvertStatus.APPROVED)
 
 
