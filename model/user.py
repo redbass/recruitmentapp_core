@@ -1,3 +1,5 @@
+from uuid import uuid4
+
 from pymongo.errors import DuplicateKeyError
 
 from db.collections import users
@@ -37,6 +39,16 @@ def create_user(username: str,
         raise ValueError("A user with this email already exists")
 
     return new_user
+
+
+def create_hidden_hiring_manager(username: str):
+    password = uuid4().hex
+    return create_user(username=username,
+                       password=password,
+                       user_type=UserType.HIRING_MANAGER,
+                       first_name=username,
+                       last_name=username,
+                       )
 
 
 def get_users(user_type: str, exclude_password=False):

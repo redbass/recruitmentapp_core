@@ -1,5 +1,6 @@
 from lib.password import check_user_password
-from model.user import UserType, get_user, get_users
+from model.user import UserType, get_user, get_users, \
+    create_hidden_hiring_manager
 from test import UnitTestCase
 from test.model.user import UserFactory
 
@@ -48,6 +49,17 @@ class CreateUserTestCase(BaseUserTestCase):
         with self.assertRaises(ValueError):
             self.create_from_factory(UserFactory,
                                      username="some_invalid_email")
+
+    def test_create_hidden_hiring_manager(self):
+        create_hidden_hiring_manager(username=self.username)
+        stored_user = get_user(username=self.username)
+
+        self.assertEquals(stored_user['_id'], self.username)
+        self.assertIsNotNone(stored_user['password'], self.username)
+        self.assertEquals(stored_user['type'], UserType.HIRING_MANAGER)
+        self.assertEquals(stored_user['first_name'], self.username)
+        self.assertEquals(stored_user['last_name'], self.username)
+        self.assertIsNone(stored_user['title'])
 
 
 class GetUserTestCase(BaseUserTestCase):

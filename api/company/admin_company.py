@@ -16,8 +16,8 @@ def create_company():
 
     validate('create_company', data)
 
-    return company.create_company(
-        admin_user_ids=[identity['username']], **data)
+    return company.create_company_admin(admin_user_id=identity['username'],
+                                        **data)
 
 
 @jwt_required

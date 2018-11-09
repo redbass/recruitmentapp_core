@@ -34,7 +34,7 @@ def sign_in_company():
         "description": data.get('company_description')
     }
 
-    created_company = company.create_company(
-        admin_user_ids=[company_user['_id']], **company_data)
+    created_company = company.create_company_hiring_manager(
+        admin_user_id=company_user['_id'], **company_data)
 
     return get_company(created_company['_id'])
