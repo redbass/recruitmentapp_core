@@ -7,7 +7,7 @@ from model.job.create_job import create_job
 from model.job.edit_job import edit_job
 from model.job.job import get_job
 from model.job.job_advert import approve_job_advert, publish_job_advert, \
-    add_advert_to_job
+    add_advert_to_job, request_approval_job_advert
 
 
 @jwt_required
@@ -44,6 +44,7 @@ def api_add_advert_to_job(job_id: str):
 def set_advert_status(job_id: str, advert_id: str, action: str):
 
     map_advert_action = {
+        'requestapproval': request_approval_job_advert,
         'approve': approve_job_advert,
         'publish': publish_job_advert,
     }

@@ -65,7 +65,8 @@ class TestSetStatusJobAdvert(BaseTestJobAdvert):
     def test_approve_job_advert(self):
         self._assert_called_update_advert_status_with(
             func=approve_job_advert,
-            allowed_statuses=[AdvertStatus.REQUEST_APPROVAL],
+            allowed_statuses=[AdvertStatus.DRAFT,
+                              AdvertStatus.REQUEST_APPROVAL],
             new_status=AdvertStatus.APPROVED)
 
     def test_pay_job_advert(self):

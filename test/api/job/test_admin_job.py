@@ -133,6 +133,10 @@ class TestJobAdvert(BaseTestApiJob):
                           "'{duration}' is not a valid duration"
                           .format(duration=duration))
 
+    def test_request_approval_advert(self):
+        self._assert_set_status(action="requestApproval",
+                                expected_action=AdvertStatus.REQUEST_APPROVAL)
+
     def test_approve_advert(self):
         request_approval_job_advert(job_id=self.job_id,
                                     advert_id=self.advert['_id'])
