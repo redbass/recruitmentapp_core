@@ -47,21 +47,24 @@ def create_hidden_hiring_manager(username: str):
                        password=password,
                        user_type=UserType.HIRING_MANAGER,
                        first_name=username,
-                       last_name=username,
-                       )
+                       last_name=username)
 
 
-def get_users(user_type: str, exclude_password=False):
+def get_users(user_type: str=None, exclude_password=False):
     return _query_users_filtering_password(
-        exclude_password, users.find, {'type': user_type})
+        find_fn=users.find,
+        query={'type': user_type} if user_type else {},
+        exclude_password=exclude_password)
 
 
 def get_user(username: str, exclude_password=False):
     return _query_users_filtering_password(
-        exclude_password, users.find_one, {'_id': username})
+        find_fn=users.find_one,
+        query={'_id': username},
+        exclude_password=exclude_password)
 
 
-def _query_users_filtering_password(exclude_password, find_fn, query):
+def _query_users_filtering_password(find_fn, query, exclude_password=True):
     args = [query]
     if exclude_password:
         args.append({'password': 0})
