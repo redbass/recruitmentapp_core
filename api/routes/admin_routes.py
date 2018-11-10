@@ -14,7 +14,7 @@ SET_ADVERT_STATUS_URL = '/api/job/<job_id>/advert/<advert_id>/<action>'
 PAY_ADVERT_URL = '/api/job/<job_id>/advert/<advert_id>/pay'
 
 GET_USERS_URL = '/api/user'
-GET_USERS_BY_TYPE_URL = '/api/user/<user_type>'
+GET_USER_URL = '/api/user/<user_id>'
 
 
 def add_admin_routes(app):
@@ -94,9 +94,9 @@ def _add_user_routes(app):
                         methods=['GET'])
 
     _add_admin_url_rule(app,
-                        GET_USERS_BY_TYPE_URL,
-                        'get_users_by_type',
-                        user.get_users,
+                        GET_USER_URL,
+                        'get_user',
+                        user.get_user,
                         methods=['GET'])
 
 
