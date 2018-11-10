@@ -1,6 +1,6 @@
 from json import loads
 
-from api.routes.admin_routes import GET_USERS_BY_TYPE_URL, GET_USERS_URL
+from api.routes.admin_routes import GET_USERS_URL, GET_USER_URL
 from model.user import UserType
 from test.api import TestApi
 from test.model.user import UserFactory
@@ -19,8 +19,7 @@ class TestAPIGetUsers(TestApi):
 
     def test_get_users_by_type(self):
         expected_users = [self._user, self.user_1]
-        user_type = UserType.ADMIN
-        url = self.url_for_admin(GET_USERS_BY_TYPE_URL, user_type=user_type)
+        url = self._get_user_by_type_utl(UserType.ADMIN)
 
         self._assert_get_users(expected_users, url)
 
@@ -32,7 +31,7 @@ class TestAPIGetUsers(TestApi):
 
     def test_get_users_error_with_wrong_user_type(self):
         user_type = "ABC"
-        url = self.url_for_admin(GET_USERS_BY_TYPE_URL, user_type=user_type)
+        url = self._get_user_by_type_utl(user_type)
         response = self.get_data(url)
 
         self.assertEqual(400, response.status_code)
@@ -40,9 +39,28 @@ class TestAPIGetUsers(TestApi):
             loads(response.data)['message'],
             'Invalid user_type `{user_type}`'.format(user_type=user_type))
 
+    def test_get_user(self):
+        user_id = self._user['_id']
+        url = self.url_for_admin(GET_USER_URL, user_id=user_id)
+        response = self.get_data(url)
+        response_user = loads(response.data)
+
+        self.assertEquals(user_id, response_user['_id'])
+
+    def test_get_user_no_results(self):
+
+        url = self.url_for_admin(GET_USER_URL, user_id='random')
+        response = self.get_data(url)
+
+        self.assertIsNone(loads(response.data))
+
     def _assert_get_users(self, expected_users, url):
         expected_users_ids = [user['_id'] for user in expected_users]
         response = self.get_data(url)
         result_users_ids = [user['_id'] for user in loads(response.data)]
         self.assertEqual(200, response.status_code)
         self.assertEqual(result_users_ids, expected_users_ids)
+
+    def _get_user_by_type_utl(self, user_type):
+        url_user_type = "?type={user_type}".format(user_type=user_type)
+        return self.url_for_admin(GET_USERS_URL) + url_user_type
