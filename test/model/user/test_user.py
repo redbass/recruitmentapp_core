@@ -65,6 +65,26 @@ class CreateUserTestCase(BaseUserTestCase):
 class GetUserTestCase(BaseUserTestCase):
 
     def test_get_users(self):
+        expected_users = self._create_some_users()
+        expected_ids = [u['_id'] for u in expected_users]
+
+        result_users = get_users()
+
+        result_ids = [u['_id'] for u in result_users]
+        self.assertEqual(expected_ids, result_ids)
+
+    def test_get_users_exclude_password(self):
+        expected_users = self._create_some_users()
+        expected_ids = [u['_id'] for u in expected_users]
+
+        result_users = get_users(exclude_password=True)
+
+        result_ids = [u['_id'] for u in result_users]
+        self.assertEqual(expected_ids, result_ids)
+        for user in result_users:
+            self.assertIsNone(user.get('password'))
+
+    def test_get_users_by_type(self):
         user_type = UserType.CANDIDATE
         created_user1 = self.create_from_factory(UserFactory,
                                                  user_type=user_type)
@@ -108,3 +128,15 @@ class GetUserTestCase(BaseUserTestCase):
         user = get_user("something")
 
         self.assertIsNone(user)
+
+    def _create_some_users(self):
+        user_1 = self.create_from_factory(
+            UserFactory, user_type=UserType.ADMIN)
+        user_2 = self.create_from_factory(
+            UserFactory, user_type=UserType.HIRING_MANAGER)
+        user_3 = self.create_from_factory(
+            UserFactory, user_type=UserType.ADMIN)
+        user_4 = self.create_from_factory(
+            UserFactory, user_type=UserType.HIRING_MANAGER)
+        expected_users = [user_1, user_2, user_3, user_4]
+        return expected_users
