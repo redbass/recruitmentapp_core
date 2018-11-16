@@ -23,10 +23,6 @@ def add_generic_routes(app):
 
 
 def _add_services_routes(app):
-    app.add_url_rule(SEARCH_STATIC,
-                     'search_static',
-                     search.search_static,
-                     methods=['GET'])
     app.add_url_rule(SEARCH,
                      'search',
                      search.api_search,

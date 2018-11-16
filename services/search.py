@@ -1,11 +1,13 @@
 from datetime import datetime
 
 from db.collections import jobs
+from lib.geo import km2rad
 
 
 def search(query: str="",
            location: list=None,
-           radius: float=None):
+           distance: float=None):
+
     today = datetime.combine(datetime.now(), datetime.min.time())
 
     match_queries = [{"adverts.date.expires": {"$gt": today}}]
@@ -13,10 +15,14 @@ def search(query: str="",
     if query:
         match_queries.append({"$text": {"$search": query}})
 
-    if location and radius:
+    if location and distance:
+        rad_radius = km2rad(distance)
+        latitude, longitude = location
         match_queries.append({
             "location.geo_location": {
-                "$geoWithin": {"$centerSphere": [location, radius]}}
+                "$geoWithin": {
+                    "$centerSphere": [[longitude, latitude], rad_radius]
+                }}
             })
 
     pipeline = [
