@@ -13,8 +13,8 @@ ADVERTS_URL = '/api/job/<job_id>/advert'
 SET_ADVERT_STATUS_URL = '/api/job/<job_id>/advert/<advert_id>/<action>'
 PAY_ADVERT_URL = '/api/job/<job_id>/advert/<advert_id>/pay'
 
-GET_USERS_URL = '/api/user'
-GET_USER_URL = '/api/user/<user_id>'
+USERS_URL = '/api/user'
+USER_URL = '/api/user/<user_id>'
 
 
 def add_admin_routes(app):
@@ -88,16 +88,22 @@ def _add_job_routes(app):
 
 def _add_user_routes(app):
     _add_admin_url_rule(app,
-                        GET_USERS_URL,
+                        USERS_URL,
                         'get_users',
                         user.get_users,
                         methods=['GET'])
 
     _add_admin_url_rule(app,
-                        GET_USER_URL,
+                        USER_URL,
                         'get_user',
                         user.get_user,
                         methods=['GET'])
+
+    _add_admin_url_rule(app,
+                        USER_URL,
+                        'set_password',
+                        user.update_password,
+                        methods=['POST'])
 
 
 def _add_admin_url_rule(app, rule, endpoint=None, view_func=None, **options):

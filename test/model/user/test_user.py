@@ -1,6 +1,6 @@
 from lib.password import check_user_password
 from model.user import UserType, get_user, get_users, \
-    create_hidden_hiring_manager
+    create_hidden_hiring_manager, update_user_password
 from test import UnitTestCase
 from test.model.user import UserFactory
 
@@ -140,3 +140,25 @@ class GetUserTestCase(BaseUserTestCase):
             UserFactory, user_type=UserType.HIRING_MANAGER)
         expected_users = [user_1, user_2, user_3, user_4]
         return expected_users
+
+
+class UpdateUserPasswordTestCase(BaseUserTestCase):
+
+    def test_set_password(self):
+        user = self.create_from_factory(UserFactory)
+
+        new_password = "new_password"
+
+        update_user_password(user_id=user['_id'], new_password=new_password)
+
+        stored_user = get_user(username=user['_id'])
+
+        self.assertTrue(check_user_password(new_password,
+                                            stored_user['password']))
+
+    def test_set_password_invalid_id(self):
+
+        new_password = "new_password"
+
+        with self.assertRaises(ValueError):
+            update_user_password(user_id='123', new_password=new_password)
