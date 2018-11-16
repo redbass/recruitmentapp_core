@@ -64,6 +64,17 @@ def get_user(username: str, exclude_password=False):
         exclude_password=exclude_password)
 
 
+def update_user_password(user_id, new_password):
+
+    encoded_password = encrypt_user_password(new_password)
+
+    result = users.update_one({'_id': user_id},
+                              {'$set': {'password': encoded_password}})
+
+    if result.matched_count != 1:
+        raise ValueError("Invalid user id")
+
+
 def _query_users_filtering_password(find_fn, query, exclude_password=True):
     args = [query]
     if exclude_password:
