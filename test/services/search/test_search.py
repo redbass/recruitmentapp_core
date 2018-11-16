@@ -70,3 +70,11 @@ class SearchTextTestCase(BaseSearchTestCase):
         results = list(search('NOTHING'))
 
         self.assertEqual(0, len(results))
+
+    def test_search_jobs_returns_hiring_managers_list_without_password(self):
+        results = list(search())
+
+        for result in results:
+            self.assertGreater(len(result['company']['hiring_managers']), 0)
+            for hiring_manager in result['company']['hiring_managers']:
+                self.assertIsNone(hiring_manager.get('password'))

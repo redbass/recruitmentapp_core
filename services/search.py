@@ -59,7 +59,25 @@ def _add_lookup_query(pipeline):
             }
         },
         {"$addFields": {"company": {"$arrayElemAt": ["$companies", 0]}}},
-        {"$project": {"companies": 0}}
+        {
+            "$lookup": {
+                "from": "users",
+                "let": {
+                    "hm_ids": "$company.hire_managers_ids"
+                },
+                "pipeline": [{
+                    "$match": {
+                        "$expr": {
+                            "$in": ["$_id", "$$hm_ids"]}
+                    }
+                }],
+                "as": "company.hiring_managers"
+            }
+        },
+        {"$project": {
+            "companies": 0,
+            "company.hiring_managers.password": 0
+        }}
     ])
 
 
@@ -67,7 +85,6 @@ def _add_computed_fields_query(pipeline):
     pipeline.append({
         "$addFields": {
             "rate.pretty_print": "100£ per day",
-            "company.contacts.referent.full_name": "John Doe",
             "duration.pretty_print": "3 months and 2 weeks"
         }
     })
