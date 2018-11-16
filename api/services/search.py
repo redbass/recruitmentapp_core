@@ -5,7 +5,6 @@ from auth.api_token import api_token_required
 from exceptions.api import ParametersException
 from model.geo_location import validate_lat_long_values
 from services.search import search
-from services.search_static import static_jobs
 
 
 @json_response
@@ -14,29 +13,15 @@ def api_search():
     query = request.args.get('query')
 
     location = _get_coordinates()
-    radius = _get_radius()
+    distance = _get_distance()
 
-    results = search(query=query, location=location, radius=radius)
+    results = search(query=query, location=location, distance=distance)
     return {
         "jobs": results,
         "query": {
             "query": query,
             "location": location,
-            "radius": radius
-        }
-    }
-
-
-@json_response
-@api_token_required
-def search_static():
-
-    query = ""
-
-    return {
-        "jobs": static_jobs,
-        "query": {
-            "query": query
+            "distance": distance
         }
     }
 
@@ -60,14 +45,14 @@ def _get_coordinates():
     return location
 
 
-def _get_radius():
-    radius = request.args.get('radius')
+def _get_distance():
+    distance = request.args.get('distance') or request.args.get('radius')
 
-    if radius:
+    if distance:
         try:
-            radius = float(radius)
+            distance = float(distance)
 
         except Exception:
             raise ParametersException("Invalid radius format")
 
-    return radius
+    return distance

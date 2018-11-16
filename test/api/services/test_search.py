@@ -2,57 +2,61 @@ import json
 from urllib.parse import urlencode
 
 from api.routes.routes import SEARCH
+from lib.geo import get_coordinates_from_location, distance_from_location
 from model.job.job_advert import add_advert_to_job, approve_job_advert, \
     publish_job_advert, request_approval_job_advert
 from test.api import TestApi
 from test.model.job import JobFactory
 from test.services.search import EDINBURGH_CENTER, EDINBURGH_ROSELIN_CHAPEL, \
-    EDINBURGH_ARTHURS_SEAT, ITALY
+    ITALY, STERLING_CASTLE
 
 
 class TestAPISearch(TestApi):
 
     def setUp(self):
         super().setUp()
+        self.current_location = EDINBURGH_CENTER
         self.job_1 = self._crate_job(title="job 1",
                                      location=EDINBURGH_ROSELIN_CHAPEL)
-        self.job_2 = self._crate_job(title="Something 2",
-                                     location=EDINBURGH_ARTHURS_SEAT)
+        self.job_2 = self._crate_job(title="Something 1",
+                                     location=STERLING_CASTLE)
         self.job_3 = self._crate_job(title="job 3",
                                      location=ITALY)
 
     def test_search(self):
         query = "job"
-        location = [EDINBURGH_CENTER['latitude'],
-                    EDINBURGH_CENTER['longitude']]
+        expected_jobs = [self.job_1]
+        job_location = STERLING_CASTLE
+
+        self._assert_search_by_distance(job_location, query, expected_jobs,
+                                        precision=1)
+
+    def test_search_2(self):
+        query = "job"
+        expected_jobs = [self.job_1, self.job_3]
+        job_location = ITALY
+
+        self._assert_search_by_distance(job_location, query, expected_jobs,
+                                        precision=5)
+
+    def _assert_search_by_distance(self, job_location, query, expected_jobs,
+                                   precision):
+        location = get_coordinates_from_location(self.current_location)
         location_str = ",".join([str(l) for l in location])
-        radius = 5
 
-        # TODO: This is wrong have to be fixed in the code
-        expected_jobs = [self.job_1['title'], self.job_3['title']]
-        expected_result_query = {
-            "query": query,
-            "location": location,
-            "radius": float(radius)
-        }
-
+        radius_km = distance_from_location(location, job_location) + precision
         params = urlencode({
             'query': query,
             'location': location_str,
-            'radius': radius
+            'radius': radius_km
         })
-
         url = "{root}?{params}".format(root=SEARCH, params=params)
         response = self.get_data(url)
-
         self.assertEqual(200, response.status_code)
-
         results = json.loads(response.data)
         jobs = results['jobs']
-        result_query = results['query']
-
-        self.assertEquals(expected_jobs, [j['title'] for j in jobs])
-        self.assertEquals(expected_result_query, result_query)
+        self.assertEquals([j['title'] for j in expected_jobs],
+                          [j['title'] for j in jobs])
 
     @classmethod
     def _crate_job(cls, **job_args):

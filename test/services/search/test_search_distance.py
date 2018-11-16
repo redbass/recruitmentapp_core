@@ -1,5 +1,5 @@
-import geopy.distance
-
+from lib.geo import distance_from_location, \
+    get_coordinates_from_location
 from services.search import search
 from test.services.search import EDINBURGH_CENTER, EDINBURGH_EICA, \
     STERLING_CASTLE, ITALY, BaseSearchTestCase
@@ -12,8 +12,7 @@ class SearchByDistanceTestCase(BaseSearchTestCase):
     def setUp(self):
         super().setUp()
 
-        self.current_location = \
-            self._get_coordinates_from_location(EDINBURGH_CENTER)
+        self.current_location = get_coordinates_from_location(EDINBURGH_CENTER)
 
         self.guide = self._crate_job(
             title="Tourist guide Job", description="Description ten",
@@ -32,7 +31,8 @@ class SearchByDistanceTestCase(BaseSearchTestCase):
         self._assert_search_by_location(location, 5)
 
     def _assert_search_by_location(self, test_location, delta_in_km):
-        distance = self._distance_from_current_location(test_location)
+        distance = distance_from_location(self.current_location,
+                                          test_location)
         results_1 = search(query="Job", location=self.current_location,
                            distance=distance + delta_in_km)
         results_2 = search(query="Job", location=self.current_location,
@@ -41,10 +41,3 @@ class SearchByDistanceTestCase(BaseSearchTestCase):
         results_2 = list(results_2)
         self.assertEquals(2, len(results_1))
         self.assertEquals(1, len(results_2))
-
-    def _distance_from_current_location(self, location_2):
-        coords_2 = self._get_coordinates_from_location(location_2)
-        return geopy.distance.vincenty(self.current_location, coords_2).km
-
-    def _get_coordinates_from_location(self, location_2):
-        return [location_2.get('latitude'), location_2.get('longitude')]
