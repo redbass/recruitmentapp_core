@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from db.collections import _create_text_index, jobs
 from model.job.job_advert import add_advert_to_job, \
     request_approval_job_advert, approve_job_advert, publish_job_advert
+from services.search import search
 from test import UnitTestCase
 from test.model.job import JobFactory
 
@@ -49,7 +50,8 @@ class BaseSearchTestCase(UnitTestCase):
         _create_text_index()
 
     @classmethod
-    def _crate_job(cls, duration=15, expired=False, **job_args):
+    def _crate_job(cls,
+                   duration=15, published=True, expired=False, **job_args):
         job = cls.create_from_factory(JobFactory, **job_args)
         job_id = job['_id']
         advert = add_advert_to_job(job_id=job_id,
@@ -58,7 +60,8 @@ class BaseSearchTestCase(UnitTestCase):
 
         request_approval_job_advert(job_id=job_id, advert_id=advert_id)
         approve_job_advert(job_id=job_id, advert_id=advert_id)
-        publish_job_advert(job_id=job_id, advert_id=advert_id)
+        if published:
+            publish_job_advert(job_id=job_id, advert_id=advert_id)
 
         if expired:
             cls._make_advert_expired(job_id=job_id, advert_id=advert_id)
@@ -72,3 +75,9 @@ class BaseSearchTestCase(UnitTestCase):
             {'_id': job_id, 'adverts._id': advert_id},
             {"$set": {'adverts.$.date.expires': yesterday}}
         )
+
+    def _assert_search(self, expected_jobs, comparator='title',
+                       **search_params):
+        results = list(search(**search_params))
+        self.assertEquals([j[comparator] for j in expected_jobs],
+                          [r[comparator] for r in results])
