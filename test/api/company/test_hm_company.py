@@ -1,6 +1,6 @@
 from json import loads
 
-from api.routes.hm_routes import COMPANIES_URL
+from api.routes.routes import COMPANIES_URL
 from model.user import get_user, UserType
 from test import load_example_model
 from test.api.company import BaseTestCompany

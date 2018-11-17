@@ -5,7 +5,7 @@ from model.company.company import store_company_logo, get_company_logo
 from model.user import UserType
 from test.api.company import BaseTestCompany
 from test.model.company import CompanyFactory
-from test.model.user import UserFactory
+from test.model.test_user import UserFactory
 
 
 class TestGetCompanyLogo(BaseTestCompany):

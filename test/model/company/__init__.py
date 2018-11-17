@@ -2,7 +2,7 @@ from model.company.company import create_company
 from model.user import UserType
 from test import UnitTestCase, load_example_model
 from test.factory import ModelFactory
-from test.model.user import UserFactory
+from test.model.test_user import UserFactory
 
 
 class BaseTestCompany(UnitTestCase):

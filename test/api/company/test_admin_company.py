@@ -6,7 +6,7 @@ from auth.jwt import TEST_IDENTITY
 from test import load_example_model
 from test.api.company import BaseTestCompany
 from test.model.company import CompanyFactory
-from test.model.user import UserFactory
+from test.model.test_user import UserFactory
 
 
 class TestCreateCompany(BaseTestCompany):

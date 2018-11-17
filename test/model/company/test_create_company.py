@@ -3,7 +3,7 @@ from model.company.company import get_company, \
 from model.user import UserType
 from test import load_example_model
 from test.model.company import BaseTestCompany
-from test.model.user import UserFactory
+from test.model.test_user import UserFactory
 
 
 class TestCreateCompany(BaseTestCompany):
