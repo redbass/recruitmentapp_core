@@ -7,6 +7,7 @@ jobs = db.jobs
 users = db.users
 companies = db.companies
 payments = db.payments
+picklist = db.picklist
 files = db['fs.files']
 
 # Indexes
