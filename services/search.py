@@ -2,15 +2,28 @@ from datetime import datetime
 
 from db.collections import jobs
 from lib.geo import km2rad
+from model.job.job_advert import AdvertStatus
 
 
 def search(query: str="",
            location: list=None,
            distance: float=None):
 
-    today = datetime.combine(datetime.now(), datetime.min.time())
+    pipeline = []
 
-    match_queries = [{"adverts.date.expires": {"$gt": today}}]
+    _add_match_query(pipeline, query, location, distance)
+    _add_lookup_query(pipeline)
+    _add_computed_fields_query(pipeline)
+
+    return jobs.aggregate(pipeline)
+
+
+def _add_match_query(pipeline, query, location, distance):
+    today = datetime.combine(datetime.now(), datetime.min.time())
+    match_queries = [
+        {"adverts.date.expires": {"$gt": today}},
+        {"adverts.status": AdvertStatus.PUBLISHED}
+    ]
 
     if query:
         match_queries.append({"$text": {"$search": query}})
@@ -25,11 +38,11 @@ def search(query: str="",
                 }}
             })
 
-    pipeline = [
-        {
-            "$match": {"$and": match_queries}
-        },
+    pipeline.append({"$match": {"$and": match_queries}})
 
+
+def _add_lookup_query(pipeline):
+    pipeline.extend([
         {
             "$lookup": {
                 "from": "companies",
@@ -38,38 +51,40 @@ def search(query: str="",
                 },
                 "pipeline": [{
                     "$match": {
-                        "$expr": {"$eq": ["$_id", "$$c_id"]}
+                        "$expr": {
+                            "$eq": ["$_id", "$$c_id"]}
                     }
                 }],
                 "as": "companies"
             }
         },
-
         {"$addFields": {"company": {"$arrayElemAt": ["$companies", 0]}}},
-
-        {"$addFields": {"company": {"$arrayElemAt": ["$companies", 0]}}},
-
-        {"$addFields": {
-            "location.address": {
-                "postcode": "$location.postcode",
-                "address": "This is the address",
-                "city": "Test Town",
+        {
+            "$lookup": {
+                "from": "users",
+                "let": {
+                    "hm_ids": "$company.hire_managers_ids"
+                },
+                "pipeline": [{
+                    "$match": {
+                        "$expr": {
+                            "$in": ["$_id", "$$hm_ids"]}
+                    }
+                }],
+                "as": "company.hiring_managers"
             }
-        }},
+        },
+        {"$project": {
+            "companies": 0,
+            "company.hiring_managers.password": 0
+        }}
+    ])
 
-        {"$addFields": {"metadata.rate.pretty_print": "100£ per day"}},
 
-        {"$addFields": {"metadata.company_referent.full_name": "John Doe"}},
-        {"$addFields": {
-            "metadata.company_referent.phone_number": "+44 7873590126"}},
-
-        {"$addFields": {"duration.pretty_print": "3 months and 2 weeks"}},
-
-        {"$addFields": {"company.logo": "http://findastart.palmerminto.com/"
-                                        "wp-content/uploads/2018/06/"
-                                        "cropped-Find-a-Start-logo@2x.png"}},
-
-        {"$project": {"companies": 0}}
-    ]
-
-    return jobs.aggregate(pipeline)
+def _add_computed_fields_query(pipeline):
+    pipeline.append({
+        "$addFields": {
+            "rate.pretty_print": "100£ per day",
+            "duration.pretty_print": "3 months and 2 weeks"
+        }
+    })

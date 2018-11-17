@@ -1,3 +1,4 @@
+import logging
 from json import loads
 from unittest import TestCase
 
@@ -7,6 +8,8 @@ from config import settings
 from db import get_db_name
 from db.collections import db, companies, users, jobs, payments
 from lib.schema_validation import validate
+
+logging.getLogger('faker.factory').setLevel(logging.ERROR)
 
 
 class UnitTestCase(TestCase):
