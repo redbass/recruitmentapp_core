@@ -69,10 +69,7 @@
             "properties": {
                 "type": {
                     "type": "string",
-                    "minimum": 1
-                },
-                "units": {
-                    "type": "string"
+                    "enum": ["hourly_rate", "day_rate", "price", "salary"]
                 },
                 "value": {
                     "type": "number",
