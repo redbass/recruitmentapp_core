@@ -52,9 +52,8 @@ class TestCreateJob(BaseTestJob):
                 "job_type": "developer"
             },
             "rate": {
-                "type": "other",
-                "units": "lines of code",
-                "value": 0.1
+                "type": "hourly_rate",
+                "value": 10
             }
         }
         return job
