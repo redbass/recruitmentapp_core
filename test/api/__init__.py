@@ -10,7 +10,7 @@ from db.collections import setup_database
 from model.user import UserType
 from test import UnitTestCase
 from test.model.company import CompanyFactory
-from test.model.user import UserFactory
+from test.model.test_user import UserFactory
 
 TEST_USER = 'test@user.com'
 

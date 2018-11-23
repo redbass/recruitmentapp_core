@@ -9,7 +9,7 @@ from model.user import UserType
 from test.api.job import BaseTestApiJob
 from test.model.company import CompanyFactory
 from test.model.job import JobFactory
-from test.model.user import UserFactory
+from test.model.test_user import UserFactory
 
 
 class TestApiCreateJob(BaseTestApiJob):

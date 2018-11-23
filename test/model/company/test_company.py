@@ -2,7 +2,7 @@ from model.company.company import get_companies, \
     get_company_by_admin_user
 from model.user import UserType
 from test.model.company import BaseTestCompany, CompanyFactory
-from test.model.user import UserFactory
+from test.model.test_user import UserFactory
 
 
 class TestGetCompanies(BaseTestCompany):

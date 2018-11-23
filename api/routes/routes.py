@@ -1,6 +1,7 @@
-from api.services import postcode, picklist, search
+from api.services import postcode, search
+from api import picklist
 from api.integration import stripe
-from api.company import company
+from api.company import company, hm_company
 
 SEARCH_STATIC = '/api/job/search_static'
 SEARCH = '/api/job/search'
@@ -10,6 +11,7 @@ PICKLIST = '/api/picklist/<name>'
 POSTCODE_SEARCH = '/api/postcode/<postcode>'
 
 COMPANY_LOGO = '/api/company/<company_id>/logo'
+COMPANIES_URL = '/api/company'
 
 STRIPE_CHARGE_PAYMENT = '/api/stripe/charge'
 STRIPE_CHARGE_PROCESSED = '/api/stripe/charge/processed'
@@ -19,17 +21,32 @@ def add_generic_routes(app):
 
     _add_services_routes(app)
     _add_integration_routes(app)
-    _add_company_routes(app)
+
+    app.add_url_rule(COMPANY_LOGO,
+                     'upload_company_logo',
+                     company.upload_company_logo,
+                     methods=['POST'])
+
+    app.add_url_rule(COMPANY_LOGO,
+                     'get_company_logo',
+                     company.get_company_logo,
+                     methods=['GET'])
+
+    app.add_url_rule(COMPANIES_URL,
+                     'sign_in_company',
+                     hm_company.sign_in_company,
+                     methods=['POST'])
+
+    app.add_url_rule(PICKLIST,
+                     'picklist',
+                     picklist.picklist,
+                     methods=['GET'])
 
 
 def _add_services_routes(app):
     app.add_url_rule(SEARCH,
                      'search',
                      search.api_search,
-                     methods=['GET'])
-    app.add_url_rule(PICKLIST,
-                     'picklist',
-                     picklist.picklist,
                      methods=['GET'])
     app.add_url_rule(POSTCODE_SEARCH,
                      'postcode',
@@ -46,15 +63,3 @@ def _add_integration_routes(app):
                      'stripe_charge_processed',
                      stripe.charge_processed,
                      methods=['POST'])
-
-
-def _add_company_routes(app):
-    app.add_url_rule(COMPANY_LOGO,
-                     'upload_company_logo',
-                     company.upload_company_logo,
-                     methods=['POST'])
-
-    app.add_url_rule(COMPANY_LOGO,
-                     'get_company_logo',
-                     company.get_company_logo,
-                     methods=['GET'])

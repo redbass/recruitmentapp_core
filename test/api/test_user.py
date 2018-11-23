@@ -4,7 +4,7 @@ from api.routes.admin_routes import USERS_URL, USER_URL
 from lib.password import check_user_password
 from model.user import UserType, get_user
 from test.api import TestApi
-from test.model.user import UserFactory
+from test.model.test_user import UserFactory
 
 
 class TestAPIGetUsers(TestApi):

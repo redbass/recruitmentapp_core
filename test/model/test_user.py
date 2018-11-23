@@ -1,8 +1,8 @@
 from lib.password import check_user_password
 from model.user import UserType, get_user, get_users, \
-    create_hidden_hiring_manager, update_user_password
-from test import UnitTestCase
-from test.model.user import UserFactory
+    create_hidden_hiring_manager, update_user_password, create_user
+from test import UnitTestCase, load_example_model
+from test.factory import ModelFactory
 
 
 class BaseUserTestCase(UnitTestCase):
@@ -162,3 +162,18 @@ class UpdateUserPasswordTestCase(BaseUserTestCase):
 
         with self.assertRaises(ValueError):
             update_user_password(user_id='123', new_password=new_password)
+
+
+class UserFactory(ModelFactory):
+    EXAMPLE_MODEL_NAME = 'create_user_input'
+
+    def create(self, **qwargs):
+
+        default_values = load_example_model(self.EXAMPLE_MODEL_NAME)
+
+        if 'username' not in qwargs:
+            default_values['username'] = self.fake.email()
+
+        default_values.update(qwargs)
+
+        return create_user(**default_values)
