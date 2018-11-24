@@ -11,11 +11,14 @@ from services.search import search
 @api_token_required
 def api_search():
     query = request.args.get('query')
+    job_type = request.args.get('job_type')
+    rate_type = request.args.get('rate_type')
 
     location = _get_coordinates()
     distance = _get_distance()
 
-    results = search(query=query, location=location, distance=distance)
+    results = search(query=query, job_type=job_type, rate_type=rate_type,
+                     location=location, distance=distance)
     return {
         "jobs": results,
         "query": {

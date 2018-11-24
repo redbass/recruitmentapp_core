@@ -7,18 +7,21 @@ from model.job.job_advert import AdvertStatus
 
 def search(query: str="",
            location: list=None,
-           distance: float=None):
+           distance: float=None,
+           job_type: str=None,
+           rate_type: str=None):
 
     pipeline = []
 
-    _add_match_query(pipeline, query, location, distance)
+    _add_match_query(pipeline=pipeline, query=query, job_type=job_type,
+                     location=location, distance=distance, rate_type=rate_type)
     _add_lookup_query(pipeline)
     _add_computed_fields_query(pipeline)
 
     return jobs.aggregate(pipeline)
 
 
-def _add_match_query(pipeline, query, location, distance):
+def _add_match_query(pipeline, query, job_type, rate_type, location, distance):
     today = datetime.combine(datetime.now(), datetime.min.time())
     match_queries = [
         {"adverts.date.expires": {"$gt": today}},
@@ -37,6 +40,12 @@ def _add_match_query(pipeline, query, location, distance):
                     "$centerSphere": [[longitude, latitude], rad_radius]
                 }}
             })
+
+    if job_type:
+        match_queries.append({"metadata.job_type": job_type})
+
+    if rate_type:
+        match_queries.append({"rate.type": rate_type})
 
     pipeline.append({"$match": {"$and": match_queries}})
 
