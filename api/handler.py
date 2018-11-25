@@ -2,6 +2,7 @@ from functools import wraps
 
 from flask.json import jsonify
 from jsonschema import ValidationError
+from jwt import ExpiredSignatureError
 
 from exceptions.api import ParametersException, ActionNotAllowed
 from exceptions.auth import UnauthorizedException
@@ -13,6 +14,7 @@ EXCEPTIONS = {
     ValueError: 400,
     ValidationError: 400,
     ActionNotAllowed: 400,
+    ExpiredSignatureError: 401,
     UnauthorizedException: 405,
     ServiceError: 503,
     StripeException: 500
