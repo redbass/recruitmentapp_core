@@ -2,11 +2,11 @@ from model.picklist import store_piclikst, get_picklist
 from test import UnitTestCase
 
 
-class TestLocation(UnitTestCase):
+class TestPicklist(UnitTestCase):
 
     def test_store_picklist(self):
 
-        picklist_type = 'duration'
+        picklist_type = 'job_durations'
         picklist_values = [
             {'key': 'value1', 'value': 'Value One'},
             {'key': 'value2', 'value': 'Value Two'},
@@ -23,7 +23,7 @@ class TestLocation(UnitTestCase):
         picklist_values = []
 
         with self.assertRaises(ValueError):
-            store_piclikst('duration', picklist_values)
+            store_piclikst('job_durations', picklist_values)
 
     def test_store_invalid_picklist_values_raise_error(self):
         picklist_values = [

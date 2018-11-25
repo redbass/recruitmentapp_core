@@ -1,7 +1,8 @@
 from db.collections import picklist
 
 
-ALLOWED_PICKLIST_NAMES = ['duration']
+ALLOWED_PICKLIST_NAMES = ['job_titles', 'job_locations', 'job_durations',
+                          'job_rates', 'company_trades']
 
 
 def store_piclikst(picklist_type, picklist_values):

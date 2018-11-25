@@ -3,7 +3,6 @@ from api import picklist
 from api.integration import stripe
 from api.company import company, hm_company
 
-SEARCH_STATIC = '/api/job/search_static'
 SEARCH = '/api/job/search'
 
 PICKLIST = '/api/picklist/<name>'
@@ -38,9 +37,14 @@ def add_generic_routes(app):
                      methods=['POST'])
 
     app.add_url_rule(PICKLIST,
-                     'picklist',
-                     picklist.picklist,
+                     'get_picklist',
+                     picklist.get_picklist,
                      methods=['GET'])
+
+    app.add_url_rule(PICKLIST,
+                     'store_picklist',
+                     picklist.store_picklist,
+                     methods=['POST'])
 
 
 def _add_services_routes(app):
