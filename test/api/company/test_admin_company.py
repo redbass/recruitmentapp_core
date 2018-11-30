@@ -1,8 +1,10 @@
 from json import loads
 from unittest.mock import patch
 
-from api.routes.admin_routes import COMPANIES_URL, COMPANY_URL
+from api.routes.admin_routes import COMPANIES_URL, COMPANY_URL, \
+    COMPANY_ACTIONS_URL
 from auth.jwt import TEST_IDENTITY
+from model.company.company import get_company
 from test import load_example_model
 from test.api.company import BaseTestCompany
 from test.model.company import CompanyFactory
@@ -47,6 +49,35 @@ class TestEditCompany(BaseTestCompany):
         self.assertEqual(data['name'], result_company['name'])
         self.assertEqual(data['description'],
                          result_company['description'])
+
+    def test_enable_disable_company(self):
+        company = self.create_from_factory(CompanyFactory)
+
+        self.assertFalse(company['enabled'])
+
+        url = self.url_for_admin(COMPANY_ACTIONS_URL,
+                                 action='enable',
+                                 company_id=company['_id'])
+        self.post_json(url)
+        company = get_company(company['_id'])
+        self.assertTrue(company['enabled'])
+
+        url = self.url_for_admin(COMPANY_ACTIONS_URL,
+                                 action='disable',
+                                 company_id=company['_id'])
+        self.post_json(url)
+        company = get_company(company['_id'])
+        self.assertFalse(company['enabled'])
+
+    def test_company_actions_not_supported_raise_error(self):
+        company = self.create_from_factory(CompanyFactory)
+
+        url = self.url_for_admin(COMPANY_ACTIONS_URL,
+                                 action='random',
+                                 company_id=company['_id'])
+        response = self.post_json(url)
+
+        self.assertEquals(400, response.status_code)
 
 
 class TestGetCompany(BaseTestCompany):

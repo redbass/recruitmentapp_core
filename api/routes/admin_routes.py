@@ -7,6 +7,7 @@ ADMIN_PREFIX = 'admin'
 
 COMPANIES_URL = '/api/company'
 COMPANY_URL = '/api/company/<company_id>'
+COMPANY_ACTIONS_URL = '/api/company/<company_id>/<action>'
 JOBS_URL = '/api/job'
 JOB_URL = '/api/job/<job_id>'
 ADVERTS_URL = '/api/job/<job_id>/advert'
@@ -46,6 +47,12 @@ def _add_company_routes(app):
                         COMPANY_URL,
                         'edit_company',
                         api.company.admin_company.edit_company,
+                        methods=['POST'])
+
+    _add_admin_url_rule(app,
+                        COMPANY_ACTIONS_URL,
+                        'company_actions',
+                        api.company.admin_company.company_actions,
                         methods=['POST'])
 
 
