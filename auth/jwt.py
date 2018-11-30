@@ -11,7 +11,7 @@ from flask_jwt_extended import jwt_required as flask_jwt_required, \
 from config import settings
 from lib.password import check_user_password
 from model.company.company import get_company_by_admin_user
-from model.user import get_user
+from model.user import get_user, UserType
 
 __jwt = None
 
@@ -70,10 +70,17 @@ def _setup_endpoints(app):
 
         user = get_user(username)
         if not user or not check_user_password(password, user.get('password')):
-            return jsonify({'login': False}), 401
+            return jsonify(
+                {'login': False, 'reason': 'INVALID_CREDENTIALS'}), 401
+
+        company = get_company_by_admin_user(user['_id'])
+        if user['type'] == UserType.HIRING_MANAGER \
+                and not company.get('enabled', False):
+            return jsonify(
+                {'login': False, 'reason': 'COMPANY_DISABLED'}), 401
 
         # Create the tokens we will be sending back to the user
-        identity = _create_identity_object(user)
+        identity = _create_identity_object(user, company)
         access_token = create_access_token(identity=identity)
         refresh_token = create_refresh_token(identity=identity)
 
@@ -105,11 +112,9 @@ def _setup_endpoints(app):
         return resp, 200
 
 
-def _create_identity_object(user):
-    admin_username = user['_id']
-    company = get_company_by_admin_user(admin_username)
+def _create_identity_object(user, company):
     return {
-        'username': admin_username,
+        'username': user['_id'],
         'role': user['type'],
         'company_id': company['_id'] if company else None
     }
