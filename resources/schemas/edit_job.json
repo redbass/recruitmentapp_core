@@ -9,10 +9,6 @@
             "type": "string",
             "minimum": 1
         },
-        "duration_days": {
-            "type": "integer",
-            "minimum": 0
-        },
         "location": {
             "type": "object",
             "properties": {
@@ -29,6 +25,10 @@
                     "type": "number",
                     "minimum": -180,
                     "maximum": 180
+                },
+                "admin_district": {
+                    "type": "string",
+                    "minimum": 1
                 }
             },
             "anyOf": [
@@ -84,7 +84,6 @@
     "anyOf": [
         {"required": ["title"]},
         {"required": ["description"]},
-        {"required": ["duration_days"]},
         {"required": ["location"]},
         {"required": ["metadata"]},
         {"required": ["rate"]}
