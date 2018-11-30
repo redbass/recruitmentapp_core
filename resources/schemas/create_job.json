@@ -14,7 +14,7 @@
         },
         "duration_days": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 1
         },
         "location": {
             "type": "object",
@@ -56,11 +56,16 @@
                 "job_type": {
                     "type": "string",
                     "minimum": 1
+                },
+                "job_duration_days": {
+                    "type": "integer",
+                    "minimum": 1
                 }
             },
             "required": [
                 "trades",
-                "job_type"
+                "job_type",
+                "job_duration_days"
             ],
             "additionalProperties": false
         },
