@@ -12,10 +12,6 @@
             "type": "string",
             "minimum": 1
         },
-        "duration_days": {
-            "type": "integer",
-            "minimum": 1
-        },
         "location": {
             "type": "object",
             "properties": {
@@ -92,7 +88,6 @@
         "company_id",
         "title",
         "description",
-        "duration_days",
         "location",
         "metadata",
         "rate"

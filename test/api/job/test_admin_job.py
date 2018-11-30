@@ -48,8 +48,10 @@ class TestApiCreateJob(BaseTestApiJob):
         })
 
     def test_create_job_invalid_data(self):
+        title = 1
         job_input = self.load_example_model('create_job_input')
-        job_input['duration_days'] = "SOME RANDOM STRING"
+        job_input['company_id'] = self.company['_id']
+        job_input['title'] = title
 
         url = self.url_for_admin(JOBS_URL)
         response = self.post_json(url, job_input)
@@ -57,7 +59,7 @@ class TestApiCreateJob(BaseTestApiJob):
         self.assertEqual(400, response.status_code)
         self.assertEqual(loads(response.data), {
             "exception": "ValidationError",
-            "message": "'SOME RANDOM STRING' is not of type 'integer'",
+            "message": "{title} is not of type 'string'".format(title=title),
             "refId": ""
         })
 
