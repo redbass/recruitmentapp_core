@@ -8,18 +8,14 @@ from test.model.test_user import UserFactory
 
 class TestCreateCompany(BaseTestCompany):
 
+    def setUp(self):
+        super().setUp()
+        self.admin = self.create_from_factory(UserFactory,
+                                              user_type=UserType.ADMIN)
+
     def test_create_company_as_admin_add_hidden_hiring_manager_user(self):
-        admin = self.create_from_factory(UserFactory,
-                                         user_type=UserType.ADMIN)
-        create_company_input = load_example_model('create_company_input')
-
-        created_company = create_company_admin(
-            admin_user_id=admin['_id'], **create_company_input)
-
-        admins = created_company['admin_user_ids']
-
-        expected_values = [admin['_id'], created_company['contacts']['email']]
-        self.assertEquals(expected_values, admins)
+        self._assert_create_company(self.admin, is_admin=True,
+                                    create_fn=create_company_admin)
 
     def test_create_company_as_hiring_manager(self):
         self._assert_create_company(self.hiring_manager1,
@@ -48,14 +44,17 @@ class TestCreateCompany(BaseTestCompany):
                                     "admin user `.*` already exists"):
             _validate_admin_id(admin_user_id=self.hiring_manager1['_id'])
 
-    def _assert_create_company(self, user, create_fn):
+    def _assert_create_company(self, user, create_fn, is_admin=False):
         create_company_input = load_example_model('create_company_input')
         company = create_fn(admin_user_id=user['_id'],
                             **create_company_input)
+        expected_ids = [user['_id'], company['contacts']['email']] \
+            if is_admin else [user['_id']]
         expected_company = {
             '_id': company['_id'],
-            'hire_managers_ids': [user['_id']],
-            'admin_user_ids': [user['_id']]
+            'hire_managers_ids': expected_ids,
+            'admin_user_ids': expected_ids,
+            'enabled': is_admin
         }
         expected_company.update(create_company_input)
         created_company = get_company(company['_id'])
