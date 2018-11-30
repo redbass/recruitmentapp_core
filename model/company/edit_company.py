@@ -16,3 +16,12 @@ def edit_company(_id: str,
                      {"$set": exploded_values})
 
     return get_company(_id)
+
+
+def enable_company(_id: str, enable=True):
+    companies.update({"_id": _id},
+                     {"$set": {'enabled': enable}})
+
+
+def disable_company(_id: str):
+    enable_company(_id, enable=False)

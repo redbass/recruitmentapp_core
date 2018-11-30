@@ -6,6 +6,7 @@ from auth.jwt import jwt_required
 from lib.schema_validation import validate
 from model.company import company
 from model.company import edit_company as edit_company_model
+from model.company.edit_company import enable_company, disable_company
 
 
 @jwt_required
@@ -38,3 +39,22 @@ def get_companies():
 @json_response
 def get_company(company_id):
     return company.get_company(company_id=company_id)
+
+
+@jwt_required
+@json_response
+def company_actions(company_id, action):
+    actions_map = {
+        'enable': enable_company,
+        'disable': disable_company
+    }
+
+    foo = actions_map.get(action)
+
+    if not foo:
+        raise ValueError("Action '{action}' not supported"
+                         .format(action=action))
+
+    foo(company_id)
+
+    return {}

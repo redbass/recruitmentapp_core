@@ -53,10 +53,10 @@ class TestCreateCompany(BaseTestCompany):
         expected_company = {
             '_id': company['_id'],
             'hire_managers_ids': expected_ids,
-            'admin_user_ids': expected_ids,
-            'enabled': is_admin
+            'admin_user_ids': expected_ids
         }
         expected_company.update(create_company_input)
+        expected_company['enabled'] = is_admin
         created_company = get_company(company['_id'])
         self.assertIsNotNone(created_company['_id'])
         self.assertEqual(expected_company, created_company)

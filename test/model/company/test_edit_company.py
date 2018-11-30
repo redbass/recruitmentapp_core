@@ -1,4 +1,6 @@
-from model.company.edit_company import edit_company
+from model.company.company import get_company
+from model.company.edit_company import edit_company, enable_company, \
+    disable_company
 from test.model.company import BaseTestCompany, CompanyFactory
 
 
@@ -41,3 +43,16 @@ class TestEditCompany(BaseTestCompany):
                 'Company id "{company_id}" does not exists'.format(
                     company_id=company_id)):
             edit_company(_id=company_id, name="New Name")
+
+    def test_enable_disable_company(self):
+        enable_company(_id=self.company['_id'])
+        company = get_company(self.company['_id'])
+        self.assertTrue(company['enabled'])
+
+        disable_company(_id=self.company['_id'])
+        company = get_company(self.company['_id'])
+        self.assertFalse(company['enabled'])
+
+        enable_company(_id=self.company['_id'])
+        company = get_company(self.company['_id'])
+        self.assertTrue(company['enabled'])
