@@ -11,7 +11,8 @@
     },
     "metadata":{
         "trades": ["software_engineer"],
-        "job_type": "developer"
+        "job_type": "developer",
+        "job_duration_days": 21
     },
     "rate": {
         "type": "hourly_rate",
