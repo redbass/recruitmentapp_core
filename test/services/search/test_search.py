@@ -23,12 +23,38 @@ class SearchTestCase(BaseSearchTestCase):
             location=EDINBURGH_EICA)
 
     def test_search_jobs_no_results(self):
-        results = list(search('NOTHING'))
-
+        results, total, pages = search('NOTHING')
         self.assertEqual(0, len(results))
+        self.assertEquals(0, total)
+        self.assertEquals(0, pages)
+
+    def test_search_return_total_results_and_pages(self):
+        _, total, pages = search()
+        self.assertEquals(3, total)
+        self.assertEquals(1, pages)
+
+    def test_search_return_no_results_if_requested_empty_page(self):
+        results, total, pages = search(page=100)
+
+        self.assertEquals(0, len(results))
+        self.assertEquals(3, total)
+        self.assertEquals(1, pages)
+
+    def test_search_get_specific_page(self):
+        results, total, pages = search(page=0, limit=2)
+
+        self.assertEquals(2, len(results))
+        self.assertEquals(3, total)
+        self.assertEquals(2, pages)
+
+        results, total, pages = search(page=1, limit=2)
+
+        self.assertEquals(1, len(results))
+        self.assertEquals(3, total)
+        self.assertEquals(2, pages)
 
     def test_search_jobs_returns_hiring_managers_list_without_password(self):
-        results = list(search())
+        results, _, _ = search()
 
         for result in results:
             self.assertGreater(len(result['company']['hiring_managers']), 0)

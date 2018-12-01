@@ -33,11 +33,10 @@ class SearchByDistanceTestCase(BaseSearchTestCase):
     def _assert_search_by_location(self, test_location, delta_in_km):
         distance = distance_from_location(self.current_location,
                                           test_location)
-        results_1 = search(query="Job", location=self.current_location,
-                           distance=distance + delta_in_km)
-        results_2 = search(query="Job", location=self.current_location,
-                           distance=distance - delta_in_km)
-        results_1 = list(results_1)
-        results_2 = list(results_2)
+        results_1, _, _ = search(query="Job", location=self.current_location,
+                                 distance=distance + delta_in_km)
+        results_2, _, _ = search(query="Job", location=self.current_location,
+                                 distance=distance - delta_in_km)
+
         self.assertEquals(2, len(results_1))
         self.assertEquals(1, len(results_2))

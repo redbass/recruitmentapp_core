@@ -1,24 +1,66 @@
+
+
 from datetime import datetime
 
 from db.collections import jobs
 from lib.geo import km2rad
 from model.job.job_advert import AdvertStatus
 
+DEFAULT_PAGE_SIZE = 10
 
-def search(query: str="",
-           location: list=None,
-           distance: float=None,
-           job_type: str=None,
-           rate_type: str=None):
 
+def _prepare_results(result):
+    results, count, pages = [], 0, 0
+
+    result = list(result)
+
+    if result:
+        results = result[0]['result']
+        count = result[0]['count']
+        pages = int(result[0]['pages'])
+
+    return results, count, pages
+
+
+def search(query: str = "",
+           location: list = None,
+           distance: float = None,
+           job_type: str = None,
+           rate_type: str = None,
+           page: int = None,
+           limit: int = None):
     pipeline = []
 
     _add_match_query(pipeline=pipeline, query=query, job_type=job_type,
                      location=location, distance=distance, rate_type=rate_type)
     _add_lookup_query(pipeline)
+    _add_order_by_advert_creation(pipeline)
     _add_computed_fields_query(pipeline)
+    _add_pagination(pipeline, page, limit)
 
-    return jobs.aggregate(pipeline)
+    result = jobs.aggregate(pipeline)
+
+    return _prepare_results(result)
+
+
+def _add_pagination(pipeline, page, limit):
+    page = page or 0
+    limit = limit or DEFAULT_PAGE_SIZE
+    results_query = {'$slice': ['$result', page * limit, limit]}
+    page_query = {'$ceil': {'$divide': [{'$size': '$result'}, limit]}}
+    pipeline.extend([
+        {
+            '$group': {
+                '_id': 'results', 'result': {'$push': '$$CURRENT'}}
+        },
+        {
+            '$project': {
+                '_id': 0,
+                'count': {'$size': '$result'},
+                'result': results_query,
+                'pages': page_query},
+        }
+    ])
 
 
 def _add_match_query(pipeline, query, job_type, rate_type, location, distance):
@@ -39,7 +81,7 @@ def _add_match_query(pipeline, query, job_type, rate_type, location, distance):
                 "$geoWithin": {
                     "$centerSphere": [[longitude, latitude], rad_radius]
                 }}
-            })
+        })
 
     if job_type:
         match_queries.append({"metadata.job_type": job_type})
@@ -48,6 +90,13 @@ def _add_match_query(pipeline, query, job_type, rate_type, location, distance):
         match_queries.append({"rate.type": rate_type})
 
     pipeline.append({"$match": {"$and": match_queries}})
+
+
+def _add_order_by_advert_creation(pipeline):
+    pipeline.extend([
+        {"$addFields": {"advert": {"$arrayElemAt": ["$adverts", 0]}}},
+        {"$sort": {"advert.date.created": -1}}
+    ])
 
 
 def _add_lookup_query(pipeline):
@@ -67,7 +116,10 @@ def _add_lookup_query(pipeline):
                 "as": "companies"
             }
         },
-        {"$addFields": {"company": {"$arrayElemAt": ["$companies", 0]}}},
+        {
+            "$addFields": {
+                "company": {"$arrayElemAt": ["$companies", 0]}}
+        },
         {
             "$lookup": {
                 "from": "users",
@@ -83,10 +135,11 @@ def _add_lookup_query(pipeline):
                 "as": "company.hiring_managers"
             }
         },
-        {"$project": {
-            "companies": 0,
-            "company.hiring_managers.password": 0
-        }}
+        {
+            "$project": {
+                "companies": 0,
+                "company.hiring_managers.password": 0
+            }}
     ])
 
 
