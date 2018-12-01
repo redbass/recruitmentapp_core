@@ -14,18 +14,35 @@ def api_search():
     job_type = request.args.get('job_type')
     rate_type = request.args.get('rate_type')
 
+    page = request.args.get('page')
+    page = int(page) if page else None
+
+    limit = request.args.get('limit')
+    limit = int(limit) if limit else None
+
     location = _get_coordinates()
     distance = _get_distance()
 
-    results = search(query=query, job_type=job_type, rate_type=rate_type,
-                     location=location, distance=distance)
+    results, total, pages = search(
+        query=query, job_type=job_type, rate_type=rate_type, location=location,
+        distance=distance, page=page, limit=limit
+    )
+
+    query = {
+        'query': query,
+        'job_type': job_type,
+        'rate_type': rate_type,
+        'location': location,
+        'distance': distance,
+        'page': page,
+        'limit': limit
+    }
+
     return {
         "jobs": results,
-        "query": {
-            "query": query,
-            "location": location,
-            "distance": distance
-        }
+        "query": query,
+        "total": total,
+        "pages": pages
     }
 
 

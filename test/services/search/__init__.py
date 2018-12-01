@@ -78,6 +78,6 @@ class BaseSearchTestCase(UnitTestCase):
 
     def _assert_search(self, expected_jobs, comparator='title',
                        **search_params):
-        results = list(search(**search_params))
+        results, _, _ = search(**search_params)
         self.assertEquals([j[comparator] for j in expected_jobs],
                           [r[comparator] for r in results])

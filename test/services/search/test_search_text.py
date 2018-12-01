@@ -37,11 +37,11 @@ class SearchTextTestCase(BaseSearchTestCase):
         )
 
     def test_search_with_no_params_return_all_approved_not_expired(self):
-        expected_jobs = [self.guide, self.breeder, self.climber, self.far_job]
+        expected_jobs = [self.far_job, self.climber, self.breeder, self.guide]
         self._assert_search(expected_jobs=expected_jobs)
 
     def test_search_jobs_by_title(self):
-        expected_jobs = [self.guide, self.breeder, self.far_job]
+        expected_jobs = [self.far_job, self.breeder, self.guide]
         self._assert_search(expected_jobs=expected_jobs,
                             query='Job')
 

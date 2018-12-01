@@ -35,7 +35,6 @@ class TestAPISearch(TestApi):
             'job_type': self.job_type,
             'rate_type': self.rate_type,
         })
-        self._assert_search(expected_jobs, url_params)
 
         self._assert_search(expected_jobs=expected_jobs, url_params=url_params)
 
@@ -49,11 +48,27 @@ class TestAPISearch(TestApi):
 
     def test_search_distance_2(self):
         query = "job"
-        expected_jobs = [self.job_1, self.job_3]
+        expected_jobs = [self.job_3, self.job_1]
         job_location = ITALY
 
         self._assert_search_by_distance(job_location, query, expected_jobs,
                                         precision=5)
+
+    def test_pagination(self):
+        url_params = {
+            'query': "",
+            'page': '0',
+            'limit': '10'
+        }
+
+        result = self._search(url_params=urlencode(url_params))
+
+        expected_results = [self.job_1, self.job_2, self.job_3]
+
+        self.assertEquals(len(expected_results), len(result['jobs']))
+        self.assertIsNotNone(result['query'])
+        self.assertEquals(len(expected_results), result['total'])
+        self.assertEquals(1, result['pages'])
 
     def _assert_search_by_distance(self, job_location, query, expected_jobs,
                                    precision):
@@ -69,13 +84,18 @@ class TestAPISearch(TestApi):
         self._assert_search(expected_jobs, params)
 
     def _assert_search(self, expected_jobs, url_params):
-        url = "{root}?{params}".format(root=SEARCH, params=url_params)
-        response = self.get_data(url)
-        self.assertEqual(200, response.status_code)
-        results = json.loads(response.data)
-        jobs = results['jobs']
+        result = self._search(url_params)
+        jobs = result['jobs']
         self.assertEquals([j['title'] for j in expected_jobs],
                           [j['title'] for j in jobs])
+        return result
+
+    def _search(self, url_params):
+        url = "{root}?{params}".format(root=SEARCH, params=url_params)
+        response = self.get_data(url)
+        self.assertEquals(200, response.status_code)
+        result = json.loads(response.data)
+        return result
 
     @classmethod
     def _crate_job(cls, **job_args):
