@@ -1,5 +1,6 @@
+from io import BytesIO
+
 from flask import send_file, request
-from flask.json import jsonify
 from flask_jwt_extended import get_jwt_identity
 
 from api.handler import json_response
@@ -10,6 +11,12 @@ from exceptions.auth import UnauthorizedException
 from model.company import company
 from model.company.company import get_company
 from model.user import UserType
+
+EMPTY_IMAGE = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00' \
+              b'\x00\x01\x01\x03\x00\x00\x00%\xdbV\xca\x00\x00\x00\x03PLTE' \
+              b'\x00\x00\x00\xa7z=\xda\x00\x00\x00\x01tRNS\x00@\xe6\xd8f\x00' \
+              b'\x00\x00\nIDAT\x08\xd7c`\x00\x00\x00\x02\x00\x01\xe2!\xbc3' \
+              b'\x00\x00\x00\x00IEND\xaeB`\x82'
 
 
 @jwt_required
@@ -43,7 +50,7 @@ def upload_company_logo(company_id):
 def get_company_logo(company_id):
 
     logo = company.get_company_logo(company_id=company_id)
-    if logo:
-        return send_file(logo, 'application/octet-stream')
+    if not logo:
+        logo = BytesIO(EMPTY_IMAGE)
 
-    return jsonify(None), 404
+    return send_file(logo, 'application/octet-stream')

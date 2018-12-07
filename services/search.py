@@ -95,6 +95,7 @@ def _add_match_query(pipeline, query, job_type, rate_type, location, distance):
 def _add_order_by_advert_creation(pipeline):
     pipeline.extend([
         {"$addFields": {"advert": {"$arrayElemAt": ["$adverts", 0]}}},
+        {"$project": {"adverts": 0}},
         {"$sort": {"advert.date.created": -1}}
     ])
 

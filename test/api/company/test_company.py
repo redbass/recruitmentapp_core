@@ -33,7 +33,7 @@ class TestGetCompanyLogo(BaseTestCompany):
         url = self.url_for(COMPANY_LOGO, company_id="123123123123123")
         response = self.get_data(url)
 
-        self.assertEqual(404, response.status_code)
+        self.assertEqual(200, response.status_code)
 
 
 class TestUploadCompanyLogo(BaseTestCompany):
