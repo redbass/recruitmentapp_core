@@ -8,6 +8,7 @@ users = db.users
 companies = db.companies
 payments = db.payments
 picklist = db.picklist
+configs = db.config
 files = db['fs.files']
 
 # Indexes

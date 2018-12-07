@@ -12,6 +12,7 @@ POSTCODE_SEARCH = '/api/postcode/<postcode>'
 COMPANY_LOGO = '/api/company/<company_id>/logo'
 COMPANIES_URL = '/api/company'
 
+STRIPE_GET_CONFIG = '/api/stripe/config'
 STRIPE_CHARGE_PAYMENT = '/api/stripe/charge'
 STRIPE_CHARGE_PROCESSED = '/api/stripe/charge/processed'
 
@@ -59,6 +60,10 @@ def _add_services_routes(app):
 
 
 def _add_integration_routes(app):
+    app.add_url_rule(STRIPE_GET_CONFIG,
+                     'stripe_cget_config',
+                     stripe.get_stripe_config,
+                     methods=['GET'])
     app.add_url_rule(STRIPE_CHARGE_PAYMENT,
                      'stripe_charge_payment',
                      stripe.charge_payment,
