@@ -1,24 +1,30 @@
 import stripe
 
 from config import settings
+from db.collections import configs
 from exceptions.stripe import StripeException
 from model.job.job_advert import publish_payed_job_advert, \
     pay_job_advert as pay_advert
 from model.payment import store_payment
 
-DEFAULT_CURRENCY = 'GBP'
-DEFAULT_ADVERT_CHARGE = 2000
-DEFAULT_CHARGE_DESCRIPTION = 'Single Payment'
-
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
+def get_stripe_config():
+    return configs.find_one({'_id': 'stripe'}) or {}
+
+
 def pay_job_advert(job_id, advert_id, stripe_token):
+    stripe_configs = get_stripe_config()
+
+    default_advert_charge = stripe_configs['default_advert_charge']
+    default_currency = stripe_configs['default_currency']
+    default_charge_description = stripe_configs['default_charge_description']
 
     response = stripe.Charge.create(
-        amount=DEFAULT_ADVERT_CHARGE,
-        currency=DEFAULT_CURRENCY,
-        description=DEFAULT_CHARGE_DESCRIPTION,
+        amount=default_advert_charge,
+        currency=default_currency,
+        description=default_charge_description,
         source=stripe_token,
         metadata={
             'job_id': job_id,

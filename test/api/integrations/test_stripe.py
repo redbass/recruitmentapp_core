@@ -1,7 +1,9 @@
 import json
 from unittest.mock import patch
 
-from api.routes.routes import STRIPE_CHARGE_PROCESSED, STRIPE_CHARGE_PAYMENT
+from api.routes.routes import STRIPE_CHARGE_PROCESSED, STRIPE_CHARGE_PAYMENT, \
+    STRIPE_GET_CONFIG
+from db.collections import configs
 from model.job.job_advert import add_advert_to_job, approve_job_advert, \
     pay_job_advert, request_approval_job_advert
 from test.api.job import BaseTestApiJob
@@ -9,6 +11,25 @@ from test.model.job import JobFactory
 
 
 class TestApiStripeIntegration(BaseTestApiJob):
+
+    def setUp(self):
+        super().setUp()
+        self.stripe_config = {
+            'default_advert_charge': 100,
+            'default_currency': "EUR",
+            'default_charge_description': "description",
+        }
+        self._store_stripe_settings()
+
+    def _store_stripe_settings(self):
+        configs.update_one(
+            {'_id': 'stripe'}, {'$set': self.stripe_config}, upsert=True)
+
+    def test_get_stripe_config(self):
+
+        result = self.get_data(self.url_for(STRIPE_GET_CONFIG))
+
+        self.assertEquals(self.stripe_config, json.loads(result.data))
 
     @patch('api.integration.stripe.pay_job_advert')
     def test_charge_payment(self, pay_job_advert_mock):

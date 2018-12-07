@@ -1,9 +1,8 @@
 from unittest.mock import patch
 
-from db.collections import payments
+from db.collections import payments, configs
 from exceptions.stripe import StripeException
-from integrations.stripe import publish_payed_advert, DEFAULT_ADVERT_CHARGE, \
-    DEFAULT_CURRENCY, DEFAULT_CHARGE_DESCRIPTION, pay_job_advert
+from integrations.stripe import publish_payed_advert, pay_job_advert
 from model.job.job_advert import pay_job_advert as pay_advert, \
     request_approval_job_advert
 from model.job.job import get_job
@@ -26,6 +25,10 @@ class BaseTestIntegrationStripe(BaseTestApiJob):
     def setUp(self):
         super().setUp()
         self.token = "some random token"
+        self.default_advert_charge = 123
+        self.default_currency = 'EUR'
+        self.default_charge_description = 'this is an advert'
+        self._store_stripe_settings()
 
     def _create_approved_advert(self):
         job = self.create_from_factory(JobFactory)
@@ -41,6 +44,16 @@ class BaseTestIntegrationStripe(BaseTestApiJob):
     def _get_stored_adverts(self, job_id):
         stored_job = get_job(job_id=job_id)
         return stored_job['adverts']
+
+    def _store_stripe_settings(self):
+        conf = {
+            'default_advert_charge': self.default_advert_charge,
+            'default_currency': self.default_currency,
+            'default_charge_description': self.default_charge_description,
+        }
+        configs.update_one({'_id': 'stripe'},
+                           {'$set': conf},
+                           upsert=True)
 
 
 class TestPayJobAdvert(BaseTestIntegrationStripe):
@@ -65,9 +78,9 @@ class TestPayJobAdvert(BaseTestIntegrationStripe):
         stored_advert, job_id, advert_id = \
             self._call_publish_advert('succeeded', stripe_mock)
         stripe_mock.Charge.create.assert_called_with(
-            amount=DEFAULT_ADVERT_CHARGE,
-            currency=DEFAULT_CURRENCY,
-            description=DEFAULT_CHARGE_DESCRIPTION,
+            amount=self.default_advert_charge,
+            currency=self.default_currency,
+            description=self.default_charge_description,
             source=self.token,
             metadata={
                 'job_id': job_id,
