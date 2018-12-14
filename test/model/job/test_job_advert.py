@@ -7,7 +7,7 @@ from model.job.job import get_job
 from model.job.job_advert import add_advert_to_job, _create_advert_dict, \
     AdvertStatus, approve_job_advert, publish_job_advert, pay_job_advert, \
     publish_payed_job_advert, request_approval_job_advert, \
-    _update_advert_status
+    _update_advert_status, archive_job_advert
 
 from test.model.job import BaseTestJob, JobFactory
 
@@ -87,6 +87,12 @@ class TestSetStatusJobAdvert(BaseTestJobAdvert):
             allowed_statuses=[AdvertStatus.APPROVED,
                               AdvertStatus.PAYED],
             new_status=AdvertStatus.PUBLISHED)
+
+    def test_archive_job_advert(self):
+        self._assert_called_update_advert_status_with(
+            func=archive_job_advert,
+            allowed_statuses=[AdvertStatus.PUBLISHED],
+            new_status=AdvertStatus.ARCHIVED)
 
     def test_update_advert_status_base_case(self):
         new_status = "random_value"

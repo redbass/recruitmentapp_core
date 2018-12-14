@@ -11,6 +11,7 @@ class AdvertStatus:
     APPROVED = 'APPROVED'
     PAYED = 'PAYED'
     PUBLISHED = 'PUBLISHED'
+    ARCHIVED = 'ARCHIVED'
 
 
 def add_advert_to_job(job_id: str,
@@ -69,6 +70,13 @@ def publish_job_advert(advert_id, job_id):
         allowed_statuses=[AdvertStatus.APPROVED,
                           AdvertStatus.PAYED],
         new_status=AdvertStatus.PUBLISHED)
+
+
+def archive_job_advert(advert_id, job_id):
+    return _update_advert_status(
+        advert_id=advert_id, job_id=job_id,
+        allowed_statuses=[AdvertStatus.PUBLISHED],
+        new_status=AdvertStatus.ARCHIVED)
 
 
 def _create_advert_dict(duration: int) -> dict:
