@@ -6,8 +6,8 @@ from integrations.stripe import publish_payed_advert, pay_job_advert
 from model.job.job_advert import pay_job_advert as pay_advert, \
     request_approval_job_advert
 from model.job.job import get_job
-from model.job.job_advert import add_advert_to_job, approve_job_advert, \
-    AdvertStatus
+from model.job.job_advert import add_advert_to_job, approve_job_advert
+from model.job import AdvertStatus
 from test.api.job import BaseTestApiJob
 from test.features import crate_stripe_charge_response
 from test.model.job import JobFactory

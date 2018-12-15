@@ -3,8 +3,9 @@ from json import loads
 from api.routes.admin_routes import JOBS_URL, JOB_URL, ADVERTS_URL, \
     SET_ADVERT_STATUS_URL
 from model.job.job import get_job
-from model.job.job_advert import add_advert_to_job, AdvertStatus, \
-    approve_job_advert, request_approval_job_advert, publish_job_advert
+from model.job.job_advert import add_advert_to_job, approve_job_advert, \
+    request_approval_job_advert, publish_job_advert
+from model.job import AdvertStatus
 from model.user import UserType
 from test.api.job import BaseTestApiJob
 from test.model.company import CompanyFactory

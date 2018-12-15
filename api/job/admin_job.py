@@ -9,8 +9,8 @@ from model.job.create_job import create_job
 from model.job.edit_job import edit_job
 from model.job.job import get_job
 from model.job.job_advert import approve_job_advert, publish_job_advert, \
-    add_advert_to_job, request_approval_job_advert, archive_job_advert, \
-    AdvertStatus
+    add_advert_to_job, request_approval_job_advert, archive_job_advert
+from model.job import AdvertStatus
 from model.user import UserType
 
 
