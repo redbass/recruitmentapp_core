@@ -86,6 +86,22 @@ class TestGetJob(BaseTestJob):
 
         self.assertEquals(expected_job_ids, [j['_id'] for j in list(jobs)])
 
+    def test_get_jobs_exclude_drafts(self):
+        job_1, advert1 = self._create_job_with_advert()
+        _, _ = self._create_job_with_advert()
+        job_3, advert3 = self._create_job_with_advert()
+
+        request_approval_job_advert(job_id=job_1['_id'],
+                                    advert_id=advert1['_id'])
+        request_approval_job_advert(job_id=job_3['_id'],
+                                    advert_id=advert3['_id'])
+
+        expected_job_ids = [job_1['_id'], job_3['_id']]
+
+        jobs = get_jobs(exclude_draft=True)
+
+        self.assertEquals(expected_job_ids, [j['_id'] for j in list(jobs)])
+
     def _create_job_with_advert(self):
         job = self.create_from_factory(JobFactory)
         advert = add_advert_to_job(job_id=job['_id'], advert_duration_days=10)

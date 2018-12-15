@@ -9,7 +9,9 @@ from model.job.job import get_jobs, get_job
 @json_response
 def api_get_jobs():
     adverts_status_filter = request.args.get('advertsStatusFilter', None)
-    return get_jobs(adverts_status_filter=adverts_status_filter)
+    exclude_drafts = request.args.get('excludeDrafts', True)
+    return get_jobs(adverts_status_filter=adverts_status_filter,
+                    exclude_draft=exclude_drafts)
 
 
 @jwt_required

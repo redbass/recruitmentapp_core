@@ -1,9 +1,12 @@
 from datetime import datetime
 
 from db.collections import jobs
+from model.job import AdvertStatus
 
 
-def get_jobs(company_id=None, adverts_status_filter=None):
+def get_jobs(company_id=None,
+             adverts_status_filter=None,
+             exclude_draft=False):
     pipeline = [
         {
             "$lookup": {
@@ -28,8 +31,12 @@ def get_jobs(company_id=None, adverts_status_filter=None):
         pipeline.insert(0, {"$match": {"company_id": company_id}})
 
     if adverts_status_filter:
-        pipeline.insert(0,
-                        {"$match": {"adverts.status": adverts_status_filter}})
+        match = {"$match": {"adverts.status": adverts_status_filter}}
+        pipeline.insert(0, match)
+
+    if exclude_draft:
+        match = {"$match": {"adverts.status": {"$ne": AdvertStatus.DRAFT}}}
+        pipeline.insert(0, match)
 
     results = jobs.aggregate(pipeline)
 

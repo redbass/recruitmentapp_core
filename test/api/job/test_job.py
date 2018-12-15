@@ -44,6 +44,20 @@ class TestApiGetJobs(BaseTestApiJob):
         url = self.url_for_admin(JOBS_URL + filter_param)
         self._assert_get_jobs(expected_jobs, url)
 
+    def test_get_jobs_exclude_drafts(self):
+        job_1, job_2, job_3, job_4 = self._create_jobs()
+        self._add_advert(job_2['_id'])
+        self._add_advert(job_4['_id'])
+        self._request_advert_approval(job_1['_id'])
+        self._request_advert_approval(job_3['_id'])
+
+        expected_jobs = [job_1, job_3]
+
+        filter_param = '?excludeDrafts={exclude}'\
+            .format(exclude=True)
+        url = self.url_for_admin(JOBS_URL + filter_param)
+        self._assert_get_jobs(expected_jobs, url)
+
     def _create_jobs(self):
         company_1 = self._company
         company_2 = self.create_from_factory(CompanyFactory)
@@ -65,5 +79,9 @@ class TestApiGetJobs(BaseTestApiJob):
                          [j['_id'] for j in result_jobs])
 
     def _request_advert_approval(self, job_id):
-        advert = add_advert_to_job(job_id=job_id, advert_duration_days=10)
+        advert = self._add_advert(job_id)
         request_approval_job_advert(job_id=job_id, advert_id=advert['_id'])
+
+    def _add_advert(self, job_id):
+        advert = add_advert_to_job(job_id=job_id, advert_duration_days=10)
+        return advert
