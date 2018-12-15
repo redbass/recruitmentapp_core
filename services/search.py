@@ -4,7 +4,7 @@ from datetime import datetime
 
 from db.collections import jobs
 from lib.geo import km2rad
-from model.job.job_advert import AdvertStatus
+from model.job import AdvertStatus
 
 DEFAULT_PAGE_SIZE = 10
 

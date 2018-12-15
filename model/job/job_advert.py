@@ -2,16 +2,8 @@ from datetime import datetime, timedelta
 
 from db.collections import jobs
 from model import create_id
+from model.job import AdvertStatus
 from model.job.job import get_job
-
-
-class AdvertStatus:
-    DRAFT = 'DRAFT'
-    REQUEST_APPROVAL = 'REQUEST_APPROVAL'
-    APPROVED = 'APPROVED'
-    PAYED = 'PAYED'
-    PUBLISHED = 'PUBLISHED'
-    ARCHIVED = 'ARCHIVED'
 
 
 def add_advert_to_job(job_id: str,

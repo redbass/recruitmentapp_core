@@ -1,8 +1,8 @@
 from api.routes.admin_routes import JOBS_URL, JOB_URL
 from json import loads
 from api.routes.hm_routes import COMPANY_JOBS_URL
-from model.job.job_advert import request_approval_job_advert, AdvertStatus, \
-    add_advert_to_job
+from model.job.job_advert import request_approval_job_advert, add_advert_to_job
+from model.job import AdvertStatus
 from test.api.job import BaseTestApiJob
 from test.model.company import CompanyFactory
 from test.model.job import JobFactory

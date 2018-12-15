@@ -2,7 +2,8 @@ from freezegun import freeze_time
 
 from model.job.job import get_job, get_jobs
 from model.job.job_advert import request_approval_job_advert, \
-    add_advert_to_job, AdvertStatus
+    add_advert_to_job
+from model.job import AdvertStatus
 from test.model.company import CompanyFactory
 from test.model.job import BaseTestJob, JobFactory
 
