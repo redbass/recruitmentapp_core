@@ -53,7 +53,7 @@
                     "type": "string",
                     "minimum": 1
                 },
-                "job_duration_days": {
+                "job_duration_weeks": {
                     "type": "integer",
                     "minimum": 1
                 }
@@ -61,7 +61,7 @@
             "required": [
                 "trades",
                 "job_type",
-                "job_duration_days"
+                "job_duration_weeks"
             ],
             "additionalProperties": false
         },
