@@ -63,7 +63,7 @@ def get_company(company_id: str):
     return companies.find_one({'_id': company_id})
 
 
-def get_companies(ids: list=None):
+def get_companies(ids=None):
     query = {} if not ids else {'_id': {'$in': ids}}
     return companies.find(query)
 

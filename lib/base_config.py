@@ -6,7 +6,7 @@ from lib.password import decrypt_system_password, encrypt_system_password
 
 class BaseConfig(object):
 
-    ENC_SEED = 'aaaaaaaaaaaaaaaa'
+    ENC_SEED = 'this_is_not_a_seed'
     ENC_PSWD = os.environ.get('ENC_PSWD', None)
 
     MAX_CONTENT_LENGTH = 400000
@@ -24,9 +24,9 @@ class BaseConfig(object):
 
     DATABASE_HOST = os.environ.get('DATABASE_HOST', 'localhost')
     DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD', None)
-    DATABASE_PORT = None
-    DATABASE_USER = None
-    DATABASE_NAME = None
+    DATABASE_PORT = os.environ.get('DATABASE_PORT', '27017')
+    DATABASE_USER = os.environ.get('DATABASE_HOST', None)
+    DATABASE_NAME = os.environ.get('DATABASE_NAME', None)
     DATABASE_DB_SUFFIX = ''
 
     STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', None)
