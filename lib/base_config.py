@@ -22,10 +22,10 @@ class BaseConfig(object):
     LOGIN_REQUIRED = True
     API_TOKEN_REQUIRED = True
 
-    DATABASE_HOST = ''
+    DATABASE_HOST = os.environ.get('DATABASE_HOST', 'localhost')
+    DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD', None)
     DATABASE_PORT = None
     DATABASE_USER = None
-    DATABASE_PASSWORD = None
     DATABASE_NAME = None
     DATABASE_DB_SUFFIX = ''
 
