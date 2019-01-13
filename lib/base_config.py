@@ -25,7 +25,7 @@ class BaseConfig(object):
     DATABASE_HOST = os.environ.get('DATABASE_HOST', 'localhost')
     DATABASE_PASSWORD = os.environ.get('DATABASE_PASSWORD', None)
     DATABASE_PORT = os.environ.get('DATABASE_PORT', '27017')
-    DATABASE_USER = os.environ.get('DATABASE_HOST', None)
+    DATABASE_USER = os.environ.get('DATABASE_USER', None)
     DATABASE_NAME = os.environ.get('DATABASE_NAME', None)
     DATABASE_DB_SUFFIX = ''
 
