@@ -50,7 +50,7 @@ def create_hidden_hiring_manager(username: str):
                        last_name=username)
 
 
-def get_users(user_type: str=None, exclude_password=False):
+def get_users(user_type=None, exclude_password=False):
     return _query_users_filtering_password(
         find_fn=users.find,
         query={'type': user_type} if user_type else {},
