@@ -3,7 +3,6 @@ from test import UnitTestCase
 
 
 class TestEmailValidation(UnitTestCase):
-
     valid_emails = [
         'email@example.com',
         'firstname.lastname@example.com',
@@ -20,7 +19,7 @@ class TestEmailValidation(UnitTestCase):
         'email@example.co.jp',
         'firstname-lastname@example.com',
 
-        'much."more\ unusual"@example.com',
+        'much."more\\ unusual"@example.com',
         'very.unusual."@".unusual.com@example.com'
     ]
     invalid_emails = [
