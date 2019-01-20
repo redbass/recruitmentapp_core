@@ -48,7 +48,8 @@ class TestApiStripeIntegration(BaseTestApiJob):
         self.assertEqual(200, response.status_code)
 
         pay_job_advert_mock.assert_called_with(
-            advert_id=advert_id, job_id=job_id, stripe_token=token)
+            advert_id=advert_id, job_id=job_id, stripe_token=token,
+            user_id=self._user['_id'])
 
         response_data = json.loads(response.data)
         self.assertEquals(job_id, response_data['job']['_id'])

@@ -1,5 +1,6 @@
 
 from flask import request
+from flask_jwt_extended import get_jwt_identity
 
 from api.handler import json_response
 from auth.api_token import api_token_required
@@ -16,7 +17,10 @@ def charge_payment():
     advert_id = data.get('advert_id', "")
     token = data.get('token', "")
 
-    pay_job_advert(advert_id=advert_id, job_id=job_id, stripe_token=token)
+    identity = get_jwt_identity()
+
+    pay_job_advert(advert_id=advert_id, job_id=job_id, stripe_token=token,
+                   user_id=identity['username'])
     job = get_job(job_id=job_id)
     return {'job': job}
 

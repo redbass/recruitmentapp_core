@@ -16,6 +16,8 @@ class DevConfig(BaseConfig):
 
 
 class LocalConfig(BaseConfig):
+    FLASK_SECRET_KEY = "RanDom_Key"
+
     DEBUG_MODE = True
 
     DATABASE_PORT = 27017

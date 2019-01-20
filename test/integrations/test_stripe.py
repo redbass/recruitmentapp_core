@@ -84,7 +84,8 @@ class TestPayJobAdvert(BaseTestIntegrationStripe):
             source=self.token,
             metadata={
                 'job_id': job_id,
-                'advert_id': advert_id
+                'advert_id': advert_id,
+                'user_id': self._user['_id']
             }
         )
 
@@ -93,7 +94,7 @@ class TestPayJobAdvert(BaseTestIntegrationStripe):
         charge = MockStripeCharge(response_status=response_status)
         stripe_mock.Charge.create.return_value = charge
         pay_job_advert(advert_id=advert_id, job_id=job_id,
-                       stripe_token=self.token)
+                       stripe_token=self.token, user_id=self._user['_id'])
         stored_advert = self._get_stored_adverts(job_id)[0]
         return stored_advert, job_id, advert_id
 
