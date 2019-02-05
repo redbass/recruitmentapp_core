@@ -29,7 +29,6 @@ class BaseConfig(object):
     DATABASE_NAME = os.environ.get('DATABASE_NAME', None)
     DATABASE_DB_SUFFIX = ''
 
-    STRIPE_PUBLIC_KEY = os.environ.get('STRIPE_PUBLIC_KEY', None)
     STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', None)
 
     def __init__(self):

@@ -14,7 +14,7 @@ def get_stripe_config():
     return configs.find_one({'_id': 'stripe'}) or {}
 
 
-def pay_job_advert(job_id, advert_id, stripe_token):
+def pay_job_advert(job_id, advert_id, stripe_token, user_id):
     stripe_configs = get_stripe_config()
 
     default_advert_charge = stripe_configs['default_advert_charge']
@@ -28,7 +28,8 @@ def pay_job_advert(job_id, advert_id, stripe_token):
         source=stripe_token,
         metadata={
             'job_id': job_id,
-            'advert_id': advert_id
+            'advert_id': advert_id,
+            'user_id': user_id
         }
     )
 
