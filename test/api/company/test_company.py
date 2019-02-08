@@ -1,8 +1,11 @@
 from io import BytesIO
+from json import loads
 
+from api.routes.routes import COMPANIES_URL
 from api.routes.routes import COMPANY_LOGO
 from model.company.company import store_company_logo, get_company_logo
-from model.user import UserType
+from model.user import get_user, UserType
+from test import load_example_model
 from test.api.company import BaseTestCompany
 from test.model.company import CompanyFactory
 from test.model.test_user import UserFactory
@@ -91,3 +94,29 @@ class TestUploadCompanyLogo(BaseTestCompany):
             data={'file': (BytesIO(company_logo_content), 'test.txt')})
 
         return response
+
+
+class TestHMCompany(BaseTestCompany):
+
+    def test_sign_in_company(self):
+
+        input_data = load_example_model('sign_in_company')
+
+        url = self.url_for(COMPANIES_URL)
+        response = self.post_json(url, input_data)
+
+        self.assertEqual(200, response.status_code)
+
+        result_company = loads(response.data)
+        stored_company_id = result_company['admin_user_ids'][0]
+
+        self.assertEqual(input_data['company_name'], result_company['name'])
+        self.assertEqual(input_data['company_description'],
+                         result_company['description'])
+
+        stored_hm = get_user(stored_company_id)
+        self.assertIsNotNone(stored_hm)
+        self.assertEqual(stored_hm['type'], UserType.HIRING_MANAGER)
+
+        self.assertEqual(input_data['hm_email'],
+                         result_company['contacts']['email'])
