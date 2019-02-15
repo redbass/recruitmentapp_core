@@ -7,7 +7,7 @@ from exceptions.api import ActionNotAllowed
 from lib.schema_validation import validate
 from model.job.create_job import create_job
 from model.job.edit_job import edit_job
-from model.job.job import get_job
+from model.job.job import get_job, get_jobs
 from model.job.job_advert import approve_job_advert, publish_job_advert, \
     add_advert_to_job, request_approval_job_advert, archive_job_advert
 from model.job import AdvertStatus
@@ -66,3 +66,18 @@ def set_advert_status(job_id: str, advert_id: str, action: str):
 
     advert_action(job_id=job_id, advert_id=advert_id)
     return get_job(job_id=job_id)
+
+
+@jwt_required
+@json_response
+def api_get_job(job_id):
+    return get_job(job_id=job_id)
+
+
+@jwt_required
+@json_response
+def api_get_jobs():
+    adverts_status_filter = request.args.get('advertsStatusFilter', None)
+    exclude_drafts = request.args.get('excludeDrafts', True)
+    return get_jobs(adverts_status_filter=adverts_status_filter,
+                    exclude_draft=exclude_drafts)

@@ -6,7 +6,7 @@ import pkg_resources
 
 from config import settings
 from db import get_db_name
-from db.collections import db, companies, users, jobs, payments
+from db.collections import db, companies, users, jobs, payments, applications
 from lib.schema_validation import validate
 
 logging.getLogger('faker.factory').setLevel(logging.ERROR)
@@ -32,6 +32,7 @@ class UnitTestCase(TestCase):
         users.drop()
         jobs.drop()
         payments.drop()
+        applications.drop()
         super().tearDown()
 
     @classmethod

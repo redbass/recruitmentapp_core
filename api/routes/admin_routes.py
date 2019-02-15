@@ -1,7 +1,6 @@
 import api.company.admin_company
 import api.job.admin_job
 from api import user
-from api.job import job
 
 ADMIN_PREFIX = 'admin'
 
@@ -60,13 +59,13 @@ def _add_job_routes(app):
     _add_admin_url_rule(app,
                         JOBS_URL,
                         'get_jobs',
-                        job.api_get_jobs,
+                        api.job.admin_job.api_get_jobs,
                         methods=['GET'])
 
     _add_admin_url_rule(app,
                         JOB_URL,
                         'get_job',
-                        job.api_get_job,
+                        api.job.admin_job.api_get_job,
                         methods=['GET'])
 
     _add_admin_url_rule(app,

@@ -1,6 +1,6 @@
 import api.company.company
 from api.services import postcode, search
-from api import picklist
+from api import picklist, advert
 from api.integration import stripe
 from api.company import company
 
@@ -12,6 +12,7 @@ POSTCODE_SEARCH = '/api/postcode/<postcode>'
 
 COMPANY_LOGO = '/api/company/<company_id>/logo'
 COMPANIES_URL = '/api/company'
+APPLY_ADVERT = '/api/advert/<advert_id>/apply'
 
 STRIPE_GET_CONFIG = '/api/stripe/config'
 STRIPE_CHARGE_PAYMENT = '/api/stripe/charge'
@@ -36,6 +37,11 @@ def add_generic_routes(app):
     app.add_url_rule(COMPANIES_URL,
                      'sign_in_company',
                      api.company.company.sign_in_company,
+                     methods=['POST'])
+
+    app.add_url_rule(APPLY_ADVERT,
+                     'apply_advert',
+                     advert.api_apply_advert,
                      methods=['POST'])
 
     app.add_url_rule(PICKLIST,
