@@ -1,0 +1,16 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+    "properties": {
+        "candidate_id": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "email": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "first_name": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "last_name": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "phone_number": { "type": "string", "minLength": 1, "maxLength": 50 },
+        "metadata": {"type": "object"}
+    },
+    "required": [
+         "candidate_id", "email", "first_name", "last_name",
+         "phone_number", "metadata"
+    ],
+    "additionalProperties": false
+}
