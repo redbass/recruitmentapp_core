@@ -5,6 +5,7 @@ from api.handler import json_response
 from auth.jwt import jwt_required
 from exceptions.api import ActionNotAllowed
 from lib.schema_validation import validate
+from model.job.application import get_advert_applications_by_job_id
 from model.job.create_job import create_job
 from model.job.edit_job import edit_job
 from model.job.job import get_job, get_jobs
@@ -72,6 +73,12 @@ def set_advert_status(job_id: str, advert_id: str, action: str):
 @json_response
 def api_get_job(job_id):
     return get_job(job_id=job_id)
+
+
+@jwt_required
+@json_response
+def api_get_advert_applications(job_id):
+    return get_advert_applications_by_job_id(job_id=job_id)
 
 
 @jwt_required
