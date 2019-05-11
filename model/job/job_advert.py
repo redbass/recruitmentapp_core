@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 from db.collections import jobs
+from integrations.send_mail_sendgrid import send_email_advert_approved
 from model import create_id
 from model.job import AdvertStatus
 from model.job.job import get_job
@@ -35,11 +36,13 @@ def request_approval_job_advert(advert_id, job_id):
 
 
 def approve_job_advert(advert_id, job_id):
-    return _update_advert_status(
+    job = _update_advert_status(
         advert_id=advert_id, job_id=job_id,
-        allowed_statuses=[AdvertStatus.DRAFT,
-                          AdvertStatus.REQUEST_APPROVAL],
+        allowed_statuses=[AdvertStatus.DRAFT, AdvertStatus.REQUEST_APPROVAL],
         new_status=AdvertStatus.APPROVED)
+
+    send_email_advert_approved(job_id=job_id)
+    return job
 
 
 def pay_job_advert(advert_id, job_id):

@@ -1,6 +1,7 @@
 import logging
 from json import loads
 from unittest import TestCase
+from unittest.mock import patch
 
 import pkg_resources
 
@@ -26,6 +27,10 @@ class UnitTestCase(TestCase):
     def setUp(self):
         if not settings.TEST_MODE:
             raise Exception('Test have to run in test mode')
+
+        sendgrid_patch = patch(
+            'integrations.send_mail_sendgrid.SendGridAPIClient')
+        sendgrid_patch.start()
 
     def tearDown(self):
         companies.drop()
