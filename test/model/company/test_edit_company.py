@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from model.company.company import get_company
 from model.company.edit_company import edit_company, enable_company, \
     disable_company
@@ -8,6 +10,10 @@ class TestEditCompany(BaseTestCompany):
 
     def setUp(self):
         super().setUp()
+
+        patcher = patch(
+            'model.company.edit_company.send_email_company_approved')
+        self.mock_send_email_company_approved = patcher.start()
 
         self.company = self.create_from_factory(
             CompanyFactory,
@@ -48,6 +54,9 @@ class TestEditCompany(BaseTestCompany):
         enable_company(_id=self.company['_id'])
         company = get_company(self.company['_id'])
         self.assertTrue(company['enabled'])
+
+        self.mock_send_email_company_approved\
+            .assert_called_once_with(company_id=self.company['_id'])
 
         disable_company(_id=self.company['_id'])
         company = get_company(self.company['_id'])
