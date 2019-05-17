@@ -30,6 +30,7 @@ class BaseConfig(object):
     DATABASE_DB_SUFFIX = ''
 
     STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', None)
+    SENDGRID_SECRET_KEY = os.environ.get('SENDGRID_SECRET_KEY', None)
 
     def __init__(self):
         if self.DATABASE_PASSWORD:

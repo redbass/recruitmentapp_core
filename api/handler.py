@@ -6,8 +6,8 @@ from jwt import ExpiredSignatureError
 
 from exceptions.api import ParametersException, ActionNotAllowed
 from exceptions.auth import UnauthorizedException
+from exceptions.integrations import StripeException, SendgridException
 from exceptions.service import ServiceError
-from exceptions.stripe import StripeException
 
 EXCEPTIONS = {
     ParametersException: 400,
@@ -17,7 +17,8 @@ EXCEPTIONS = {
     ExpiredSignatureError: 401,
     UnauthorizedException: 405,
     ServiceError: 503,
-    StripeException: 500
+    StripeException: 500,
+    SendgridException: 500
 }
 
 

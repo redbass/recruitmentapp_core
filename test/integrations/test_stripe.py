@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from db.collections import payments, configs
-from exceptions.stripe import StripeException
+from exceptions.integrations import StripeException
 from integrations.stripe import publish_payed_advert, pay_job_advert
 from model.job.job_advert import pay_job_advert as pay_advert, \
     request_approval_job_advert

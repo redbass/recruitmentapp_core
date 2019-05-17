@@ -2,7 +2,7 @@ import stripe
 
 from config import settings
 from db.collections import configs
-from exceptions.stripe import StripeException
+from exceptions.integrations import StripeException
 from model.job.job_advert import publish_payed_job_advert, \
     pay_job_advert as pay_advert
 from model.payment import store_payment
