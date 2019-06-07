@@ -95,14 +95,14 @@ class TestWalker(TestCase):
         self.assertEqual(expected, result)
 
     def test_dict_to_datapath_empty_dict(self):
-            input = {
-                "a": {}
-            }
+        input = {
+            "a": {}
+        }
 
-            expected = {
-                "a": {}
-            }
+        expected = {
+            "a": {}
+        }
 
-            result = dict_to_datapath(input)
+        result = dict_to_datapath(input)
 
-            self.assertEqual(expected, result)
+        self.assertEqual(expected, result)
